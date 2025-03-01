@@ -1,0 +1,25 @@
+# 🔒 Fichiers sensibles
+config.php
+.env
+
+# 🚫 Bases de données locales
+*.sql
+database/
+
+# ⚙️ Fichiers système
+.DS_Store
+Thumbs.db
+
+# # 🔄 Dépendances (si tu utilises Composer)
+# vendor/
+
+# 📂 Dossiers de cache et logs
+cache/
+logs/
+*.log
+
+# 🌐 XAMPP & IDE (VS Code, PHPStorm, etc.)
+xampp/
+htdocs/
+.vscode/
+.idea/
