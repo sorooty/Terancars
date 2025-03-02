@@ -51,18 +51,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Si pas d'erreurs, enregistrer le message
     if (empty($errors)) {
+        // Vérifier si la table messages existe
+        if (!tableExists($conn, 'messages')) {
+            // Créer la table si elle n'existe pas
+            $createTable = "CREATE TABLE IF NOT EXISTS messages (
+                id_message INT AUTO_INCREMENT PRIMARY KEY,
+                nom VARCHAR(100) NOT NULL,
+                prenom VARCHAR(100) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                telephone VARCHAR(20),
+                sujet VARCHAR(255) NOT NULL,
+                message TEXT NOT NULL,
+                date_envoi TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )";
+            $conn->query($createTable);
+        }
+        
         // Préparation de la requête
         $query = "INSERT INTO messages (nom, prenom, email, telephone, sujet, message) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssssss", $nom, $prenom, $email, $telephone, $sujet, $message);
         
-        // Exécution de la requête
-        if ($stmt->execute()) {
-            $success = true;
-            // Réinitialisation des champs
-            $nom = $prenom = $email = $telephone = $sujet = $message = "";
+        // Vérifier si la préparation a réussi
+        if ($stmt === false) {
+            $errors[] = "Erreur de préparation de la requête : " . $conn->error;
         } else {
-            $errors[] = "Une erreur est survenue lors de l'envoi du message. Veuillez réessayer.";
+            $stmt->bind_param("ssssss", $nom, $prenom, $email, $telephone, $sujet, $message);
+            
+            // Exécution de la requête
+            if ($stmt->execute()) {
+                $success = true;
+                // Réinitialisation des champs
+                $nom = $prenom = $email = $telephone = $sujet = $message = "";
+            } else {
+                $errors[] = "Une erreur est survenue lors de l'envoi du message : " . $stmt->error;
+            }
         }
     }
 }
@@ -180,7 +202,7 @@ if (isset($_GET['sujet']) && $_GET['sujet'] == 'vehicule' && isset($_GET['id']))
     </div>
 </div>
 
-<!-- Ajout des styles spécifiques à la page de contact -->
+<!-- Ajout des styles spécifiques à la page de contact conformes à la charte graphique -->
 <style>
 .contact-container {
     width: 90%;
@@ -196,7 +218,7 @@ if (isset($_GET['sujet']) && $_GET['sujet'] == 'vehicule' && isset($_GET['id']))
 
 .contact-header h1 {
     font-size: 2.2rem;
-    color: #333;
+    color: #042345; /* Bleu de la charte graphique */
     margin-bottom: 0.5rem;
 }
 
@@ -223,17 +245,18 @@ if (isset($_GET['sujet']) && $_GET['sujet'] == 'vehicule' && isset($_GET['id']))
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 1.5rem;
     text-align: center;
+    border-top: 3px solid #B68FB2; /* Violet de la charte graphique */
 }
 
 .info-card i {
     font-size: 2rem;
-    color: #007bff;
+    color: #042345; /* Bleu de la charte graphique */
     margin-bottom: 1rem;
 }
 
 .info-card h3 {
     font-size: 1.2rem;
-    color: #333;
+    color: #042345; /* Bleu de la charte graphique */
     margin-bottom: 0.8rem;
 }
 
@@ -249,95 +272,95 @@ if (isset($_GET['sujet']) && $_GET['sujet'] == 'vehicule' && isset($_GET['id']))
     padding: 2rem;
 }
 
-.contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.form-row {
+.contact-form .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.contact-form .form-group {
+    margin-bottom: 1.5rem;
 }
 
-.form-group label {
+.contact-form label {
+    display: block;
+    margin-bottom: 0.5rem;
     font-weight: 500;
-    color: #555;
+    color: #042345; /* Bleu de la charte graphique */
 }
 
-.form-group input,
-.form-group textarea {
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
     padding: 0.8rem;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-family: inherit;
     font-size: 1rem;
+    transition: border-color 0.3s ease;
 }
 
-.form-group textarea {
-    resize: vertical;
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: #B68FB2; /* Violet de la charte graphique */
 }
 
-.form-actions {
+.contact-form .form-actions {
     margin-top: 1rem;
 }
 
-.form-actions button {
-    padding: 0.8rem 2rem;
+.contact-form button {
+    background-color: #042345; /* Bleu de la charte graphique */
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
     font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.contact-form button:hover {
+    background-color: #B68FB2; /* Violet de la charte graphique */
 }
 
 .success-message {
     background-color: #d4edda;
     color: #155724;
-    padding: 2rem;
-    border-radius: 8px;
-    text-align: center;
+    padding: 1rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .success-message i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    color: #28a745;
+    font-size: 1.5rem;
+    margin-right: 1rem;
 }
 
 .error-list {
     background-color: #f8d7da;
     color: #721c24;
-    padding: 1rem 2rem;
-    border-radius: 8px;
+    padding: 1rem;
+    border-radius: 4px;
     margin-bottom: 1.5rem;
 }
 
 .error-list ul {
-    list-style-type: disc;
+    list-style-position: inside;
     margin-left: 1rem;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 768px) {
     .contact-content {
         grid-template-columns: 1fr;
     }
     
-    .contact-info {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .contact-info {
+    .contact-form .form-row {
         grid-template-columns: 1fr;
     }
 }
