@@ -1,0 +1,56 @@
+[33mcommit da73e2d246ccd609851a43d0d3c368bdc47ab206[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mversion-ia[m[33m, [m[1;31morigin/version-ia[m[33m)[m
+Author: Seyni Baldé <senseybalde@gmail.com>
+Date:   Mon Mar 3 08:37:45 2025 +0000
+
+    Modifications additionnelles
+
+[33mcommit ff7324be25e75036848afd594d80cd8edc1f0bfc[m
+Author: Seyni Baldé <senseybalde@gmail.com>
+Date:   Sun Mar 2 21:03:25 2025 +0000
+
+    Application de la charte graphique et correction des problèmes de communication front-end/back-end
+
+[33mcommit f3c8aff9720958841f5c2bc1cb707dfbdfd48455[m
+Author: Seyni Baldé <senseybalde@gmail.com>
+Date:   Sun Mar 2 19:05:19 2025 +0000
+
+    Mise à jour de la documentation sur les différences entre les branches
+
+[33mcommit 4a63e5384fec1a0b68a22c1e09834b88e0fd7827[m
+Author: Seyni Baldé <senseybalde@gmail.com>
+Date:   Sun Mar 2 19:03:54 2025 +0000
+
+    Configuration avancée pour la branche version-ia
+
+[33mcommit fd47f1390df889aceb478366ca0e3d959ea439cc[m
+Author: Seyni Baldé <senseybalde@gmail.com>
+Date:   Sun Mar 2 18:51:49 2025 +0000
+
+    Version développée avec l'aide de l'IA incluant les outils de diagnostic et les améliorations
+
+[33mcommit a634b20d2c0a6057dbc413bcd2ed779bdfcecaa0[m
+Author: Seyni Baldé <senseybalde@gmail.com>
+Date:   Sat Mar 1 20:52:06 2025 +0000
+
+    🔒 Sécurisation et nettoyage du projet
+    
+    1. Ajout des règles de sécurité dans .gitignore
+       - Exclusion des fichiers de configuration sensibles
+       - Protection des données de base de données locales
+       - Ignorance des fichiers système et IDE
+    
+    2. Suppression de dbconfig.php du dépôt
+       - Retrait du fichier de configuration de la base de données
+       - Migration vers un système plus sécurisé
+
+[33mcommit e607396ef2afbb875065c9148382e375d20817a8[m
+Author: Seyni Baldé <senseybalde@gmail.com>
+Date:   Sat Mar 1 20:47:50 2025 +0000
+
+    Mise à jour du .gitignore
+
+[33mcommit bcc3ec91454969221ebd4b73a32ed3acfcf3da19[m
+Author: Seyni Baldé <senseybalde@gmail.com>
+Date:   Sat Mar 1 20:40:13 2025 +0000
+
+    Initialisation du projet

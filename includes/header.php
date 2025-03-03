@@ -9,9 +9,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' . SITE_NAME : SITE_NAME; ?></title>
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>assets/CSS/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' : ''; ?>TeranCar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/CSS/style.css">
     <!-- Meta tags pour améliorer le SEO -->
     <meta name="description" content="Terancar - Vente et location de véhicules de qualité. Trouvez votre voiture idéale parmi notre large sélection.">
     <meta name="keywords" content="voiture, automobile, achat voiture, location voiture, véhicules, Terancar">
@@ -26,77 +29,29 @@
     <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
-    <header>
-        <div class="header-container container">
-            <div class="logo">
-                <a href="<?php echo SITE_URL; ?>public/index.php">
-                    <div class="terancar-logo">
-                        <img src="<?php echo SITE_URL; ?>assets/images/logos/terancar-logo.png" alt="Terancar Logo">
-                        <div class="text">
-                            <span class="brand-name">Terancar</span>
-                            <span class="tagline">VOTRE PARTENAIRE AUTO</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="<?php echo SITE_URL; ?>public/index.php"><i class="fas fa-home"></i> Accueil</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>public/catalogue.php"><i class="fas fa-car"></i> Catalogue</a></li>
-                    <li><a href="<?php echo SITE_URL; ?>public/contact.php"><i class="fas fa-envelope"></i> Contact</a></li>
-                </ul>
-            </nav>
-            
-            <div class="user-actions">
-                <?php if (isLoggedIn()): ?>
-                    <div class="dropdown">
-                        <a href="#" class="dropdown-toggle">
-                            <i class="fas fa-user-circle"></i> 
-                            <?php 
-                                $user = getCurrentUser();
-                                echo $user ? htmlspecialchars($user['prenom']) : 'Mon compte'; 
-                            ?>
-                            <i class="fas fa-chevron-down"></i>
-                        </a>
-                        <div class="dropdown-menu">
-                            <a href="<?php echo SITE_URL; ?>public/profile.php"><i class="fas fa-user"></i> Mon profil</a>
-                            <a href="<?php echo SITE_URL; ?>public/order-details.php"><i class="fas fa-shopping-bag"></i> Mes commandes</a>
-                            <a href="<?php echo SITE_URL; ?>public/logout.php"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
-                        </div>
-                    </div>
-                <?php else: ?>
-                    <a href="<?php echo SITE_URL; ?>public/login.php" class="btn btn-login">Connexion</a>
-                    <a href="<?php echo SITE_URL; ?>public/register.php" class="btn btn-register">Inscription</a>
-                <?php endif; ?>
-                
-                <a href="<?php echo SITE_URL; ?>public/panier.php" class="cart-link">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-count" id="cart-count">0</span>
-                </a>
-                
-                <button class="mobile-menu-btn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-        </div>
-    </header>
+    <?php include 'navbar.php'; ?>
     
-    <div class="main-content">
-        <?php
-        // Affichage des messages d'alerte
-        $alert = getAlert();
-        if ($alert) {
-            echo '<div class="container">';
-            echo '<div class="alert alert-' . $alert['type'] . '">';
-            echo '<div class="alert-content">' . $alert['message'] . '</div>';
-            echo '<button class="alert-close">&times;</button>';
-            echo '</div>';
-            echo '</div>';
-        }
-        ?>
+    <div class="alerts-container">
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success">
+                <?php 
+                echo $_SESSION['success'];
+                unset($_SESSION['success']);
+                ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger">
+                <?php 
+                echo $_SESSION['error'];
+                unset($_SESSION['error']);
+                ?>
+            </div>
+        <?php endif; ?>
+    </div>
+    
+    <div class="page-content">
     </div>
 </body>
 </html>

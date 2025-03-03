@@ -9,7 +9,7 @@ $pageTitle = "Accueil";
 
 // Inclusion des fichiers nécessaires
 include '../config/config.php'; // Connexion à la DB
-include '../includes/header.php'; // En-tête du site
+require_once '../includes/header.php'; // En-tête du site
 
 // Récupérer les 6 derniers véhicules ajoutés
 $query = "SELECT * FROM vehicules ORDER BY id_vehicule DESC LIMIT 6";
@@ -24,10 +24,10 @@ $marques_result = $conn->query($marques_query);
 <section class="hero-banner">
     <div class="hero-content">
         <h1>Trouvez votre véhicule idéal</h1>
-        <p>Vente et location de véhicules neufs et d'occasion de qualité</p>
+        <p>Location et vente de véhicules de qualité pour tous vos besoins</p>
         <div class="hero-buttons">
-            <a href="catalogue.php" class="btn btn-primary">Voir notre catalogue</a>
-            <a href="contact.php" class="btn btn-secondary">Nous contacter</a>
+            <a href="catalogue.php" class="btn btn-primary"><i class="fas fa-search"></i> Explorer le catalogue</a>
+            <a href="location.php" class="btn btn-secondary"><i class="fas fa-key"></i> Louer un véhicule</a>
         </div>
     </div>
 </section>
@@ -35,73 +35,84 @@ $marques_result = $conn->query($marques_query);
 <!-- Section de recherche de véhicules -->
 <section class="vehicle-search">
     <div class="container">
-        <div class="search-header">
-            <h2>Rechercher par type de véhicule</h2>
-        </div>
-        
+        <h2 class="section-title">Nos catégories de véhicules</h2>
         <div class="vehicle-types">
             <div class="vehicle-type">
-                <img src="<?php echo SITE_URL; ?>assets/images/icones/sedan.png" alt="Berline">
+                <i class="fas fa-car vehicle-icon"></i>
+                <h3>Citadines</h3>
+                <p>Parfaites pour la ville</p>
+            </div>
+            <div class="vehicle-type">
+                <i class="fas fa-car-side vehicle-icon"></i>
                 <h3>Berlines</h3>
+                <p>Confort et élégance</p>
             </div>
             <div class="vehicle-type">
-                <img src="<?php echo SITE_URL; ?>assets/images/icones/suv.png" alt="SUV">
+                <i class="fas fa-truck vehicle-icon"></i>
                 <h3>SUV</h3>
+                <p>Polyvalence maximale</p>
             </div>
             <div class="vehicle-type">
-                <img src="<?php echo SITE_URL; ?>assets/images/icones/hatchback.png" alt="Compacte">
-                <h3>Compactes</h3>
-            </div>
-            <div class="vehicle-type">
-                <img src="<?php echo SITE_URL; ?>assets/images/icones/convertible.png" alt="Cabriolet">
-                <h3>Cabriolets</h3>
-            </div>
-            <div class="vehicle-type">
-                <img src="<?php echo SITE_URL; ?>assets/images/icones/electric.png" alt="Électrique">
-                <h3>Électriques</h3>
+                <i class="fas fa-truck-pickup vehicle-icon"></i>
+                <h3>Utilitaires</h3>
+                <p>Pour les professionnels</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Section des marques populaires -->
+<section class="features">
+    <div class="container">
+        <div class="features-grid">
+            <div class="widget">
+                <i class="fas fa-shield-alt widget-icon"></i>
+                <h3 class="widget-title">Sécurité garantie</h3>
+                <p class="widget-content">Tous nos véhicules sont régulièrement contrôlés et entretenus</p>
+            </div>
+            <div class="widget">
+                <i class="fas fa-clock widget-icon"></i>
+                <h3 class="widget-title">Service 24/7</h3>
+                <p class="widget-content">Assistance routière disponible à tout moment</p>
+            </div>
+            <div class="widget">
+                <i class="fas fa-hand-holding-usd widget-icon"></i>
+                <h3 class="widget-title">Prix compétitifs</h3>
+                <p class="widget-content">Les meilleurs tarifs du marché garantis</p>
+            </div>
+            <div class="widget">
+                <i class="fas fa-smile widget-icon"></i>
+                <h3 class="widget-title">Satisfaction client</h3>
+                <p class="widget-content">98% de nos clients satisfaits</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="popular-brands">
     <div class="container">
-        <div class="brands-header">
-            <h2>Marques populaires</h2>
-        </div>
-        
+        <h2 class="section-title">Marques populaires</h2>
         <div class="brands-grid">
-            <?php 
-            // Afficher les marques disponibles
-            if ($marques_result && $marques_result->num_rows > 0) {
-                while ($marque = $marques_result->fetch_assoc()) {
-                    $marque_nom = $marque['marque'];
-                    $logo_path = SITE_URL . "assets/images/marques/" . strtolower($marque_nom) . ".png";
-                    // Logo par défaut si non disponible
-                    $default_logo = SITE_URL . "assets/images/marques/default.png";
-            ?>
-                <div class="brand-card">
-                    <img src="<?php echo $logo_path; ?>" alt="<?php echo $marque_nom; ?>" onerror="this.src='<?php echo $default_logo; ?>'">
-                    <h3><?php echo $marque_nom; ?></h3>
-                </div>
-            <?php
-                }
-            } else {
-                // Afficher des marques par défaut si aucune n'est trouvée
-                $default_brands = ['Audi', 'BMW', 'Mercedes', 'Renault', 'Peugeot'];
-                foreach ($default_brands as $brand) {
-                    $logo_path = SITE_URL . "assets/images/marques/" . strtolower($brand) . ".png";
-                    $default_logo = SITE_URL . "assets/images/marques/default.png";
-            ?>
-                <div class="brand-card">
-                    <img src="<?php echo $logo_path; ?>" alt="<?php echo $brand; ?>" onerror="this.src='<?php echo $default_logo; ?>'">
-                    <h3><?php echo $brand; ?></h3>
-                </div>
-            <?php
-                }
-            }
-            ?>
+            <div class="brand-card">
+                <img src="assets/images/brands/volkswagen.png" alt="Volkswagen">
+                <h3>Volkswagen</h3>
+            </div>
+            <div class="brand-card">
+                <img src="assets/images/brands/toyota.png" alt="Toyota">
+                <h3>Toyota</h3>
+            </div>
+            <div class="brand-card">
+                <img src="assets/images/brands/renault.png" alt="Renault">
+                <h3>Renault</h3>
+            </div>
+            <div class="brand-card">
+                <img src="assets/images/brands/peugeot.png" alt="Peugeot">
+                <h3>Peugeot</h3>
+            </div>
+            <div class="brand-card">
+                <img src="assets/images/brands/mercedes.png" alt="Mercedes">
+                <h3>Mercedes</h3>
+            </div>
         </div>
     </div>
 </section>
@@ -109,85 +120,56 @@ $marques_result = $conn->query($marques_query);
 <!-- Section des avis clients -->
 <section class="customer-reviews">
     <div class="container">
-        <div class="reviews-header">
-            <h2>Ce que disent nos clients</h2>
-        </div>
-        
-        <div class="reviews-slider">
-            <div class="reviews-container">
-                <div class="review-card">
-                    <div class="review-stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h3 class="review-title">Service exceptionnel</h3>
-                    <p class="review-text">J'ai acheté ma nouvelle voiture chez Terancar et je suis très satisfait du service client et de la qualité du véhicule.</p>
-                    <p class="reviewer-name">Jean Dupont</p>
+        <h2 class="section-title">Avis de nos clients</h2>
+        <div class="reviews-container">
+            <div class="review-card">
+                <div class="review-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
                 </div>
-                
-                <div class="review-card">
-                    <div class="review-stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                    </div>
-                    <h3 class="review-title">Excellent rapport qualité-prix</h3>
-                    <p class="review-text">Les prix sont compétitifs et la qualité des véhicules est au rendez-vous. Je recommande vivement.</p>
-                    <p class="reviewer-name">Marie Martin</p>
-                </div>
-                
-                <div class="review-card">
-                    <div class="review-stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h3 class="review-title">Location sans souci</h3>
-                    <p class="review-text">J'ai loué une voiture pour mes vacances, tout s'est parfaitement déroulé. Le processus était simple et rapide.</p>
-                    <p class="reviewer-name">Pierre Leroy</p>
-                </div>
-                
-                <div class="review-card">
-                    <div class="review-stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="far fa-star"></i>
-                    </div>
-                    <h3 class="review-title">Équipe professionnelle</h3>
-                    <p class="review-text">L'équipe est très professionnelle et à l'écoute des besoins. Ils m'ont aidé à trouver le véhicule parfait.</p>
-                    <p class="reviewer-name">Sophie Bernard</p>
-                </div>
-                
-                <div class="review-card">
-                    <div class="review-stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h3 class="review-title">Service après-vente impeccable</h3>
-                    <p class="review-text">J'ai eu un petit problème après l'achat, et le service après-vente a été très réactif. Problème résolu rapidement.</p>
-                    <p class="reviewer-name">Thomas Petit</p>
-                </div>
+                <h3 class="review-title">Service excellent</h3>
+                <p>Location rapide et simple. Véhicule en parfait état. Je recommande !</p>
+                <p class="reviewer-name">Marie D.</p>
             </div>
-            
-            <div class="slider-controls">
-                <div class="slider-arrow prev">
-                    <i class="fas fa-chevron-left"></i>
+            <div class="review-card">
+                <div class="review-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
                 </div>
-                <div class="slider-arrow next">
-                    <i class="fas fa-chevron-right"></i>
+                <h3 class="review-title">Très professionnel</h3>
+                <p>Personnel accueillant et prix très compétitifs. Parfait !</p>
+                <p class="reviewer-name">Thomas L.</p>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
                 </div>
+                <h3 class="review-title">Très satisfait</h3>
+                <p>Processus de location simple et transparent. Je reviendrai !</p>
+                <p class="reviewer-name">Pierre M.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Prêt à trouver votre véhicule ?</h2>
+            <p>Découvrez notre sélection de véhicules disponibles à la location et à la vente</p>
+            <div class="cta-buttons">
+                <a href="catalogue.php" class="btn btn-primary"><i class="fas fa-car"></i> Voir le catalogue</a>
+                <a href="contact.php" class="btn btn-secondary"><i class="fas fa-envelope"></i> Nous contacter</a>
             </div>
         </div>
     </div>
@@ -227,4 +209,4 @@ $marques_result = $conn->query($marques_query);
     </div>
 </div>
 
-<?php include '../includes/footer.php'; // Pied de page ?>
+<?php require_once '../includes/footer.php'; // Pied de page ?>
