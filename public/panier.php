@@ -28,19 +28,19 @@ $debugMode = isset($_GET['debug']) ? true : false;
 if (isset($_GET['ajouter']) && is_numeric($_GET['ajouter'])) {
     $vehiculeId = (int)$_GET['ajouter'];
     $type = isset($_GET['type']) && in_array($_GET['type'], ['achat', 'location']) ? $_GET['type'] : 'achat';
-    
-    // Vérifier si le véhicule existe
+        
+        // Vérifier si le véhicule existe
     if ($tableExists) {
         $query = "SELECT * FROM vehicules WHERE id_vehicule = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $vehiculeId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows > 0) {
-            $vehicule = $result->fetch_assoc();
+            $stmt->execute();
+            $result = $stmt->get_result();
             
-            // Vérifier si le véhicule est déjà dans le panier
+        if ($result->num_rows > 0) {
+                $vehicule = $result->fetch_assoc();
+                
+                // Vérifier si le véhicule est déjà dans le panier
             if (!in_array($vehiculeId, $_SESSION['panier'][$type])) {
                 // Ajouter au panier
                 $_SESSION['panier'][$type][] = $vehiculeId;
@@ -59,9 +59,9 @@ if (isset($_GET['ajouter']) && is_numeric($_GET['ajouter'])) {
     // Rediriger vers la page du panier
     header("Location: panier.php");
     exit;
-}
-
-// Supprimer un véhicule du panier
+    }
+    
+    // Supprimer un véhicule du panier
 if (isset($_GET['supprimer']) && is_numeric($_GET['supprimer'])) {
     $vehiculeId = (int)$_GET['supprimer'];
     $type = isset($_GET['type']) && in_array($_GET['type'], ['achat', 'location']) ? $_GET['type'] : 'achat';
@@ -75,14 +75,14 @@ if (isset($_GET['supprimer']) && is_numeric($_GET['supprimer'])) {
         // Réindexer le tableau
         $_SESSION['panier'][$type] = array_values($_SESSION['panier'][$type]);
         setAlert("Le véhicule a été retiré de votre panier.", "success");
-    } else {
+                } else {
         setAlert("Ce véhicule n'est pas dans votre panier.", "warning");
-    }
-    
-    // Rediriger vers la page du panier
+            }
+            
+            // Rediriger vers la page du panier
     header("Location: panier.php");
-    exit;
-}
+            exit;
+        }
 
 // Vider le panier
 if (isset($_GET['vider'])) {
@@ -94,15 +94,15 @@ if (isset($_GET['vider'])) {
             'location' => []
         ];
         setAlert("Votre panier a été vidé.", "success");
-    } else {
+                } else {
         $_SESSION['panier'][$type] = [];
         setAlert("Votre panier de " . ($type === 'achat' ? "vente" : "location") . " a été vidé.", "success");
-    }
-    
-    // Rediriger vers la page du panier
+            }
+            
+            // Rediriger vers la page du panier
     header("Location: panier.php");
-    exit;
-}
+            exit;
+        }
 
 // Récupérer les informations des véhicules dans le panier
 $vehiculesAchat = [];
@@ -177,7 +177,7 @@ if ($tableExists) {
                     </a>
                 </div>
                 
-                <div class="panier-items">
+        <div class="panier-items">
                     <?php foreach ($vehiculesAchat as $vehicule) { 
                         // Récupérer l'image principale du véhicule
                         $imagePath = "/DaCar/assets/images/vehicles/" . $vehicule['id_vehicule'] . "_1.jpg";
@@ -189,8 +189,8 @@ if ($tableExists) {
                         <div class="panier-item">
                             <div class="item-image">
                                 <img src="<?php echo $imagePath; ?>" alt="<?php echo $vehicule['marque'] . ' ' . $vehicule['modele']; ?>">
-                            </div>
-                            <div class="item-details">
+                    </div>
+                    <div class="item-details">
                                 <h3><?php echo $vehicule['marque'] . " " . $vehicule['modele']; ?></h3>
                                 <div class="item-specs">
                                     <span><i class="fas fa-road"></i> <?php echo number_format($vehicule['kilometrage']); ?> km</span>
@@ -201,10 +201,10 @@ if ($tableExists) {
                                         <span><i class="fas fa-gas-pump"></i> <?php echo $vehicule['carburant']; ?></span>
                                     <?php } ?>
                                 </div>
-                            </div>
+                                    </div>
                             <div class="item-price">
                                 <span class="price"><?php echo formatPrice($vehicule['prix']); ?></span>
-                            </div>
+                                </div>
                             <div class="item-actions">
                                 <a href="vehicle-details.php?id=<?php echo $vehicule['id_vehicule']; ?>" class="btn btn-sm btn-info">
                                     <i class="fas fa-eye"></i>
@@ -216,8 +216,8 @@ if ($tableExists) {
                         </div>
                     <?php } ?>
                 </div>
-                
-                <div class="panier-summary">
+            
+            <div class="panier-summary">
                     <div class="summary-row">
                         <span>Total:</span>
                         <span class="total-price"><?php echo formatPrice($totalAchat); ?></span>
@@ -228,8 +228,8 @@ if ($tableExists) {
                     </div>
                 </div>
             <?php } ?>
-        </div>
-        
+                </div>
+                
         <!-- Section des locations -->
         <div id="location-tab" class="panier-tab-content">
             <?php if (empty($vehiculesLocation)) { ?>
@@ -291,8 +291,8 @@ if ($tableExists) {
                     <div class="summary-actions">
                         <a href="catalogue.php" class="btn btn-secondary">Continuer mes locations</a>
                         <a href="checkout.php?type=location" class="btn btn-primary">Procéder à la réservation</a>
-                    </div>
-                </div>
+            </div>
+        </div>
             <?php } ?>
         </div>
     <?php } ?>

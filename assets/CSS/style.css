@@ -493,7 +493,7 @@ header {
 
 .vehicle-actions {
     display: flex;
-    flex-direction: column;
+        flex-direction: column;
     gap: 0.8rem;
 }
 
@@ -949,7 +949,7 @@ footer {
     
     .main-nav ul {
         flex-wrap: wrap;
-        justify-content: center;
+    justify-content: center;
     }
     
     .user-actions {
@@ -971,7 +971,7 @@ footer {
 
 @media (max-width: 576px) {
     .hero-buttons {
-        flex-direction: column;
+    flex-direction: column;
         width: 100%;
         max-width: 300px;
         margin: 0 auto;
