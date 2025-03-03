@@ -77,7 +77,7 @@ La base de données `terancar` contient les tables suivantes :
 
 ## Crédits
 
-Développé par [Votre Nom] - 2023
+Développé par CESI-IT - 2023
 
 ## Licence
 

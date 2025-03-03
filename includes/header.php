@@ -12,74 +12,31 @@
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' . SITE_NAME : SITE_NAME; ?></title>
     <link rel="stylesheet" href="<?php echo SITE_URL; ?>assets/CSS/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Ajout de jQuery pour les fonctionnalités AJAX -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Meta tags pour améliorer le SEO -->
-    <meta name="description" content="DaCar - Vente et location de véhicules de qualité. Trouvez votre voiture idéale parmi notre large sélection.">
-    <meta name="keywords" content="voiture, automobile, achat voiture, location voiture, véhicules">
+    <meta name="description" content="Terancar - Vente et location de véhicules de qualité. Trouvez votre voiture idéale parmi notre large sélection.">
+    <meta name="keywords" content="voiture, automobile, achat voiture, location voiture, véhicules, Terancar">
     <!-- Favicon -->
-    <link rel="icon" href="<?php echo SITE_URL; ?>assets/images/favicon.ico" type="image/x-icon">
-    <!-- Styles personnalisés pour la charte graphique -->
-    <style>
-        :root {
-            --primary-color: #042345;    /* Bleu foncé - couleur principale */
-            --secondary-color: #B68FB2;  /* Violet - couleur secondaire */
-            --white-color: #FFFFFF;      /* Blanc */
-        }
-        
-        /* Styles spécifiques pour le header selon la charte graphique */
-        header {
-            background-color: var(--primary-color);
-            color: var(--white-color);
-        }
-        
-        .logo h1 span {
-            color: var(--secondary-color);
-        }
-        
-        .main-nav a {
-            color: var(--white-color);
-        }
-        
-        .main-nav a:hover {
-            color: var(--secondary-color);
-            background-color: rgba(182, 143, 178, 0.1); /* Violet transparent */
-        }
-        
-        .btn-login, .btn-register {
-            border: 1px solid var(--white-color);
-            color: var(--white-color);
-        }
-        
-        .btn-login:hover {
-            background-color: var(--white-color);
-            color: var(--primary-color);
-        }
-        
-        .btn-register {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-        
-        .btn-register:hover {
-            background-color: #c7a5c3; /* Version plus claire du violet */
-        }
-        
-        /* Styles pour les alertes */
-        .alert {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            border-radius: 4px;
-            position: relative;
-        }
-    </style>
+    <link rel="icon" href="<?php echo SITE_URL; ?>assets/images/logos/terancar-logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="<?php echo SITE_URL; ?>assets/images/logos/terancar-logo.png">
+    <!-- Meta tags pour les réseaux sociaux -->
+    <meta property="og:title" content="<?php echo isset($pageTitle) ? $pageTitle . ' - ' . SITE_NAME : SITE_NAME; ?>">
+    <meta property="og:description" content="Terancar - Vente et location de véhicules de qualité. Trouvez votre voiture idéale parmi notre large sélection.">
+    <meta property="og:image" content="<?php echo SITE_URL; ?>assets/images/logos/terancar-logo.png">
+    <meta property="og:url" content="<?php echo SITE_URL; ?>">
+    <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
     <header>
         <div class="header-container container">
             <div class="logo">
                 <a href="<?php echo SITE_URL; ?>public/index.php">
-                    <h1>Da<span>Car</span></h1>
+                    <div class="terancar-logo">
+                        <img src="<?php echo SITE_URL; ?>assets/images/logos/terancar-logo.png" alt="Terancar Logo">
+                        <div class="text">
+                            <span class="brand-name">Terancar</span>
+                            <span class="tagline">VOTRE PARTENAIRE AUTO</span>
+                        </div>
+                    </div>
                 </a>
             </div>
             
@@ -140,52 +97,6 @@
             echo '</div>';
         }
         ?>
-        
-        <!-- Script pour initialiser le compteur du panier -->
-        <script>
-            // Fonction pour mettre à jour le compteur du panier
-            function updateCartCount() {
-                // Récupérer le panier depuis le localStorage
-                let cart = JSON.parse(localStorage.getItem('cart')) || [];
-                
-                // Calculer le nombre total d'articles
-                let count = 0;
-                cart.forEach(item => {
-                    count += item.quantity;
-                });
-                
-                // Mettre à jour l'affichage
-                document.getElementById('cart-count').textContent = count;
-            }
-            
-            // Mettre à jour le compteur au chargement de la page
-            document.addEventListener('DOMContentLoaded', function() {
-                updateCartCount();
-                
-                // Fermer les alertes
-                const closeButtons = document.querySelectorAll('.alert-close');
-                closeButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        this.parentElement.style.display = 'none';
-                    });
-                });
-                
-                // Menu mobile
-                const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-                const mainNav = document.querySelector('.main-nav');
-                
-                if (mobileMenuBtn) {
-                    mobileMenuBtn.addEventListener('click', function() {
-                        mainNav.classList.toggle('active');
-                        this.classList.toggle('active');
-                    });
-                }
-            });
-            
-            // Écouter les changements dans le localStorage
-            window.addEventListener('storage', function(e) {
-                if (e.key === 'cart') {
-                    updateCartCount();
-                }
-            });
-        </script>
+    </div>
+</body>
+</html>

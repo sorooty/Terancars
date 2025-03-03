@@ -1,311 +1,372 @@
 <?php
 /**
- * Page de catalogue
- * Affiche tous les véhicules disponibles avec options de filtrage
- * Adapté à la structure de base de données optimisée
+ * Page catalogue
+ * Affiche la liste des véhicules disponibles avec filtres
  */
 
 // Définition du titre de la page
 $pageTitle = "Catalogue";
 
 // Inclusion des fichiers nécessaires
-include '../config/config.php';
-include '../includes/header.php';
+include '../config/config.php'; // Connexion à la DB
+include '../includes/header.php'; // En-tête du site
 
-// Initialisation des filtres
-$where = "1=1"; // Condition toujours vraie pour commencer
+// Initialisation des variables de filtrage
+$where_clauses = [];
 $params = [];
 $types = "";
 
+// Vérifier si la connexion à la base de données est établie
+if (!isset($conn) || $conn->connect_error) {
+    echo '<div class="alert alert-danger">Erreur de connexion à la base de données : ' . (isset($conn) ? $conn->connect_error : 'Connexion non établie') . '</div>';
+    $conn_error = true;
+} else {
+    $conn_error = false;
+}
+
+// Vérifier si la table vehicules existe
+$table_exists = false;
+if (!$conn_error) {
+    if (function_exists('tableExists')) {
+        $table_exists = tableExists($conn, 'vehicules');
+    } else {
+        // Méthode alternative pour vérifier si la table existe
+        $check_table = $conn->query("SHOW TABLES LIKE 'vehicules'");
+        $table_exists = ($check_table && $check_table->num_rows > 0);
+    }
+}
+
 // Traitement des filtres si soumis
-if (isset($_GET['filter'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['filter'])) {
     // Filtre par marque
     if (!empty($_GET['marque'])) {
-        $where .= " AND marque = ?";
+        $where_clauses[] = "marque = ?";
         $params[] = $_GET['marque'];
         $types .= "s";
     }
     
     // Filtre par carburant
     if (!empty($_GET['carburant'])) {
-        $where .= " AND carburant = ?";
+        $where_clauses[] = "carburant = ?";
         $params[] = $_GET['carburant'];
         $types .= "s";
     }
     
     // Filtre par transmission
     if (!empty($_GET['transmission'])) {
-        $where .= " AND transmission = ?";
+        $where_clauses[] = "transmission = ?";
         $params[] = $_GET['transmission'];
         $types .= "s";
     }
     
-    // Filtre par prix minimum
-    if (!empty($_GET['prix_min'])) {
-        $where .= " AND prix >= ?";
-        $params[] = $_GET['prix_min'];
-        $types .= "d";
-    }
-    
-    // Filtre par prix maximum
-    if (!empty($_GET['prix_max'])) {
-        $where .= " AND prix <= ?";
-        $params[] = $_GET['prix_max'];
-        $types .= "d";
-    }
-    
-    // Filtre par disponibilité en location
-    if (isset($_GET['disponible_location']) && $_GET['disponible_location'] == 1) {
-        $where .= " AND disponible_location = 1";
-    }
-    
-    // Filtre par année (ajouté selon la structure de la base de données)
+    // Filtre par année
     if (!empty($_GET['annee_min'])) {
-        $where .= " AND annee >= ?";
+        $where_clauses[] = "annee >= ?";
         $params[] = $_GET['annee_min'];
         $types .= "i";
     }
     
-    if (!empty($_GET['annee_max'])) {
-        $where .= " AND annee <= ?";
-        $params[] = $_GET['annee_max'];
-        $types .= "i";
+    // Filtre par prix
+    if (!empty($_GET['prix_max']) && $_GET['prix_max'] > 0) {
+        // Vérifier si la colonne prix_achat existe
+        $prix_column = 'prix_achat';
+        if (function_exists('columnExists')) {
+            if (!columnExists($conn, 'vehicules', 'prix_achat')) {
+                // Essayer avec la colonne 'prix' si prix_achat n'existe pas
+                if (columnExists($conn, 'vehicules', 'prix')) {
+                    $prix_column = 'prix';
+                }
+            }
+        } else {
+            // Méthode alternative pour vérifier si la colonne existe
+            $check_column = $conn->query("SHOW COLUMNS FROM vehicules LIKE 'prix_achat'");
+            if (!$check_column || $check_column->num_rows === 0) {
+                $check_prix = $conn->query("SHOW COLUMNS FROM vehicules LIKE 'prix'");
+                if ($check_prix && $check_prix->num_rows > 0) {
+                    $prix_column = 'prix';
+                }
+            }
+        }
+        
+        $where_clauses[] = "$prix_column <= ?";
+        $params[] = $_GET['prix_max'];
+        $types .= "d";
     }
     
-    // Filtre par stock disponible
-    if (isset($_GET['en_stock']) && $_GET['en_stock'] == 1) {
-        $where .= " AND stock > 0";
+    // Filtre par disponibilité pour location
+    if (isset($_GET['disponible_location']) && $_GET['disponible_location'] == 1) {
+        $where_clauses[] = "disponible_location = 1";
     }
 }
 
-// Récupération des marques pour le filtre
-$queryMarques = "SELECT DISTINCT marque FROM vehicules ORDER BY marque";
-$resultMarques = $conn->query($queryMarques);
+// Construction de la requête SQL
+$sql = "SELECT * FROM vehicules";
+if (!empty($where_clauses)) {
+    $sql .= " WHERE " . implode(" AND ", $where_clauses);
+}
+$sql .= " ORDER BY id_vehicule DESC";
 
-// Récupération des années pour le filtre
-$queryAnnees = "SELECT MIN(annee) as min_annee, MAX(annee) as max_annee FROM vehicules WHERE annee IS NOT NULL";
-$resultAnnees = $conn->query($queryAnnees);
-$annees = $resultAnnees->fetch_assoc();
-
-// Récupération des véhicules avec filtres
-$query = "SELECT * FROM vehicules WHERE $where ORDER BY date_ajout DESC";
-
-// Si la colonne date_ajout n'existe pas, utiliser id_vehicule comme ordre par défaut
-if (!$conn->query("SHOW COLUMNS FROM vehicules LIKE 'date_ajout'")->num_rows) {
-    $query = "SELECT * FROM vehicules WHERE $where ORDER BY id_vehicule DESC";
+// Préparation et exécution de la requête
+if ($table_exists) {
+    $stmt = $conn->prepare($sql);
+    
+    // Vérifier si la préparation a réussi
+    if ($stmt === false) {
+        // Afficher un message d'erreur
+        echo '<div class="alert alert-danger">Erreur de préparation de la requête : ' . $conn->error . '</div>';
+    } else {
+        // La préparation a réussi, continuer avec le binding des paramètres
+        if (!empty($params)) {
+            // Utilisation de call_user_func_array pour éviter les problèmes avec bind_param
+            $bind_names[] = $types;
+            for ($i = 0; $i < count($params); $i++) {
+                $bind_name = 'bind' . $i;
+                $$bind_name = $params[$i];
+                $bind_names[] = &$$bind_name;
+            }
+            call_user_func_array(array($stmt, 'bind_param'), $bind_names);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+    }
+} else {
+    // La table n'existe pas, initialiser $result à null
+    $result = null;
+    echo '<div class="alert alert-warning">La table des véhicules n\'existe pas ou n\'est pas accessible.</div>';
 }
 
-$stmt = $conn->prepare($query);
+// Récupération des valeurs distinctes pour les filtres
+$marques = [];
+$carburants = [];
+$transmissions = [];
 
-// Bind des paramètres si nécessaire
-if (!empty($params)) {
-    $stmt->bind_param($types, ...$params);
+if ($table_exists) {
+    // Récupération des marques
+    $query_marques = "SELECT DISTINCT marque FROM vehicules ORDER BY marque";
+    $result_marques = $conn->query($query_marques);
+    if ($result_marques) {
+        while ($row = $result_marques->fetch_assoc()) {
+            $marques[] = $row['marque'];
+        }
+    }
+    
+    // Récupération des carburants
+    $query_carburants = "SELECT DISTINCT carburant FROM vehicules ORDER BY carburant";
+    $result_carburants = $conn->query($query_carburants);
+    if ($result_carburants) {
+        while ($row = $result_carburants->fetch_assoc()) {
+            $carburants[] = $row['carburant'];
+        }
+    }
+    
+    // Récupération des transmissions
+    $query_transmissions = "SELECT DISTINCT transmission FROM vehicules ORDER BY transmission";
+    $result_transmissions = $conn->query($query_transmissions);
+    if ($result_transmissions) {
+        while ($row = $result_transmissions->fetch_assoc()) {
+            $transmissions[] = $row['transmission'];
+        }
+    }
 }
-
-$stmt->execute();
-$result = $stmt->get_result();
 ?>
 
-<div class="catalogue-container">
-    <div class="catalogue-header">
-        <h1>Catalogue de Véhicules</h1>
-        <p>Découvrez notre sélection de véhicules disponibles à l'achat et à la location</p>
-    </div>
-    
-    <div class="catalogue-content">
-        <!-- Filtres -->
-        <div class="filtres">
-            <h2>Filtres</h2>
-            <form action="catalogue.php" method="GET" class="filtre-form">
-                <div class="filtre-group">
-                    <label for="marque">Marque</label>
-                    <select name="marque" id="marque">
-                        <option value="">Toutes les marques</option>
-                        <?php while ($marque = $resultMarques->fetch_assoc()) { ?>
-                            <option value="<?php echo $marque['marque']; ?>" <?php echo (isset($_GET['marque']) && $_GET['marque'] == $marque['marque']) ? 'selected' : ''; ?>>
-                                <?php echo $marque['marque']; ?>
-                            </option>
-                        <?php } ?>
-                    </select>
-                </div>
-                
-                <div class="filtre-group">
-                    <label for="carburant">Carburant</label>
-                    <select name="carburant" id="carburant">
-                        <option value="">Tous types</option>
-                        <option value="essence" <?php echo (isset($_GET['carburant']) && $_GET['carburant'] == 'essence') ? 'selected' : ''; ?>>Essence</option>
-                        <option value="diesel" <?php echo (isset($_GET['carburant']) && $_GET['carburant'] == 'diesel') ? 'selected' : ''; ?>>Diesel</option>
-                        <option value="électrique" <?php echo (isset($_GET['carburant']) && $_GET['carburant'] == 'électrique') ? 'selected' : ''; ?>>Électrique</option>
-                        <option value="hybride" <?php echo (isset($_GET['carburant']) && $_GET['carburant'] == 'hybride') ? 'selected' : ''; ?>>Hybride</option>
-                    </select>
-                </div>
-                
-                <div class="filtre-group">
-                    <label for="transmission">Transmission</label>
-                    <select name="transmission" id="transmission">
-                        <option value="">Toutes</option>
-                        <option value="manuelle" <?php echo (isset($_GET['transmission']) && $_GET['transmission'] == 'manuelle') ? 'selected' : ''; ?>>Manuelle</option>
-                        <option value="automatique" <?php echo (isset($_GET['transmission']) && $_GET['transmission'] == 'automatique') ? 'selected' : ''; ?>>Automatique</option>
-                    </select>
-                </div>
-                
-                <!-- Ajout des filtres par année -->
-                <?php if (isset($annees['min_annee']) && isset($annees['max_annee'])) { ?>
-                <div class="filtre-group">
-                    <label for="annee_min">Année minimum</label>
-                    <select name="annee_min" id="annee_min">
-                        <option value="">Toutes</option>
-                        <?php for ($i = $annees['min_annee']; $i <= $annees['max_annee']; $i++) { ?>
-                            <option value="<?php echo $i; ?>" <?php echo (isset($_GET['annee_min']) && $_GET['annee_min'] == $i) ? 'selected' : ''; ?>>
-                                <?php echo $i; ?>
-                            </option>
-                        <?php } ?>
-                    </select>
-                </div>
-                
-                <div class="filtre-group">
-                    <label for="annee_max">Année maximum</label>
-                    <select name="annee_max" id="annee_max">
-                        <option value="">Toutes</option>
-                        <?php for ($i = $annees['min_annee']; $i <= $annees['max_annee']; $i++) { ?>
-                            <option value="<?php echo $i; ?>" <?php echo (isset($_GET['annee_max']) && $_GET['annee_max'] == $i) ? 'selected' : ''; ?>>
-                                <?php echo $i; ?>
-                            </option>
-                        <?php } ?>
-                    </select>
-                </div>
-                <?php } ?>
-                
-                <div class="filtre-group">
-                    <label for="prix_min">Prix minimum</label>
-                    <input type="number" name="prix_min" id="prix_min" min="0" step="1000" value="<?php echo isset($_GET['prix_min']) ? $_GET['prix_min'] : ''; ?>">
-                </div>
-                
-                <div class="filtre-group">
-                    <label for="prix_max">Prix maximum</label>
-                    <input type="number" name="prix_max" id="prix_max" min="0" step="1000" value="<?php echo isset($_GET['prix_max']) ? $_GET['prix_max'] : ''; ?>">
-                </div>
-                
-                <div class="filtre-group checkbox">
-                    <input type="checkbox" name="disponible_location" id="disponible_location" value="1" <?php echo (isset($_GET['disponible_location']) && $_GET['disponible_location'] == 1) ? 'checked' : ''; ?>>
-                    <label for="disponible_location">Disponible en location</label>
-                </div>
-                
-                <div class="filtre-group checkbox">
-                    <input type="checkbox" name="en_stock" id="en_stock" value="1" <?php echo (isset($_GET['en_stock']) && $_GET['en_stock'] == 1) ? 'checked' : ''; ?>>
-                    <label for="en_stock">En stock uniquement</label>
-                </div>
-                
-                <div class="filtre-actions">
-                    <input type="hidden" name="filter" value="1">
-                    <button type="submit" class="btn btn-primary">Filtrer</button>
-                    <a href="catalogue.php" class="btn btn-outline">Réinitialiser</a>
-                </div>
-            </form>
-        </div>
-        
-        <!-- Liste des véhicules -->
-        <div class="vehicules-liste">
-            <?php 
-            if ($result->num_rows > 0) {
-                while ($vehicule = $result->fetch_assoc()) {
-                    // Récupérer l'image principale du véhicule
-                    $imagePath = "/DaCar/assets/images/vehicles/" . $vehicule['id_vehicule'] . "_1.jpg";
-                    // Image par défaut si non disponible
-                    if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $imagePath)) {
-                        $imagePath = "/DaCar/assets/images/no-image.jpg";
-                    }
-                    
-                    // Vérifier si le véhicule est en stock
-                    $enStock = isset($vehicule['stock']) && $vehicule['stock'] > 0;
-            ?>
-                    <div class="vehicule-card">
-                        <div class="vehicule-image">
-                            <img src="<?php echo $imagePath; ?>" alt="<?php echo $vehicule['marque'] . ' ' . $vehicule['modele']; ?>">
-                            <?php if ($vehicule['disponible_location']) { ?>
-                                <span class="badge-location">Location</span>
-                            <?php } ?>
-                            <?php if (!$enStock) { ?>
-                                <span class="badge-stock">Rupture de stock</span>
-                            <?php } ?>
-                        </div>
-                        <div class="vehicule-info">
-                            <h3><?php echo $vehicule['marque'] . " " . $vehicule['modele']; ?></h3>
-                            <?php if (isset($vehicule['annee'])) { ?>
-                                <span class="vehicule-annee"><?php echo $vehicule['annee']; ?></span>
-                            <?php } ?>
-                            
-                            <div class="vehicule-specs">
-                                <span><i class="fas fa-gas-pump"></i> <?php echo ucfirst($vehicule['carburant']); ?></span>
-                                <span><i class="fas fa-cog"></i> <?php echo ucfirst($vehicule['transmission']); ?></span>
-                                <span><i class="fas fa-road"></i> <?php echo number_format($vehicule['kilometrage']); ?> km</span>
-                                <?php if (isset($vehicule['stock'])) { ?>
-                                    <span><i class="fas fa-warehouse"></i> Stock: <?php echo $vehicule['stock']; ?></span>
-                                <?php } ?>
-                            </div>
-                            
-                            <div class="vehicule-prix">
-                                <span class="prix-achat"><?php echo formatPrice($vehicule['prix']); ?></span>
-                                <?php if ($vehicule['disponible_location']) { ?>
-                                    <span class="prix-location"><?php echo formatPrice($vehicule['tarif_location_journalier']); ?>/jour</span>
-                                <?php } ?>
-                            </div>
-                            
-                            <div class="vehicule-actions">
-                                <a href="vehicle-details.php?id=<?php echo $vehicule['id_vehicule']; ?>" class="btn btn-view">Voir détails</a>
-                                <?php if ($enStock) { ?>
-                                    <a href="panier.php?ajouter=<?php echo $vehicule['id_vehicule']; ?>&type=achat" class="btn btn-add-cart" data-add-to-cart data-vehicle-id="<?php echo $vehicule['id_vehicule']; ?>" data-type="achat">
-                                        <i class="fas fa-shopping-cart"></i>
-                                    </a>
-                                <?php } ?>
-                                <?php if ($vehicule['disponible_location']) { ?>
-                                    <a href="panier.php?ajouter=<?php echo $vehicule['id_vehicule']; ?>&type=location" class="btn btn-add-location" data-add-to-cart data-vehicle-id="<?php echo $vehicule['id_vehicule']; ?>" data-type="location">
-                                        <i class="fas fa-key"></i>
-                                    </a>
-                                <?php } ?>
-                            </div>
-                        </div>
-                    </div>
-            <?php 
-                }
-            } else {
-                echo "<div class='no-results'>Aucun véhicule ne correspond à vos critères de recherche.</div>";
-            }
-            ?>
-        </div>
+<!-- En-tête de la page catalogue -->
+<div class="catalogue-header">
+    <div class="container">
+        <h1>Catalogue de véhicules</h1>
+        <p>Découvrez notre sélection de véhicules disponibles à l'achat ou à la location</p>
     </div>
 </div>
 
-<!-- Ajout des styles spécifiques pour les nouveaux badges -->
-<style>
-.badge-stock {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #dc3545;
-    color: white;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.btn-add-location {
-    background-color: #28a745;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.btn-add-location:hover {
-    background-color: #218838;
-    transform: scale(1.1);
-}
-</style>
+<div class="container">
+    <div class="row">
+        <!-- Colonne des filtres (à gauche) -->
+        <div class="col-md-3">
+            <div class="filtres">
+                <h2>Filtres</h2>
+                <form action="" method="GET">
+                    <input type="hidden" name="filter" value="1">
+                    
+                    <div class="filtre-groupe">
+                        <label for="marque">Marque</label>
+                        <select name="marque" id="marque">
+                            <option value="">Toutes les marques</option>
+                            <?php foreach ($marques as $marque): ?>
+                                <option value="<?php echo htmlspecialchars($marque); ?>" <?php echo (isset($_GET['marque']) && $_GET['marque'] == $marque) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($marque); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="filtre-groupe">
+                        <label for="carburant">Carburant</label>
+                        <select name="carburant" id="carburant">
+                            <option value="">Tous les carburants</option>
+                            <?php foreach ($carburants as $carburant): ?>
+                                <option value="<?php echo htmlspecialchars($carburant); ?>" <?php echo (isset($_GET['carburant']) && $_GET['carburant'] == $carburant) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($carburant); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="filtre-groupe">
+                        <label for="transmission">Transmission</label>
+                        <select name="transmission" id="transmission">
+                            <option value="">Toutes les transmissions</option>
+                            <?php foreach ($transmissions as $transmission): ?>
+                                <option value="<?php echo htmlspecialchars($transmission); ?>" <?php echo (isset($_GET['transmission']) && $_GET['transmission'] == $transmission) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($transmission); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="filtre-groupe">
+                        <label for="annee_min">Année minimum</label>
+                        <select name="annee_min" id="annee_min">
+                            <option value="">Toutes les années</option>
+                            <?php for ($i = date("Y"); $i >= 2000; $i--): ?>
+                                <option value="<?php echo $i; ?>" <?php echo (isset($_GET['annee_min']) && $_GET['annee_min'] == $i) ? 'selected' : ''; ?>>
+                                    <?php echo $i; ?>
+                                </option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="filtre-groupe">
+                        <label for="prix_max">Prix maximum</label>
+                        <input type="number" name="prix_max" id="prix_max" min="0" step="1000" value="<?php echo isset($_GET['prix_max']) ? htmlspecialchars($_GET['prix_max']) : ''; ?>" placeholder="Prix maximum">
+                    </div>
+                    
+                    <div class="filtre-checkbox">
+                        <input type="checkbox" name="disponible_location" id="disponible_location" value="1" <?php echo (isset($_GET['disponible_location']) && $_GET['disponible_location'] == 1) ? 'checked' : ''; ?>>
+                        <label for="disponible_location">Disponible à la location</label>
+                    </div>
+                    
+                    <div class="filtre-actions">
+                        <button type="submit" class="btn-filtre">Appliquer les filtres</button>
+                        <a href="catalogue.php" class="btn-reset">Réinitialiser</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Colonne des véhicules (à droite) -->
+        <div class="col-md-9">
+            <?php 
+            // Vérifier si $result est défini
+            if (!isset($result) && isset($stmt) && $stmt !== false) {
+                $stmt->execute();
+                $result = $stmt->get_result();
+            }
+            
+            if (isset($result) && $result && $result->num_rows > 0): 
+            ?>
+                <div class="vehicules-container">
+                    <?php while ($vehicule = $result->fetch_assoc()): ?>
+                        <div class="vehicule-card">
+                            <div class="vehicule-image">
+                                <?php
+                                // Récupérer l'image principale du véhicule
+                                $id_vehicule = $vehicule['id_vehicule'];
+                                $image_path = '../assets/images/default-car.jpg'; // Image par défaut
+                                
+                                // Vérifier si la table images_vehicules existe
+                                $images_table_exists = false;
+                                if (!$conn_error) {
+                                    $check_images_table = $conn->query("SHOW TABLES LIKE 'images_vehicules'");
+                                    $images_table_exists = ($check_images_table && $check_images_table->num_rows > 0);
+                                }
+                                
+                                if ($images_table_exists) {
+                                    $image_query = "SELECT chemin_image FROM images_vehicules WHERE id_vehicule = ? LIMIT 1";
+                                    $image_stmt = $conn->prepare($image_query);
+                                    
+                                    if ($image_stmt) {
+                                        $image_stmt->bind_param("i", $id_vehicule);
+                                        $image_stmt->execute();
+                                        $image_result = $image_stmt->get_result();
+                                        
+                                        if ($image_result && $image_result->num_rows > 0) {
+                                            $image = $image_result->fetch_assoc();
+                                            $image_path = $image['chemin_image'];
+                                        }
+                                        $image_stmt->close();
+                                    }
+                                }
+                                ?>
+                                <img src="<?php echo htmlspecialchars($image_path); ?>" alt="<?php echo htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']); ?>">
+                            </div>
+                            <div class="vehicule-info">
+                                <h3><?php echo htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']); ?></h3>
+                                <p class="vehicule-annee"><?php echo isset($vehicule['annee']) ? htmlspecialchars($vehicule['annee']) : 'Année non spécifiée'; ?></p>
+                                <div class="vehicule-specs">
+                                    <?php if (isset($vehicule['carburant'])): ?>
+                                    <span><i class="fas fa-gas-pump"></i> <?php echo htmlspecialchars($vehicule['carburant']); ?></span>
+                                    <?php endif; ?>
+                                    
+                                    <?php if (isset($vehicule['transmission'])): ?>
+                                    <span><i class="fas fa-cogs"></i> <?php echo htmlspecialchars($vehicule['transmission']); ?></span>
+                                    <?php endif; ?>
+                                    
+                                    <?php if (isset($vehicule['kilometrage'])): ?>
+                                    <span><i class="fas fa-road"></i> <?php echo number_format($vehicule['kilometrage'], 0, ',', ' '); ?> km</span>
+                                    <?php endif; ?>
+                                    
+                                    <?php if (isset($vehicule['stock'])): ?>
+                                    <span><i class="fas fa-warehouse"></i> Stock: <?php echo htmlspecialchars($vehicule['stock']); ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="vehicule-price">
+                                    <?php 
+                                    // Vérifier si le véhicule est disponible à la location
+                                    $location_disponible = isset($vehicule['disponible_location']) && $vehicule['disponible_location'] == 1;
+                                    
+                                    // Vérifier si le véhicule est disponible à l'achat
+                                    $achat_disponible = isset($vehicule['disponible_achat']) && $vehicule['disponible_achat'] == 1;
+                                    
+                                    if ($achat_disponible): 
+                                        // Vérifier si la colonne prix_achat existe, sinon utiliser prix
+                                        $prix_achat = isset($vehicule['prix_achat']) ? $vehicule['prix_achat'] : (isset($vehicule['prix']) ? $vehicule['prix'] : 0);
+                                    ?>
+                                        <p class="price-achat"><?php echo number_format($prix_achat, 0, ',', ' '); ?> €</p>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($location_disponible): 
+                                        // Vérifier si la colonne prix_location existe, sinon utiliser un prix par défaut
+                                        $prix_location = isset($vehicule['prix_location']) ? $vehicule['prix_location'] : (isset($vehicule['prix_jour']) ? $vehicule['prix_jour'] : 0);
+                                    ?>
+                                        <p class="price-location">Location: <?php echo number_format($prix_location, 0, ',', ' '); ?> €/jour</p>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="vehicle-actions">
+                                    <a href="details.php?id=<?php echo $vehicule['id_vehicule']; ?>" class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i> Voir détails
+                                    </a>
+                                    <a href="panier.php?action=ajouter&id=<?php echo $vehicule['id_vehicule']; ?>&type=achat" class="btn btn-primary">
+                                        <i class="fas fa-shopping-cart"></i> Acheter
+                                    </a>
+                                    <?php if (isset($vehicule['disponible_location']) && $vehicule['disponible_location'] == 1) : ?>
+                                    <a href="panier.php?action=ajouter&id=<?php echo $vehicule['id_vehicule']; ?>&type=location" class="btn btn-secondary">
+                                        <i class="fas fa-key"></i> Louer
+                                    </a>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                </div>
+            <?php else: ?>
+                <div class="no-results">
+                    <i class="fas fa-search fa-3x mb-3"></i>
+                    <h3>Aucun véhicule trouvé</h3>
+                    <p>Aucun véhicule ne correspond à vos critères de recherche. Veuillez modifier vos filtres.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 
 <?php include '../includes/footer.php'; ?>

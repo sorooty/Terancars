@@ -14,13 +14,17 @@ include '../includes/header.php'; // En-tête du site
 // Récupérer les 6 derniers véhicules ajoutés
 $query = "SELECT * FROM vehicules ORDER BY id_vehicule DESC LIMIT 6";
 $result = $conn->query($query);
+
+// Récupérer les marques distinctes
+$marques_query = "SELECT DISTINCT marque FROM vehicules ORDER BY marque ASC LIMIT 5";
+$marques_result = $conn->query($marques_query);
 ?>
 
 <!-- Bannière d'accueil -->
 <section class="hero-banner">
     <div class="hero-content">
-        <h1>Bienvenue chez DaCar</h1>
-        <p>Votre partenaire de confiance pour l'achat et la location de véhicules de qualité</p>
+        <h1>Trouvez votre véhicule idéal</h1>
+        <p>Vente et location de véhicules neufs et d'occasion de qualité</p>
         <div class="hero-buttons">
             <a href="catalogue.php" class="btn btn-primary">Voir notre catalogue</a>
             <a href="contact.php" class="btn btn-secondary">Nous contacter</a>
@@ -28,83 +32,163 @@ $result = $conn->query($query);
     </div>
 </section>
 
-<!-- Section des derniers véhicules -->
-<section class="latest-vehicles">
-    <div class="section-header">
-        <h2>Nos Derniers Véhicules</h2>
-        <p>Découvrez les dernières additions à notre catalogue</p>
-    </div>
-
-    <div class="voitures">
-        <?php 
-        // Vérifier si des véhicules ont été trouvés
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) { 
-                // Récupérer l'image principale du véhicule (à implémenter)
-                $imagePath = "/DaCar/assets/images/vehicles/" . $row['id_vehicule'] . "_1.jpg";
-                // Image par défaut si non disponible
-                if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $imagePath)) {
-                    $imagePath = "/DaCar/assets/images/no-image.jpg";
-                }
-        ?>
-                <div class="voiture">
-                    <div class="voiture-image">
-                        <img src="<?php echo $imagePath; ?>" alt="<?php echo $row['marque'] . ' ' . $row['modele']; ?>">
-                    </div>
-                    <div class="voiture-info">
-                        <h3><?php echo $row['marque'] . " " . $row['modele']; ?></h3>
-                        <div class="voiture-details">
-                            <p class="price"><i class="fas fa-tag"></i> <?php echo number_format($row['prix'], 2); ?> €</p>
-                            <p class="mileage"><i class="fas fa-road"></i> <?php echo number_format($row['kilometrage']); ?> km</p>
-                            <?php if (isset($row['annee'])) { ?>
-                                <p class="year"><i class="fas fa-calendar-alt"></i> <?php echo $row['annee']; ?></p>
-                            <?php } ?>
-                        </div>
-                        <a href="vehicle-details.php?id=<?php echo $row['id_vehicule']; ?>" class="btn btn-view">
-                            <i class="fas fa-eye"></i> Voir détails
-                        </a>
-                    </div>
-                </div>
-        <?php 
-            }
-        } else {
-            echo "<p class='no-vehicles'>Aucun véhicule disponible pour le moment.</p>";
-        }
-        ?>
-    </div>
-    
-    <div class="view-all">
-        <a href="catalogue.php" class="btn btn-large">Voir tous nos véhicules</a>
+<!-- Section de recherche de véhicules -->
+<section class="vehicle-search">
+    <div class="container">
+        <div class="search-header">
+            <h2>Rechercher par type de véhicule</h2>
+        </div>
+        
+        <div class="vehicle-types">
+            <div class="vehicle-type">
+                <img src="<?php echo SITE_URL; ?>assets/images/icones/sedan.png" alt="Berline">
+                <h3>Berlines</h3>
+            </div>
+            <div class="vehicle-type">
+                <img src="<?php echo SITE_URL; ?>assets/images/icones/suv.png" alt="SUV">
+                <h3>SUV</h3>
+            </div>
+            <div class="vehicle-type">
+                <img src="<?php echo SITE_URL; ?>assets/images/icones/hatchback.png" alt="Compacte">
+                <h3>Compactes</h3>
+            </div>
+            <div class="vehicle-type">
+                <img src="<?php echo SITE_URL; ?>assets/images/icones/convertible.png" alt="Cabriolet">
+                <h3>Cabriolets</h3>
+            </div>
+            <div class="vehicle-type">
+                <img src="<?php echo SITE_URL; ?>assets/images/icones/electric.png" alt="Électrique">
+                <h3>Électriques</h3>
+            </div>
+        </div>
     </div>
 </section>
 
-<!-- Section des services -->
-<section class="services">
-    <div class="section-header">
-        <h2>Nos Services</h2>
-        <p>DaCar vous propose une gamme complète de services</p>
+<!-- Section des marques populaires -->
+<section class="popular-brands">
+    <div class="container">
+        <div class="brands-header">
+            <h2>Marques populaires</h2>
+        </div>
+        
+        <div class="brands-grid">
+            <?php 
+            // Afficher les marques disponibles
+            if ($marques_result && $marques_result->num_rows > 0) {
+                while ($marque = $marques_result->fetch_assoc()) {
+                    $marque_nom = $marque['marque'];
+                    $logo_path = SITE_URL . "assets/images/marques/" . strtolower($marque_nom) . ".png";
+                    // Logo par défaut si non disponible
+                    $default_logo = SITE_URL . "assets/images/marques/default.png";
+            ?>
+                <div class="brand-card">
+                    <img src="<?php echo $logo_path; ?>" alt="<?php echo $marque_nom; ?>" onerror="this.src='<?php echo $default_logo; ?>'">
+                    <h3><?php echo $marque_nom; ?></h3>
+                </div>
+            <?php
+                }
+            } else {
+                // Afficher des marques par défaut si aucune n'est trouvée
+                $default_brands = ['Audi', 'BMW', 'Mercedes', 'Renault', 'Peugeot'];
+                foreach ($default_brands as $brand) {
+                    $logo_path = SITE_URL . "assets/images/marques/" . strtolower($brand) . ".png";
+                    $default_logo = SITE_URL . "assets/images/marques/default.png";
+            ?>
+                <div class="brand-card">
+                    <img src="<?php echo $logo_path; ?>" alt="<?php echo $brand; ?>" onerror="this.src='<?php echo $default_logo; ?>'">
+                    <h3><?php echo $brand; ?></h3>
+                </div>
+            <?php
+                }
+            }
+            ?>
+        </div>
     </div>
-    
-    <div class="services-grid">
-        <div class="service-card">
-            <i class="fas fa-car-side"></i>
-            <h3>Vente de véhicules</h3>
-            <p>Large sélection de véhicules neufs et d'occasion</p>
+</section>
+
+<!-- Section des avis clients -->
+<section class="customer-reviews">
+    <div class="container">
+        <div class="reviews-header">
+            <h2>Ce que disent nos clients</h2>
         </div>
-        <div class="service-card">
-            <i class="fas fa-key"></i>
-            <h3>Location</h3>
-            <p>Solutions de location flexibles adaptées à vos besoins</p>
-        </div>
-        <div class="service-card">
-            <i class="fas fa-tools"></i>
-            <h3>Entretien</h3>
-            <p>Service d'entretien et de réparation professionnel</p>
-        </div>
-        <div class="service-card">
-            <i class="fas fa-handshake"></i>
-            <h3>Financement</h3>
-            <p>Options de financement personnalisées</p>
+        
+        <div class="reviews-slider">
+            <div class="reviews-container">
+                <div class="review-card">
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="review-title">Service exceptionnel</h3>
+                    <p class="review-text">J'ai acheté ma nouvelle voiture chez Terancar et je suis très satisfait du service client et de la qualité du véhicule.</p>
+                    <p class="reviewer-name">Jean Dupont</p>
+                </div>
+                
+                <div class="review-card">
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <h3 class="review-title">Excellent rapport qualité-prix</h3>
+                    <p class="review-text">Les prix sont compétitifs et la qualité des véhicules est au rendez-vous. Je recommande vivement.</p>
+                    <p class="reviewer-name">Marie Martin</p>
+                </div>
+                
+                <div class="review-card">
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="review-title">Location sans souci</h3>
+                    <p class="review-text">J'ai loué une voiture pour mes vacances, tout s'est parfaitement déroulé. Le processus était simple et rapide.</p>
+                    <p class="reviewer-name">Pierre Leroy</p>
+                </div>
+                
+                <div class="review-card">
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                    </div>
+                    <h3 class="review-title">Équipe professionnelle</h3>
+                    <p class="review-text">L'équipe est très professionnelle et à l'écoute des besoins. Ils m'ont aidé à trouver le véhicule parfait.</p>
+                    <p class="reviewer-name">Sophie Bernard</p>
+                </div>
+                
+                <div class="review-card">
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="review-title">Service après-vente impeccable</h3>
+                    <p class="review-text">J'ai eu un petit problème après l'achat, et le service après-vente a été très réactif. Problème résolu rapidement.</p>
+                    <p class="reviewer-name">Thomas Petit</p>
+                </div>
+            </div>
+            
+            <div class="slider-controls">
+                <div class="slider-arrow prev">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="slider-arrow next">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -141,9 +225,6 @@ $result = $conn->query($query);
             </div>
         </div>
     </div>
-    
-    <!-- Contenu existant -->
-    <!-- ... existing code ... -->
 </div>
 
 <?php include '../includes/footer.php'; // Pied de page ?>

@@ -1,402 +1,342 @@
 <?php
 /**
  * Page de détails d'un véhicule
- * Affiche les informations détaillées d'un véhicule spécifique
- * Adapté à la structure de base de données optimisée
+ * Affiche toutes les informations d'un véhicule spécifique
  */
 
-// Définition du titre de la page (sera complété avec le nom du véhicule)
+// Définition du titre de la page
 $pageTitle = "Détails du véhicule";
 
 // Inclusion des fichiers nécessaires
-include '../config/config.php';
-include '../includes/header.php';
+include '../config/config.php'; // Connexion à la DB
+include '../includes/header.php'; // En-tête du site
 
-// Vérifier si un ID est passé en paramètre dans l'URL
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    setAlert("Véhicule introuvable", "danger");
-    redirect('catalogue.php');
-    exit();
+// Vérification de l'ID du véhicule
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    // Redirection vers le catalogue si l'ID n'est pas valide
+    header('Location: catalogue.php');
+    exit;
 }
 
-$id = intval($_GET['id']); // Sécurisation de l'ID
-$debugMode = isset($_GET['debug']) && $_GET['debug'] == 1;
+$id_vehicule = intval($_GET['id']);
 
-// Vérifier si la table vehicules existe
-$tableVehiculesExists = tableExists($conn, 'vehicules');
-
-if (!$tableVehiculesExists) {
-    setAlert("La table des véhicules n'existe pas dans la base de données", "danger");
-    redirect('index.php');
-    exit();
-}
-
-// Récupérer les infos du véhicule depuis la base
-$query = "SELECT * FROM vehicules WHERE id_vehicule = ?";
-$stmt = $conn->prepare($query);
-
-if ($stmt === false) {
-    setAlert("Erreur lors de la préparation de la requête", "danger");
-    redirect('catalogue.php');
-    exit();
-}
-
-$stmt->bind_param("i", $id);
+// Récupération des informations du véhicule
+$sql = "SELECT * FROM vehicules WHERE id_vehicule = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id_vehicule);
 $stmt->execute();
 $result = $stmt->get_result();
+
+// Vérification si le véhicule existe
+if ($result->num_rows === 0) {
+    // Redirection vers le catalogue si le véhicule n'existe pas
+    header('Location: catalogue.php');
+    exit;
+}
+
+// Récupération des données du véhicule
 $vehicule = $result->fetch_assoc();
 
-if (!$vehicule) {
-    setAlert("Véhicule introuvable", "danger");
-    redirect('catalogue.php');
-    exit();
-}
-
-// Mettre à jour le titre de la page avec le nom du véhicule
-$pageTitle = $vehicule['marque'] . " " . $vehicule['modele'];
-
-// Récupérer les images du véhicule (simulation - à implémenter avec une table d'images)
-$images = [];
-for ($i = 1; $i <= 5; $i++) {
-    $imagePath = "/DaCar/assets/images/vehicles/" . $vehicule['id_vehicule'] . "_" . $i . ".jpg";
-    if (file_exists($_SERVER['DOCUMENT_ROOT'] . $imagePath)) {
-        $images[] = $imagePath;
+// Récupération des caractéristiques techniques du véhicule
+$specs = [];
+$sql_specs = "SELECT * FROM caracteristiques WHERE id_vehicule = ?";
+$stmt_specs = $conn->prepare($sql_specs);
+if ($stmt_specs) {
+    $stmt_specs->bind_param("i", $id_vehicule);
+    $stmt_specs->execute();
+    $result_specs = $stmt_specs->get_result();
+    if ($result_specs && $result_specs->num_rows > 0) {
+        $specs = $result_specs->fetch_assoc();
     }
 }
 
-// Si aucune image n'est trouvée, utiliser une image par défaut
-if (empty($images)) {
-    $images[] = "/DaCar/assets/images/no-image.jpg";
+// Récupération des images du véhicule (si table disponible)
+$images = [];
+$sql_images = "SELECT * FROM images_vehicules WHERE id_vehicule = ? ORDER BY ordre ASC";
+$stmt_images = $conn->prepare($sql_images);
+
+// Vérifier si la requête a été préparée avec succès
+if ($stmt_images) {
+    $stmt_images->bind_param("i", $id_vehicule);
+    $stmt_images->execute();
+    $result_images = $stmt_images->get_result();
+    
+    if ($result_images && $result_images->num_rows > 0) {
+        while ($image = $result_images->fetch_assoc()) {
+            $images[] = $image;
+        }
+    }
 }
 
-// Afficher les informations de débogage si demandé
-if ($debugMode) {
-    debugDatabase();
+// Si aucune image n'est trouvée dans la base de données, utiliser l'image par défaut
+if (empty($images)) {
+    // Créer une entrée d'image par défaut
+    $images[] = [
+        'id_image' => 0,
+        'id_vehicule' => $id_vehicule,
+        'chemin' => 'default.jpg',
+        'ordre' => 1
+    ];
 }
+
+// Récupération des véhicules similaires
+$vehicules_similaires = [];
+$sql_similar = "SELECT * FROM vehicules 
+                WHERE marque = ? 
+                AND id_vehicule != ? 
+                LIMIT 3";
+$stmt_similar = $conn->prepare($sql_similar);
+if ($stmt_similar) {
+    $stmt_similar->bind_param("si", $vehicule['marque'], $id_vehicule);
+    $stmt_similar->execute();
+    $result_similar = $stmt_similar->get_result();
+    
+    if ($result_similar && $result_similar->num_rows > 0) {
+        while ($similar = $result_similar->fetch_assoc()) {
+            $vehicules_similaires[] = $similar;
+        }
+    }
+}
+
+// Vérifier si le prix_location existe, sinon utiliser une valeur par défaut
+$prix_location = isset($vehicule['prix_location']) ? $vehicule['prix_location'] : 0;
 ?>
 
-<div class="breadcrumb">
-    <a href="index.php">Accueil</a> &gt; 
-    <a href="catalogue.php">Catalogue</a> &gt; 
-    <span><?php echo $vehicule['marque'] . " " . $vehicule['modele']; ?></span>
-</div>
-
-<section class="vehicle-details">
+<div class="vehicle-details-container">
+    <!-- En-tête avec le nom du véhicule -->
     <div class="vehicle-header">
-        <h1><?php echo $vehicule['marque'] . " " . $vehicule['modele']; ?></h1>
-        <?php if (isset($vehicule['annee'])) { ?>
-            <span class="vehicle-year"><?php echo $vehicule['annee']; ?></span>
-        <?php } ?>
-        
-        <?php if (isset($vehicule['stock']) && $vehicule['stock'] <= 0) { ?>
-            <span class="stock-badge out-of-stock">Rupture de stock</span>
-        <?php } elseif (isset($vehicule['stock']) && $vehicule['stock'] < 5) { ?>
-            <span class="stock-badge low-stock">Plus que <?php echo $vehicule['stock']; ?> en stock</span>
-        <?php } elseif (isset($vehicule['stock'])) { ?>
-            <span class="stock-badge in-stock">En stock</span>
-        <?php } ?>
+        <div class="container">
+            <h1><?php echo $vehicule['marque'] . ' ' . $vehicule['modele']; ?></h1>
+            <div class="vehicle-meta">
+                <span class="vehicle-year"><?php echo $vehicule['annee']; ?></span>
+                <span class="vehicle-id">Réf: <?php echo $vehicule['id_vehicule']; ?></span>
+            </div>
+        </div>
     </div>
-
-    <div class="vehicle-content">
-        <!-- Galerie d'images -->
-        <div class="vehicle-gallery">
-            <div class="main-image">
-                <img src="<?php echo $images[0]; ?>" alt="<?php echo $vehicule['marque'] . ' ' . $vehicule['modele']; ?>" id="main-vehicle-image">
+    
+    <div class="container">
+        <div class="row">
+            <!-- Galerie d'images -->
+            <div class="col-md-7">
+                <div class="vehicle-gallery">
+                    <div class="main-image">
+                        <?php 
+                        $mainImage = SITE_URL . 'assets/images/voitures/' . ($images[0]['chemin'] ?? $id_vehicule . '.jpg');
+                        $defaultImage = SITE_URL . 'assets/images/voitures/default.jpg';
+                        ?>
+                        <img id="main-vehicle-image" src="<?php echo $mainImage; ?>" alt="<?php echo $vehicule['marque'] . ' ' . $vehicule['modele']; ?>" onerror="this.src='<?php echo $defaultImage; ?>'">
+                    </div>
+                    
+                    <?php if (count($images) > 1): ?>
+                    <div class="thumbnails">
+                        <?php foreach ($images as $index => $image): ?>
+                            <?php 
+                            $thumbImage = SITE_URL . 'assets/images/voitures/' . ($image['chemin'] ?? $id_vehicule . '_' . ($index + 1) . '.jpg');
+                            ?>
+                            <div class="thumbnail <?php echo $index === 0 ? 'active' : ''; ?>">
+                                <img src="<?php echo $thumbImage; ?>" alt="<?php echo $vehicule['marque'] . ' ' . $vehicule['modele'] . ' - Image ' . ($index + 1); ?>" onerror="this.src='<?php echo $defaultImage; ?>'">
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
             </div>
             
-            <?php if (count($images) > 1) { ?>
-                <div class="thumbnail-images">
-                    <?php foreach ($images as $index => $image) { ?>
-                        <div class="thumbnail" onclick="changeMainImage('<?php echo $image; ?>')">
-                            <img src="<?php echo $image; ?>" alt="Vue <?php echo $index + 1; ?>">
+            <!-- Informations et actions -->
+            <div class="col-md-5">
+                <div class="vehicle-info-card">
+                    <div class="vehicle-price-section">
+                        <div class="vehicle-price">
+                            <h2><?php echo number_format($vehicule['prix'], 0, ',', ' '); ?> €</h2>
+                            <?php if (isset($vehicule['disponible_location']) && $vehicule['disponible_location']): ?>
+                                <div class="rental-price">
+                                    <span>Location: <?php echo number_format($prix_location, 0, ',', ' '); ?> €/jour</span>
+                                </div>
+                            <?php endif; ?>
                         </div>
-                    <?php } ?>
-                </div>
-            <?php } ?>
-        </div>
-
-        <!-- Informations principales -->
-        <div class="vehicle-info">
-            <div class="price-section">
-                <div class="price">
-                    <span class="price-label">Prix :</span>
-                    <span class="price-value"><?php echo formatPrice($vehicule['prix']); ?></span>
-                </div>
-                
-                <?php if (isset($vehicule['disponible_location']) && $vehicule['disponible_location']) { ?>
-                    <div class="rental-price">
-                        <span class="rental-label">Location :</span>
-                        <span class="rental-value"><?php echo formatPrice($vehicule['tarif_location_journalier']); ?>/jour</span>
+                        
+                        <div class="vehicle-stock">
+                            <?php if ($vehicule['stock'] > 0): ?>
+                                <span class="in-stock">En stock (<?php echo $vehicule['stock']; ?>)</span>
+                            <?php else: ?>
+                                <span class="out-of-stock">Rupture de stock</span>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                <?php } ?>
-            </div>
-
-            <div class="vehicle-actions">
-                <?php if (!isset($vehicule['stock']) || $vehicule['stock'] > 0) { ?>
-                    <a href="panier.php?ajouter=<?php echo $vehicule['id_vehicule']; ?>&type=achat" class="btn btn-primary">
-                        <i class="fas fa-shopping-cart"></i> Ajouter au panier
-                    </a>
-                <?php } else { ?>
-                    <button class="btn btn-disabled" disabled>
-                        <i class="fas fa-shopping-cart"></i> Indisponible
-                    </button>
-                <?php } ?>
-                
-                <?php if (isset($vehicule['disponible_location']) && $vehicule['disponible_location']) { ?>
-                    <a href="panier.php?ajouter=<?php echo $vehicule['id_vehicule']; ?>&type=location" class="btn btn-secondary">
-                        <i class="fas fa-key"></i> Louer ce véhicule
-                    </a>
-                <?php } ?>
-                
-                <a href="contact.php?sujet=vehicule&id=<?php echo $vehicule['id_vehicule']; ?>" class="btn btn-outline">
-                    <i class="fas fa-question-circle"></i> Demander plus d'infos
-                </a>
-            </div>
-
-            <div class="vehicle-specs">
-                <h3>Caractéristiques</h3>
-                <ul class="specs-list">
-                    <li><i class="fas fa-road"></i> <strong>Kilométrage :</strong> <?php echo number_format($vehicule['kilometrage']); ?> km</li>
-                    <li><i class="fas fa-gas-pump"></i> <strong>Carburant :</strong> <?php echo ucfirst($vehicule['carburant']); ?></li>
-                    <li><i class="fas fa-cog"></i> <strong>Transmission :</strong> <?php echo ucfirst($vehicule['transmission']); ?></li>
-                    <?php if (isset($vehicule['annee'])) { ?>
-                        <li><i class="fas fa-calendar-alt"></i> <strong>Année :</strong> <?php echo $vehicule['annee']; ?></li>
-                    <?php } ?>
-                    <?php if (isset($vehicule['puissance'])) { ?>
-                        <li><i class="fas fa-tachometer-alt"></i> <strong>Puissance :</strong> <?php echo $vehicule['puissance']; ?> ch</li>
-                    <?php } ?>
-                    <?php if (isset($vehicule['couleur'])) { ?>
-                        <li><i class="fas fa-palette"></i> <strong>Couleur :</strong> <?php echo ucfirst($vehicule['couleur']); ?></li>
-                    <?php } ?>
-                    <?php if (isset($vehicule['nb_portes'])) { ?>
-                        <li><i class="fas fa-door-open"></i> <strong>Nombre de portes :</strong> <?php echo $vehicule['nb_portes']; ?></li>
-                    <?php } ?>
-                    <?php if (isset($vehicule['nb_places'])) { ?>
-                        <li><i class="fas fa-users"></i> <strong>Nombre de places :</strong> <?php echo $vehicule['nb_places']; ?></li>
-                    <?php } ?>
-                </ul>
+                    
+                    <div class="vehicle-specs-overview">
+                        <div class="spec-item">
+                            <i class="fas fa-gas-pump"></i>
+                            <span><?php echo $vehicule['carburant']; ?></span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-cog"></i>
+                            <span><?php echo $vehicule['transmission']; ?></span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-road"></i>
+                            <span><?php echo number_format($vehicule['kilometrage'], 0, ',', ' '); ?> km</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span><?php echo $vehicule['annee']; ?></span>
+                        </div>
+                    </div>
+                    
+                    <div class="vehicle-actions">
+                        <?php if ($vehicule['stock'] > 0): ?>
+                            <a href="panier.php?ajouter=<?php echo $vehicule['id_vehicule']; ?>&type=achat" class="btn-add-cart">
+                                <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                            </a>
+                        <?php endif; ?>
+                        
+                        <?php if (isset($vehicule['disponible_location']) && $vehicule['disponible_location']): ?>
+                            <a href="panier.php?ajouter=<?php echo $vehicule['id_vehicule']; ?>&type=location" class="btn-add-rental">
+                                <i class="fas fa-key"></i> Réserver pour location
+                            </a>
+                        <?php endif; ?>
+                        
+                        <a href="contact.php?sujet=Demande d'information - <?php echo $vehicule['marque'] . ' ' . $vehicule['modele']; ?>" class="btn-contact">
+                            <i class="fas fa-envelope"></i> Demander plus d'informations
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-
-    <?php if (isset($vehicule['description']) && !empty($vehicule['description'])) { ?>
-        <div class="vehicle-description">
-            <h3>Description</h3>
-            <div class="description-content">
-                <?php echo nl2br(htmlspecialchars($vehicule['description'])); ?>
-            </div>
-        </div>
-    <?php } ?>
-    
-    <?php if (isset($vehicule['equipements']) && !empty($vehicule['equipements'])) { ?>
-        <div class="vehicle-equipment">
-            <h3>Équipements</h3>
-            <div class="equipment-content">
-                <?php 
-                $equipements = explode(',', $vehicule['equipements']);
-                echo '<ul class="equipment-list">';
-                foreach ($equipements as $equipement) {
-                    echo '<li><i class="fas fa-check"></i> ' . trim($equipement) . '</li>';
-                }
-                echo '</ul>';
-                ?>
-            </div>
-        </div>
-    <?php } ?>
-</section>
-
-<!-- Section des véhicules similaires -->
-<section class="similar-vehicles">
-    <h2>Véhicules similaires</h2>
-    <p>Ces véhicules pourraient aussi vous intéresser</p>
-    
-    <div class="similar-vehicles-container">
-        <?php
-        // Récupérer des véhicules similaires (même marque ou même type)
-        $query = "SELECT * FROM vehicules 
-                 WHERE id_vehicule != ? 
-                 AND (marque = ? OR carburant = ?) 
-                 ORDER BY RAND() 
-                 LIMIT 3";
-        $stmt = $conn->prepare($query);
         
-        if ($stmt !== false) {
-            $stmt->bind_param("iss", $id, $vehicule['marque'], $vehicule['carburant']);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            if ($result->num_rows > 0) {
-                echo '<div class="similar-vehicles-grid">';
-                while ($similar = $result->fetch_assoc()) {
-                    // Récupérer l'image principale du véhicule
-                    $imagePath = "/DaCar/assets/images/vehicles/" . $similar['id_vehicule'] . "_1.jpg";
-                    // Image par défaut si non disponible
-                    if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $imagePath)) {
-                        $imagePath = "/DaCar/assets/images/no-image.jpg";
-                    }
-                    ?>
-                    <div class="similar-vehicle-card">
-                        <div class="similar-vehicle-image">
-                            <img src="<?php echo $imagePath; ?>" alt="<?php echo $similar['marque'] . ' ' . $similar['modele']; ?>">
-                        </div>
-                        <div class="similar-vehicle-info">
-                            <h3><?php echo $similar['marque'] . " " . $similar['modele']; ?></h3>
-                            <div class="similar-vehicle-price"><?php echo formatPrice($similar['prix']); ?></div>
-                            <a href="vehicle-details.php?id=<?php echo $similar['id_vehicule']; ?>" class="btn btn-outline btn-sm">Voir détails</a>
+        <!-- Description et caractéristiques -->
+        <div class="vehicle-details-tabs">
+            <ul class="nav nav-tabs" id="vehicleDetailsTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab" aria-controls="description" aria-selected="true">Description</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab" aria-controls="specs" aria-selected="false">Caractéristiques techniques</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="equipment-tab" data-bs-toggle="tab" data-bs-target="#equipment" type="button" role="tab" aria-controls="equipment" aria-selected="false">Équipements</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="vehicleDetailsTabsContent">
+                <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                    <div class="tab-inner-content">
+                        <?php if (!empty($vehicule['description'])): ?>
+                            <p><?php echo nl2br($vehicule['description']); ?></p>
+                        <?php else: ?>
+                            <p>Ce <?php echo $vehicule['marque'] . ' ' . $vehicule['modele']; ?> de <?php echo $vehicule['annee']; ?> est disponible à l'achat chez Terancar. 
+                            Avec son moteur <?php echo $vehicule['carburant']; ?> et sa transmission <?php echo $vehicule['transmission']; ?>, 
+                            ce véhicule offre une expérience de conduite exceptionnelle. Contactez-nous pour plus d'informations.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="specs" role="tabpanel" aria-labelledby="specs-tab">
+                    <div class="tab-inner-content">
+                        <div class="specs-grid">
+                            <div class="spec-group">
+                                <h3>Moteur et Performance</h3>
+                                <ul>
+                                    <li><strong>Carburant:</strong> <?php echo $vehicule['carburant']; ?></li>
+                                    <li><strong>Transmission:</strong> <?php echo $vehicule['transmission']; ?></li>
+                                    <?php if (isset($specs['puissance'])): ?>
+                                        <li><strong>Puissance:</strong> <?php echo $specs['puissance']; ?> ch</li>
+                                    <?php endif; ?>
+                                    <?php if (isset($specs['cylindree'])): ?>
+                                        <li><strong>Cylindrée:</strong> <?php echo $specs['cylindree']; ?> cm³</li>
+                                    <?php endif; ?>
+                                    <?php if (isset($specs['consommation'])): ?>
+                                        <li><strong>Consommation:</strong> <?php echo $specs['consommation']; ?> L/100km</li>
+                                    <?php endif; ?>
+                                </ul>
+                            </div>
+                            
+                            <div class="spec-group">
+                                <h3>Dimensions</h3>
+                                <ul>
+                                    <?php if (isset($specs['longueur'])): ?>
+                                        <li><strong>Longueur:</strong> <?php echo $specs['longueur']; ?> mm</li>
+                                    <?php endif; ?>
+                                    <?php if (isset($specs['largeur'])): ?>
+                                        <li><strong>Largeur:</strong> <?php echo $specs['largeur']; ?> mm</li>
+                                    <?php endif; ?>
+                                    <?php if (isset($specs['hauteur'])): ?>
+                                        <li><strong>Hauteur:</strong> <?php echo $specs['hauteur']; ?> mm</li>
+                                    <?php endif; ?>
+                                    <?php if (isset($specs['poids'])): ?>
+                                        <li><strong>Poids:</strong> <?php echo $specs['poids']; ?> kg</li>
+                                    <?php endif; ?>
+                                    <?php if (isset($specs['coffre'])): ?>
+                                        <li><strong>Volume du coffre:</strong> <?php echo $specs['coffre']; ?> L</li>
+                                    <?php endif; ?>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    <?php
-                }
-                echo '</div>';
-            } else {
-                echo '<p class="no-similar">Aucun véhicule similaire trouvé.</p>';
-            }
-        } else {
-            echo '<p class="no-similar">Impossible de charger les véhicules similaires.</p>';
-        }
-        ?>
+                </div>
+                <div class="tab-pane fade" id="equipment" role="tabpanel" aria-labelledby="equipment-tab">
+                    <div class="tab-inner-content">
+                        <?php if (isset($specs['equipements']) && !empty($specs['equipements'])): ?>
+                            <div class="equipment-list">
+                                <?php 
+                                $equipements = explode(',', $specs['equipements']);
+                                foreach ($equipements as $equipement): 
+                                ?>
+                                    <div class="equipment-item">
+                                        <i class="fas fa-check"></i>
+                                        <span><?php echo trim($equipement); ?></span>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else: ?>
+                            <p>Les informations détaillées sur les équipements de ce véhicule ne sont pas disponibles. Veuillez nous contacter pour plus d'informations.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Véhicules similaires -->
+        <?php if (!empty($vehicules_similaires)): ?>
+        <div class="similar-vehicles">
+            <h2>Véhicules similaires</h2>
+            <div class="row">
+                <?php foreach ($vehicules_similaires as $similar): ?>
+                    <div class="col-md-4">
+                        <div class="vehicule-card">
+                            <div class="vehicule-image">
+                                <?php 
+                                $similarImage = SITE_URL . 'assets/images/voitures/' . $similar['id_vehicule'] . '.jpg';
+                                $defaultImage = SITE_URL . 'assets/images/voitures/default.jpg';
+                                ?>
+                                <img src="<?php echo $similarImage; ?>" alt="<?php echo $similar['marque'] . ' ' . $similar['modele']; ?>" onerror="this.src='<?php echo $defaultImage; ?>'">
+                                <?php if (isset($similar['disponible_location']) && $similar['disponible_location']): ?>
+                                    <span class="badge-location">Location</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="vehicule-details">
+                                <div class="vehicule-titre">
+                                    <h3><?php echo $similar['marque'] . ' ' . $similar['modele']; ?></h3>
+                                    <span class="vehicule-annee"><?php echo $similar['annee']; ?></span>
+                                </div>
+                                
+                                <div class="vehicule-prix">
+                                    <div>
+                                        <div class="prix-achat"><?php echo number_format($similar['prix'], 0, ',', ' '); ?> €</div>
+                                    </div>
+                                    
+                                    <div class="vehicule-actions">
+                                        <a href="vehicle-details.php?id=<?php echo $similar['id_vehicule']; ?>" class="btn-details">
+                                            <i class="fas fa-eye"></i> Voir détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
-</section>
-
-<!-- Styles spécifiques à la page de détails -->
-<style>
-.stock-badge {
-    display: inline-block;
-    padding: 0.3rem 0.8rem;
-    border-radius: 50px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    margin-left: 1rem;
-}
-
-.out-of-stock {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-.low-stock {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-.in-stock {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.btn-disabled {
-    background-color: #6c757d;
-    color: #fff;
-    cursor: not-allowed;
-    opacity: 0.65;
-}
-
-.vehicle-equipment {
-    margin-top: 2rem;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-}
-
-.vehicle-equipment h3 {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 1rem;
-}
-
-.equipment-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 0.8rem;
-    list-style-type: none;
-    padding: 0;
-}
-
-.equipment-list li {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-}
-
-.equipment-list li i {
-    color: #28a745;
-    margin-right: 0.5rem;
-}
-
-.similar-vehicles-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-}
-
-.similar-vehicle-card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease;
-}
-
-.similar-vehicle-card:hover {
-    transform: translateY(-5px);
-}
-
-.similar-vehicle-image {
-    height: 180px;
-    overflow: hidden;
-}
-
-.similar-vehicle-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.similar-vehicle-card:hover .similar-vehicle-image img {
-    transform: scale(1.05);
-}
-
-.similar-vehicle-info {
-    padding: 1rem;
-}
-
-.similar-vehicle-info h3 {
-    font-size: 1.1rem;
-    margin: 0 0 0.5rem 0;
-    color: #333;
-}
-
-.similar-vehicle-price {
-    font-weight: 600;
-    color: #007bff;
-    margin-bottom: 0.8rem;
-}
-
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-}
-
-.no-similar {
-    text-align: center;
-    color: #6c757d;
-    margin-top: 1.5rem;
-}
-
-@media (max-width: 768px) {
-    .similar-vehicles-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .equipment-list {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
+</div>
 
 <?php include '../includes/footer.php'; ?> 
