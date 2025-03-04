@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Configuration de base
-define('SITE_NAME', 'TeranCar');
+define('SITE_NAME', 'Teran\'Cars');
 define('SITE_URL', '/DaCar');
 
 // Configuration de la base de données
@@ -35,7 +35,7 @@ try {
 }
 
 // Configuration du fuseau horaire
-date_default_timezone_set('Europe/Paris');
+date_default_timezone_set('Africa/Dakar');
 
 // Démarrage de la session
 session_start();

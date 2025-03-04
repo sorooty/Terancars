@@ -15,7 +15,7 @@ $testimonials = getTestimonials(3);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TeranCar - Votre partenaire de confiance pour l'achat et la location de véhicules de qualité">
+    <meta name="description" content="Teran'Cars - Votre partenaire de confiance pour l'achat et la location de véhicules de qualité">
     <title><?= SITE_NAME ?> - Vente et Location de Véhicules</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,8 +28,8 @@ $testimonials = getTestimonials(3);
         <nav class="nav-main container">
             <div class="logo">
                 <a href="/">
-                    <img src="<?= asset('images/icones/Tlogo.png') ?>" alt="TeranCar Logo" class="logo-img">
-                    <span class="logo-text">Teran<span class="highlight">Car</span></span>
+                    <img src="<?= asset('images/icones/Tlogo.png') ?>" alt="Teran'Cars Logo" class="logo-img">
+                    <span class="logo-text">Teran<span class="highlight">'Cars</span></span>
                 </a>
             </div>
             
@@ -63,7 +63,7 @@ $testimonials = getTestimonials(3);
     <!-- Section Hero -->
     <section class="hero">
         <div class="hero-content container">
-            <h1>Bienvenue chez TeranCar</h1>
+            <h1>Bienvenue chez Teran'Cars</h1>
             <p class="hero-subtitle">Votre partenaire de confiance pour l'achat et la location de véhicules de qualité</p>
             <div class="hero-buttons">
                 <a href="/catalogue" class="btn btn-primary">Voir notre catalogue</a>
@@ -247,8 +247,8 @@ $testimonials = getTestimonials(3);
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section about">
-                <h3>À propos de TeranCar</h3>
-                <p>TeranCar est votre partenaire de confiance pour l'achat et la location de véhicules de qualité depuis 2020.</p>
+                <h3>À propos de Teran'Cars</h3>
+                <p>Teran'Cars est votre partenaire de confiance pour l'achat et la location de véhicules de qualité depuis 2020.</p>
             </div>
             
             <div class="footer-section links">
@@ -264,7 +264,7 @@ $testimonials = getTestimonials(3);
                 <h3>Contactez-nous</h3>
                 <p>
                     <span><i class="fas fa-phone"></i> +33 1 23 45 67 89</span>
-                    <span><i class="fas fa-envelope"></i> contact@terancar.fr</span>
+                    <span><i class="fas fa-envelope"></i> contact@terancars.fr</span>
                     <span><i class="fas fa-map-marker-alt"></i> 123 Avenue des Véhicules, 75000 Paris</span>
                 </p>
             </div>
