@@ -1,105 +1,107 @@
 <?php
 /**
- * Configuration de la base de données
- * Ce fichier contient les paramètres de connexion à la base de données MySQL
- * Version simplifiée pour la branche main (développement personnel)
+ * Configuration globale de l'application TeranCar
  */
+
+// Activation du rapport d'erreurs en mode développement
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Configuration de base
+define('SITE_NAME', 'TeranCar');
+define('SITE_URL', '/DaCar');
+
+// Configuration de la base de données
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'terancar');
+define('DB_PORT', '3307');
+
+// Connexion à la base de données
+try {
+    $db = new PDO(
+        "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8",
+        DB_USER,
+        DB_PASS,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
+        ]
+    );
+} catch(PDOException $e) {
+    die("Erreur de connexion : " . $e->getMessage());
+}
+
+// Configuration du fuseau horaire
+date_default_timezone_set('Europe/Paris');
 
 // Démarrage de la session
 session_start();
 
-// Paramètres de connexion à la base de données
-$host = 'localhost';      // Adresse du serveur MySQL
-$user = 'root';           // Nom d'utilisateur MySQL
-$pass = '';               // Mot de passe MySQL
-$dbname = "dacar";        // Nom de la base de données (version originale)
-$port = 3307;             // Port MySQL standard
-
-// Création de la connexion à MySQL
-$conn = new mysqli($host, $user, $pass, $dbname, $port);
-
-// Vérification de la connexion
-if ($conn->connect_error) {
-    die("Échec de connexion à la base de données : " . $conn->connect_error);
+// Fonctions utilitaires
+function asset($path) {
+    if (strpos($path, 'images/') === 0) {
+        return SITE_URL . '/public/' . $path;
+    }
+    return SITE_URL . '/public/assets/' . $path;
 }
 
-// Définir l'encodage UTF-8 pour éviter les problèmes de caractères spéciaux
-$conn->set_charset("utf8");
+function url($path = '') {
+    return SITE_URL . '/' . trim($path, '/');
+}
 
-// Définition des constantes globales du site
-define('SITE_NAME', 'DaCar');
-define('SITE_URL', '/DaCar/');
+function redirect($path) {
+    header('Location: ' . url($path));
+    exit();
+}
 
-// Fonction pour nettoyer les entrées utilisateur
-function cleanInput($data) {
+function clean_input($data) {
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return $data;
 }
 
-// Fonction pour vérifier si l'utilisateur est connecté
-function isLoggedIn() {
-    return isset($_SESSION['user_id']);
-}
-
-// Fonction pour vérifier si l'utilisateur est un administrateur
-function isAdmin() {
-    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
-}
-
-// Fonction pour rediriger vers une page
-function redirect($page) {
-    header("Location: " . SITE_URL . $page);
-    exit();
-}
-
-// Fonction pour afficher un message d'alerte
-function setAlert($message, $type = 'success') {
-    $_SESSION['alert'] = [
-        'message' => $message,
-        'type' => $type
-    ];
-}
-
-// Fonction pour récupérer et supprimer un message d'alerte
-function getAlert() {
-    if (isset($_SESSION['alert'])) {
-        $alert = $_SESSION['alert'];
-        unset($_SESSION['alert']);
-        return $alert;
+// Fonction pour récupérer les véhicules
+function getVehicles($limit = null) {
+    global $db;
+    $sql = "SELECT * FROM vehicules";
+    if ($limit) {
+        $sql .= " LIMIT " . (int)$limit;
     }
-    return null;
+    $stmt = $db->query($sql);
+    return $stmt->fetchAll();
+}
+
+// Fonction pour récupérer les avis clients
+function getTestimonials($limit = 3) {
+    global $db;
+    $sql = "SELECT ac.*, c.nom as client_nom 
+            FROM avis_clients ac 
+            JOIN clients c ON ac.id_client = c.id_client 
+            ORDER BY ac.date_avis DESC 
+            LIMIT " . (int)$limit;
+    $stmt = $db->query($sql);
+    return $stmt->fetchAll();
+}
+
+// Fonction pour récupérer les marques populaires
+function getPopularBrands() {
+    return [
+        'Renault',
+        'Peugeot',
+        'Volkswagen',
+        'Toyota',
+        'BMW',
+        'Mercedes',
+        'Audi',
+        'Ford'
+    ];
 }
 
 // Fonction pour formater le prix
 function formatPrice($price) {
     return number_format($price, 2, ',', ' ') . ' €';
 }
-
-// Fonction pour obtenir les informations de l'utilisateur connecté
-function getCurrentUser() {
-    global $conn;
-    
-    if (!isLoggedIn()) {
-        return null;
-    }
-    
-    $userId = $_SESSION['user_id'];
-    $query = "SELECT * FROM utilisateurs WHERE id_utilisateur = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows === 1) {
-        return $result->fetch_assoc();
-    }
-    
-    return null;
-}
-
-// Version simplifiée - sans les fonctions avancées de débogage et de vérification
-// ajoutées dans la branche version-ia
-?>
-

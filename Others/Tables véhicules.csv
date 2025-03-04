@@ -1,0 +1,29 @@
+id_vehicule,marque,modele,annee,prix,stock,disponible_location,tarif_location_journalier,carburant,transmission,kilometrage
+1,Toyota,Corolla,2022,22000.00,5,1,30.00,essence,automatique,15000
+2,Honda,Civic,2021,21000.00,3,1,28.00,essence,manuelle,12000
+3,Tesla,"Model 3",2023,45000.00,2,0,0.00,électrique,automatique,8000
+4,BMW,X5,2020,55000.00,4,1,50.00,diesel,automatique,25000
+5,Mercedes,"Classe A",2019,27000.00,6,1,35.00,essence,automatique,30000
+6,Peugeot,208,2022,18000.00,10,1,25.00,essence,manuelle,9000
+7,Ford,Mustang,2021,48000.00,3,1,55.00,essence,automatique,15000
+8,Audi,A4,2022,37000.00,4,1,45.00,diesel,automatique,12000
+9,Hyundai,Tucson,2020,29000.00,5,1,30.00,essence,manuelle,18000
+10,Renault,Clio,2019,16000.00,8,1,25.00,essence,manuelle,22000
+11,Nissan,Leaf,2023,32000.00,6,0,0.00,électrique,automatique,5000
+12,Volkswagen,Golf,2021,25000.00,7,1,35.00,diesel,automatique,14000
+13,Toyota,RAV4,2022,35000.00,5,1,45.00,essence,automatique,12000
+14,Jeep,Wrangler,2023,42000.00,4,1,55.00,diesel,manuelle,15000
+15,"Land Rover",Defender,2021,60000.00,3,1,70.00,diesel,automatique,20000
+16,Tesla,"Model Y",2023,52000.00,6,0,0.00,électrique,automatique,8000
+17,Hyundai,"Ioniq 5",2022,40000.00,5,1,50.00,électrique,automatique,10000
+18,Toyota,Prius,2020,28000.00,7,1,30.00,hybride,automatique,25000
+19,Mercedes,"Classe E",2021,55000.00,4,1,65.00,essence,automatique,15000
+20,BMW,"Série 5",2022,58000.00,5,1,70.00,diesel,automatique,13000
+21,Audi,A6,2023,57000.00,6,1,68.00,essence,automatique,9000
+22,Peugeot,308,2021,22000.00,10,1,30.00,essence,manuelle,18000
+23,Renault,Twingo,2022,15000.00,12,1,25.00,essence,manuelle,20000
+24,Fiat,500,2023,18000.00,15,1,28.00,électrique,automatique,5000
+25,Ford,"Mustang GT",2020,60000.00,3,1,80.00,essence,automatique,12000
+26,Porsche,"911 Carrera",2022,110000.00,2,1,150.00,essence,automatique,5000
+27,Chevrolet,Camaro,2021,55000.00,4,1,85.00,essence,manuelle,14000
+28,SONIA,HAMEG,2025,100000.00,1,1,120.00,électrique,automatique,12000
