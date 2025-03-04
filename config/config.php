@@ -13,7 +13,7 @@ $host = 'localhost';      // Adresse du serveur MySQL
 $user = 'root';           // Nom d'utilisateur MySQL
 $pass = '';               // Mot de passe MySQL
 $dbname = "dacar";        // Nom de la base de données (version originale)
-$port = 3306;             // Port MySQL standard
+$port = 3307;             // Port MySQL standard
 
 // Création de la connexion à MySQL
 $conn = new mysqli($host, $user, $pass, $dbname, $port);
