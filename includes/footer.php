@@ -48,6 +48,6 @@
     </footer>
 
     <!-- Scripts JavaScript -->
-    <script src="/DaCar/assets/jscript/main.js"></script>
+    <!-- <script src="/DaCar/assets/jscript/main.js"></script> -->
 </body>
 </html>

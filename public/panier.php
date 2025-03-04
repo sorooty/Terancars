@@ -21,7 +21,7 @@ if (!isset($_SESSION['panier'])) {
 }
 
 // Vérifier si la table vehicules existe
-$tableExists = tableExists($conn, 'vehicules');
+$tableExists = tableExists('vehicules');
 $debugMode = isset($_GET['debug']) ? true : false;
 
 // Traitement des actions sur le panier

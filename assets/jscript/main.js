@@ -1,5 +1,5 @@
 /**
- * Fichier JavaScript principal pour DaCar
+ * Fichier JavaScript principal pour TeranCar
  * Contient les fonctionnalités interactives du site
  */
 
@@ -123,7 +123,7 @@ function changeMainImage(imageSrc) {
 }
 
 /**
- * Gestion du panier d'achat
+ * Gestion du panier local
  */
 class ShoppingCart {
     constructor() {
@@ -133,13 +133,13 @@ class ShoppingCart {
     
     // Charger le panier depuis le stockage local
     loadCart() {
-        const savedCart = localStorage.getItem('dacar_cart');
+        const savedCart = localStorage.getItem('terancar_cart');
         return savedCart ? JSON.parse(savedCart) : [];
     }
     
     // Sauvegarder le panier dans le stockage local
     saveCart() {
-        localStorage.setItem('dacar_cart', JSON.stringify(this.items));
+        localStorage.setItem('terancar_cart', JSON.stringify(this.items));
         this.updateCartCount();
     }
     
