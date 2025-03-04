@@ -42,14 +42,37 @@ session_start();
 
 // Fonctions utilitaires
 function asset($path) {
+    $path = trim($path, '/');
+    
+    // Images (dans public/images)
     if (strpos($path, 'images/') === 0) {
         return SITE_URL . '/public/' . $path;
     }
+    
+    // CSS, JS et autres assets
+    if (strpos($path, 'css/') === 0 || strpos($path, 'js/') === 0) {
+        return SITE_URL . '/public/assets/' . $path;
+    }
+    
+    // Par défaut, chercher dans assets
     return SITE_URL . '/public/assets/' . $path;
 }
 
 function url($path = '') {
-    return SITE_URL . '/' . trim($path, '/');
+    $path = trim($path, '/');
+    
+    // Page d'accueil
+    if (empty($path)) {
+        return SITE_URL . '/';
+    }
+    
+    // Pages dans le dossier public
+    if (strpos($path, 'pages/') === 0) {
+        return SITE_URL . '/public/' . $path;
+    }
+    
+    // Autres URLs
+    return SITE_URL . '/' . $path;
 }
 
 function redirect($path) {

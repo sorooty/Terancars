@@ -1,0 +1,160 @@
+/* Styles pour la page catalogue */
+.catalogue-header {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    padding: 3rem 0;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.catalogue-header h1 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: 1rem;
+}
+
+.catalogue-header p {
+    font-size: var(--font-size-lg);
+    opacity: 0.9;
+}
+
+/* Filtres */
+.catalogue-filters {
+    background-color: var(--background-light);
+    padding: 2rem 0;
+    margin-bottom: 3rem;
+}
+
+.filters-form {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.filter-group select,
+.filter-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: var(--font-primary);
+    font-size: var(--font-size-base);
+}
+
+.filters-form button {
+    padding: 0.8rem 2rem;
+    margin-bottom: 0;
+}
+
+/* Grille des véhicules */
+.vehicles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+.vehicle-card {
+    background: var(--light-text);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-5px);
+}
+
+.vehicle-image {
+    height: 200px;
+    overflow: hidden;
+}
+
+.vehicle-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vehicle-details {
+    padding: 1.5rem;
+}
+
+.vehicle-details h3 {
+    color: var(--primary-color);
+    font-size: var(--font-size-lg);
+    margin-bottom: 0.5rem;
+}
+
+.vehicle-price {
+    color: var(--secondary-color);
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.vehicle-info {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.vehicle-info span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.vehicle-info i {
+    color: var(--primary-color);
+}
+
+.vehicle-card .btn {
+    width: 100%;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .catalogue-header {
+        padding: 2rem 0;
+    }
+
+    .catalogue-header h1 {
+        font-size: var(--font-size-2xl);
+    }
+
+    .filters-form {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .vehicles-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .vehicle-info {
+        font-size: 0.8rem;
+    }
+} 
