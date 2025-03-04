@@ -27,16 +27,29 @@ ob_start();
         <div class="catalogue-grid">
             <?php foreach ($vehicles as $vehicle): ?>
             <div class="vehicle-card">
-                <img src="<?= asset('images/vehicules/' . $vehicle['image']) ?>" alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?>">
+                <div class="vehicle-image">
+                    <?php
+                    $vehicleImage = getVehicleImage($vehicle['marque'], $vehicle['modele']);
+                    $imagePath = !empty($vehicleImage) ? 
+                        asset('images/vehicules/' . $vehicleImage) : 
+                        asset('images/vehicules/default-car.jpg');
+                    ?>
+                    <img src="<?= $imagePath ?>" 
+                         alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?>"
+                         onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'"
+                         loading="lazy">
+                </div>
                 <div class="vehicle-details">
                     <h3><?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?></h3>
-                    <p class="vehicle-year">Année : <?= htmlspecialchars($vehicle['annee']) ?></p>
-                    <p class="vehicle-price">Prix : <?= formatPrice($vehicle['prix']) ?></p>
+                    <div class="vehicle-info">
+                        <p class="vehicle-year"><i class="fas fa-calendar"></i> <?= htmlspecialchars($vehicle['annee']) ?></p>
+                        <p class="vehicle-price"><i class="fas fa-tag"></i> <?= formatPrice($vehicle['prix']) ?></p>
+                    </div>
                     <div class="vehicle-specs">
                         <span><i class="fas fa-gas-pump"></i> <?= htmlspecialchars($vehicle['carburant']) ?></span>
                         <span><i class="fas fa-cog"></i> <?= htmlspecialchars($vehicle['transmission']) ?></span>
                     </div>
-                    <a href="<?= url('vehicule/' . $vehicle['id_vehicule']) ?>" class="btn btn-primary">Voir détails</a>
+                    <a href="<?= url('pages/vehicule/' . $vehicle['id_vehicule']) ?>" class="btn btn-primary">Voir détails</a>
                 </div>
             </div>
             <?php endforeach; ?>

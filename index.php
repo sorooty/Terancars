@@ -34,7 +34,7 @@ ob_start();
 <!-- Section Offres du Moment -->
 <section class="current-offers">
     <div class="container">
-        <h2 class="section-title">Offre du moment:</h2>
+        <h2 class="section-title">Offres du moment</h2>
         <div class="offers-slider">
             <button class="slider-arrow prev">
                 <i class="fas fa-chevron-left"></i>
@@ -43,25 +43,24 @@ ob_start();
             <div class="offers-wrapper">
                 <?php foreach ($vehicles as $index => $vehicle): ?>
                 <div class="offer-card" style="--order: <?= $index ?>">
-                    <?php
-                    // Déterminer le nom du fichier d'image en fonction de la marque et du modèle
-                    $imageFilename = '';
-                    $marqueModele = strtolower($vehicle['marque'] . ' ' . $vehicle['modele']);
-                    
-                    switch(true) {
-                        case strpos($marqueModele, 'toyota corolla') !== false:
-                            $imageFilename = 'corolla.jpeg';
-                            break;
-                        // ... existing code ...
-                        default:
-                            $imageFilename = 'audi.jpeg';
-                    }
-                    ?>
-                    <img src="<?= asset('images/vehicules/' . $imageFilename) ?>" alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?>" loading="lazy">
+                    <div class="offer-image">
+                        <?php
+                        $vehicleImage = getVehicleImage($vehicle['marque'], $vehicle['modele']);
+                        $imagePath = !empty($vehicleImage) ? 
+                            asset('images/vehicules/' . $vehicleImage) : 
+                            asset('images/vehicules/default-car.jpg');
+                        ?>
+                        <img src="<?= $imagePath ?>" 
+                             alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?>"
+                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'"
+                             loading="lazy">
+                    </div>
                     <div class="offer-details">
                         <h3><?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?></h3>
-                        <p class="offer-year">Année : <?= htmlspecialchars($vehicle['annee']) ?></p>
-                        <p class="offer-price">Prix : <?= formatPrice($vehicle['prix']) ?></p>
+                        <div class="offer-info">
+                            <p class="offer-year"><i class="fas fa-calendar"></i> <?= htmlspecialchars($vehicle['annee']) ?></p>
+                            <p class="offer-price"><i class="fas fa-tag"></i> <?= formatPrice($vehicle['prix']) ?></p>
+                        </div>
                         <div class="offer-specs">
                             <span><i class="fas fa-gas-pump"></i> <?= htmlspecialchars($vehicle['carburant']) ?></span>
                             <span><i class="fas fa-cog"></i> <?= htmlspecialchars($vehicle['transmission']) ?></span>

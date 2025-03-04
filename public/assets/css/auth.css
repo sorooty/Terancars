@@ -9,7 +9,7 @@
 }
 
 .auth-container h2 {
-    color: var(--color-primary);
+    color: var(--primary-color);
     text-align: center;
     margin-bottom: 2rem;
     font-size: 1.8rem;
@@ -78,14 +78,14 @@
 }
 
 .auth-links a {
-    color: var(--color-primary);
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s ease;
 }
 
 .auth-links a:hover {
-    color: var(--color-primary-dark);
+    color: var(--secondary-color);
 }
 
 /* Message de validation/erreur */

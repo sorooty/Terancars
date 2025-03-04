@@ -587,8 +587,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Section Offres du Moment */
 .current-offers {
-    padding: 4rem 0;
-    background-color: var(--background-light);
+    padding: 3rem 0;
+    background: var(--light-bg);
 }
 
 .offers-slider {
@@ -601,18 +601,18 @@ h1, h2, h3, h4, h5, h6 {
 
 .offers-wrapper {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     overflow-x: hidden;
     scroll-behavior: smooth;
     padding: 1rem 0;
 }
 
 .offer-card {
-    flex: 0 0 280px;
-    background: var(--light-text);
-    border-radius: 10px;
+    flex: 0 0 300px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
 }
 
@@ -620,10 +620,23 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateY(-5px);
 }
 
-.offer-card img {
+.offer-image {
     width: 100%;
     height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+
+.offer-image img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+}
+
+.offer-card:hover .offer-image img {
+    transform: scale(1.05);
 }
 
 .offer-details {
@@ -632,27 +645,28 @@ h1, h2, h3, h4, h5, h6 {
 
 .offer-details h3 {
     color: var(--primary-color);
-    font-size: var(--font-size-lg);
+    font-size: 1.2rem;
     margin-bottom: 0.5rem;
+    font-weight: 600;
 }
 
 .offer-year, .offer-price {
     color: var(--text-color);
-    font-size: var(--font-size-base);
+    font-size: 0.9rem;
     margin-bottom: 0.5rem;
 }
 
 .offer-price {
-    color: var(--secondary-color);
     font-weight: 600;
+    color: var(--primary-color);
 }
 
 .offer-specs {
     display: flex;
     gap: 1rem;
     margin: 1rem 0;
-    color: var(--text-muted);
     font-size: 0.9rem;
+    color: var(--text-color);
 }
 
 .offer-specs span {
@@ -665,24 +679,46 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--primary-color);
 }
 
-.offer-card .btn {
-    width: 100%;
-    text-align: center;
-    margin-top: 1rem;
+.slider-arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+    z-index: 2;
 }
 
-/* Responsive pour les offres */
+.slider-arrow:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.slider-arrow.prev {
+    left: 0;
+}
+
+.slider-arrow.next {
+    right: 0;
+}
+
 @media (max-width: 768px) {
+    .offer-card {
+        flex: 0 0 280px;
+    }
+    
+    .offer-image {
+        height: 180px;
+    }
+    
     .offer-details {
         padding: 1rem;
-    }
-
-    .offer-details h3 {
-        font-size: 1rem;
-    }
-
-    .offer-specs {
-        font-size: 0.8rem;
     }
 }
 

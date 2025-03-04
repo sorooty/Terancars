@@ -2,23 +2,21 @@
 require_once '../../../includes/init.php';
 
 // Variables de la page
-$pageTitle = "Inscription";
-$pageDescription = "Inscrivez-vous sur " . SITE_NAME;
-$currentPage = 'inscription';
+$pageTitle = "Connexion";
+$pageDescription = "Connectez-vous à votre compte " . SITE_NAME;
+$currentPage = 'login';
 $additionalCss = ['css/auth.css'];
 
 // Traitement du formulaire
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = clean_input($_POST["name"]);
-    $phone = clean_input($_POST["phone"]);
     $email = clean_input($_POST["email"]);
     $password = clean_input($_POST["password"]);
 
-    if (empty($name) || empty($phone) || empty($email) || empty($password)) {
+    if (empty($email) || empty($password)) {
         $error_message = 'Tous les champs sont obligatoires';
     } else {
-        // TODO: Ajouter la logique d'inscription
-        $success_message = 'Inscription réussie !';
+        // TODO: Ajouter la logique de connexion
+        $success_message = 'Connexion réussie !';
     }
 }
 
@@ -27,7 +25,7 @@ ob_start();
 ?>
 
 <div class="auth-container">
-    <h2>Inscription</h2>
+    <h2>Connexion</h2>
     <?php if (isset($error_message)): ?>
         <div class="auth-message error"><?= $error_message ?></div>
     <?php endif; ?>
@@ -36,16 +34,6 @@ ob_start();
     <?php endif; ?>
     
     <form method="POST" action="" class="auth-form">
-        <div class="form-group">
-            <label for="name">Nom Prénom*</label>
-            <input type="text" name="name" id="name" placeholder="Votre nom complet" required>
-        </div>
-
-        <div class="form-group">
-            <label for="phone">Numéro de téléphone*</label>
-            <input type="tel" name="phone" id="phone" placeholder="+221" required>
-        </div>
-
         <div class="form-group">
             <label for="email">Email*</label>
             <input type="email" name="email" id="email" placeholder="votre@email.com" required>
@@ -61,10 +49,11 @@ ob_start();
             <label for="remember">Se souvenir de moi</label>
         </div>
         
-        <button type="submit" class="btn btn-primary">S'inscrire</button>
+        <button type="submit" class="btn btn-primary">Se connecter</button>
 
         <div class="auth-links">
-            <p>Vous avez déjà un compte ? <a href="<?= url('pages/auth/login') ?>">Connectez-vous !</a></p>
+            <p>Pas encore de compte ? <a href="<?= url('pages/auth/inscription') ?>">Inscrivez-vous !</a></p>
+            <p><a href="<?= url('pages/auth/reset-password') ?>">Mot de passe oublié ?</a></p>
         </div>
     </form>
 </div>
@@ -75,4 +64,4 @@ $pageContent = ob_get_clean();
 
 // Inclusion du template
 require_once ROOT_PATH . '/includes/template.php';
-?>
+?> 
