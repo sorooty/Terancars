@@ -66,13 +66,17 @@ function url($path = '') {
         return SITE_URL . '/';
     }
     
-    // Pages dans le dossier public
+    // Pages d'authentification
+    if (strpos($path, 'pages/auth/') === 0) {
+        $pathParts = explode('/', $path);
+        return SITE_URL . '/auth/' . end($pathParts);
+    }
+    
+    // Pages normales
     if (strpos($path, 'pages/') === 0) {
-        // Si le chemin ne se termine pas par .php, l'ajouter
-        if (substr($path, -4) !== '.php' && substr($path, -1) !== '/') {
-            $path .= '.php';
-        }
-        return SITE_URL . '/public/' . $path;
+        $pathParts = explode('/', $path);
+        array_shift($pathParts); // Enlève "pages"
+        return SITE_URL . '/' . implode('/', $pathParts);
     }
     
     // Autres URLs

@@ -1,0 +1,38 @@
+Options -Indexes
+
+# Activation du module de réécriture d'URL
+RewriteEngine On
+
+# Définition de la base de l'URL
+RewriteBase /DaCar/
+
+# Permettre l'accès direct aux fichiers et dossiers existants
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirection de la page d'accueil
+RewriteRule ^$ index.php [L,QSA]
+
+# Redirection des fichiers statiques dans public
+RewriteRule ^(assets|images|js|css)/(.*)$ public/$1/$2 [L]
+
+# Redirection des pages d'authentification
+RewriteRule ^auth/([^/]+)$ public/pages/auth/$1.php [L,QSA]
+
+# Redirection des autres pages
+RewriteRule ^([^/]+)/?$ public/pages/$1/index.php [L,QSA]
+
+# Protection des fichiers sensibles
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Pages d'erreur personnalisées
+ErrorDocument 404 /DaCar/public/pages/errors/404.php
+ErrorDocument 403 /DaCar/public/pages/errors/403.php
+
+# Forcer HTTPS (à décommenter en production)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301] 

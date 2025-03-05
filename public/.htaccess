@@ -1,0 +1,8 @@
+# Permettre l'accès aux fichiers statiques
+Options +FollowSymLinks
+RewriteEngine On
+
+# Permettre l'accès direct aux fichiers existants
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L] 
