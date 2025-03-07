@@ -1,0 +1,593 @@
+/* Styles pour la page de détail véhicule */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.back-btn-container {
+    margin-bottom: 2rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn i {
+    font-size: 1.1rem;
+}
+
+.btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+.btn-link:hover {
+    color: var(--primary-dark);
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+.car-details {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.car-image-container {
+    flex: 1;
+    position: relative;
+    min-height: 400px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.favorite-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--light-text);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.favorite-btn i {
+    color: var(--danger);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.favorite-btn i.active {
+    color: var(--danger);
+    transform: scale(1.2);
+}
+
+.image-gallery {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #f8f9fa;
+}
+
+.gallery-slider {
+    height: 100%;
+    display: flex;
+    transition: transform 0.3s ease;
+}
+
+.gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.gallery-nav {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    z-index: 5;
+}
+
+.gallery-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.gallery-dot.active {
+    background: white;
+}
+
+.gallery-prev,
+.gallery-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 5;
+    color: var(--primary-color);
+}
+
+.gallery-prev:hover,
+.gallery-next:hover {
+    background: var(--light-text);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-prev { left: 1rem; }
+.gallery-next { right: 1rem; }
+
+.car-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.tag {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.tag.available {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.tag.unavailable {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.rental-price {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.description {
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.dropdowns {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.dropdown-container {
+    flex: 1;
+    background: var(--light);
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.value {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.contact-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.buy-btn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.buy-btn:hover {
+    background: var(--primary-dark);
+}
+
+.rent-btn {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.rent-btn:hover {
+    background: var(--secondary-dark);
+}
+
+/* Caractéristiques */
+.characteristics {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.characteristics h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.characteristics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.characteristic-item {
+    background: var(--light);
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.characteristic-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.characteristic-value {
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .car-details {
+        flex-direction: column;
+    }
+    
+    .car-image-container {
+        min-height: 300px;
+    }
+    
+    .characteristics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .car-details {
+        padding: 1rem;
+    }
+    
+    .characteristics {
+        padding: 1rem;
+    }
+    
+    .characteristics-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .price {
+        font-size: 2rem;
+    }
+}
+
+/* Styles pour les alertes */
+.alert {
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.alert-success {
+    background-color: var(--success-light);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.alert-danger {
+    background-color: var(--danger-light);
+    color: var(--danger);
+    border: 1px solid var(--danger);
+}
+
+/* Styles pour les formulaires du panier */
+.cart-form {
+    flex: 1;
+}
+
+.cart-form button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.cart-form button.btn-primary {
+    background: var(--primary-color);
+    color: var(--light-text);
+}
+
+.cart-form button.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.2);
+}
+
+.cart-form button.btn-secondary {
+    background: var(--secondary-color);
+    color: var(--light-text);
+}
+
+.cart-form button.btn-secondary:hover {
+    background: var(--secondary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--secondary-rgb), 0.2);
+}
+
+/* Style des boutons de navigation de la galerie */
+.gallery-prev,
+.gallery-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 5;
+    color: var(--primary-color);
+}
+
+.gallery-prev:hover,
+.gallery-next:hover {
+    background: var(--light-text);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style du bouton favori */
+.favorite-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--light-text);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.favorite-btn i {
+    color: var(--danger);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.favorite-btn i.active {
+    color: var(--danger);
+    transform: scale(1.2);
+}
+
+/* Style du bouton retour */
+.btn-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.btn-link:hover {
+    color: var(--primary-dark);
+    background: rgba(var(--primary-rgb), 0.1);
+    transform: translateX(-2px);
+}
+
+/* Style des boutons de quantité */
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--border-color);
+    background: var(--light-text);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    color: var(--primary-color);
+}
+
+.quantity-btn:hover {
+    background: var(--light);
+    border-color: var(--primary-color);
+    color: var(--primary-dark);
+}
+
+/* Style du bouton supprimer */
+.remove-btn {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.remove-btn:hover {
+    color: var(--danger-dark);
+    transform: scale(1.1);
+}
+
+/* Style des boutons */
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.2);
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: var(--secondary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--secondary-rgb), 0.2);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .button-group {
+        flex-direction: column;
+    }
+
+    .cart-form button {
+        padding: 0.8rem 1.2rem;
+    }
+
+    .btn {
+        padding: 0.8rem 1.2rem;
+    }
+} 

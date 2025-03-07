@@ -24,43 +24,43 @@ ob_start();
         <div class="story-content">
             <div class="story-text">
                 <h2>L'origine de Teran'Cars</h2>
-                <p>Fondée en 2020, Teran'Cars est née d'une vision unique : allier l'hospitalité légendaire du Sénégal, la "Teranga", au monde de l'automobile. Notre nom, fusion de "Teranga" et "Cars", reflète notre engagement à offrir bien plus qu'un simple service automobile - nous créons une expérience chaleureuse et authentique.</p>
+                <p>Teran'Cars est une entreprise de transport et de mobilité basée à Dakar, au Sénégal. Notre nom, fusion de "Teranga" (l'hospitalité légendaire sénégalaise) et "Cars", reflète notre engagement à offrir des solutions de transport fiables et efficaces, imprégnées de la chaleur de l'accueil sénégalais.</p>
                 
                 <h2>Notre Vision</h2>
-                <p>Chez Teran'Cars, nous croyons que l'achat ou la location d'un véhicule devrait être une expérience aussi agréable qu'enrichissante. Nous apportons la chaleur de l'accueil sénégalais dans chaque interaction, transformant une simple transaction en une relation durable.</p>
+                <p>Nous sommes engagés à fournir des solutions de transport fiables et efficaces à nos clients. Notre approche combine l'excellence du service avec la tradition d'hospitalité sénégalaise, créant ainsi une expérience unique pour chaque client.</p>
                 
-                <h2>Nos Valeurs</h2>
+                <h2>Nos Services</h2>
                 <div class="values-grid">
                     <div class="value-card">
-                        <i class="fas fa-handshake"></i>
-                        <h3>Teranga</h3>
-                        <p>L'hospitalité légendaire du Sénégal guide chacune de nos interactions</p>
+                        <i class="fas fa-car"></i>
+                        <h3>Location de véhicules</h3>
+                        <p>Une flotte moderne et diversifiée pour tous vos besoins</p>
                     </div>
                     <div class="value-card">
-                        <i class="fas fa-star"></i>
-                        <h3>Excellence</h3>
-                        <p>Une sélection rigoureuse de véhicules et un service irréprochable</p>
+                        <i class="fas fa-truck"></i>
+                        <h3>Services de transport</h3>
+                        <p>Solutions de transport adaptées à vos exigences</p>
                     </div>
                     <div class="value-card">
-                        <i class="fas fa-heart"></i>
-                        <h3>Authenticité</h3>
-                        <p>Des relations sincères et transparentes avec nos clients</p>
+                        <i class="fas fa-route"></i>
+                        <h3>Solutions de mobilité</h3>
+                        <p>Des options flexibles pour votre mobilité quotidienne</p>
                     </div>
                 </div>
             </div>
             
             <div class="story-stats">
                 <div class="stat-card">
-                    <span class="stat-number">3+</span>
-                    <span class="stat-label">Années d'expérience</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-number">500+</span>
-                    <span class="stat-label">Clients satisfaits</span>
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Support client disponible</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-number">100+</span>
                     <span class="stat-label">Véhicules disponibles</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">1000+</span>
+                    <span class="stat-label">Clients satisfaits</span>
                 </div>
             </div>
         </div>

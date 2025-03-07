@@ -48,6 +48,13 @@ if (!defined('ROOT_PATH')) {
                     <i class="fas fa-info-circle"></i>
                     À propos
                 </a>
+                <a href="<?= url('pages/panier/') ?>" class="<?= $currentPage === 'panier' ? 'active' : '' ?>">
+                    <i class="fas fa-shopping-cart"></i>
+                    Panier
+                    <?php if (!empty($_SESSION['panier'])): ?>
+                        <span class="cart-count"><?= count($_SESSION['panier']) ?></span>
+                    <?php endif; ?>
+                </a>
             </div>
 
             <div class="nav-auth">
@@ -81,19 +88,18 @@ if (!defined('ROOT_PATH')) {
             <div class="footer-section contact">
                 <h3>Contactez-nous</h3>
                 <p>
-                    <span><i class="fas fa-phone"></i> +33 1 23 45 67 89</span>
-                    <span><i class="fas fa-envelope"></i> contact@terancars.fr</span>
-                    <span><i class="fas fa-map-marker-alt"></i> 123 Avenue des Véhicules, 75000 Paris</span>
+                    <span><i class="fas fa-phone"></i> +221 78 123 45 67 / +221 33 823 45 67</span>
+                    <span><i class="fas fa-envelope"></i> contact@terancars.sn</span>
+                    <span><i class="fas fa-map-marker-alt"></i> 97 Route de la Corniche Dakar, Sénégal</span>
                 </p>
             </div>
             
             <div class="footer-section social">
                 <h3>Suivez-nous</h3>
                 <div class="socials">
-                    <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
-                    <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.facebook.com/Terancars" title="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/terancars_sn" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/company/terancars" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                 </div>
             </div>
         </div>

@@ -5,7 +5,9 @@
 /* Variables globales */
 :root {
     --primary-color: #0B1A30;    /* Bleu marine du design TeranCar */
+    --primary-dark: #06111f;     /* Version plus foncée du bleu marine */
     --secondary-color: #B088B0;  /* Rose du design TeranCar */
+    --secondary-dark: #8e6d8e;   /* Version plus foncée du rose */
     --text-color: #333333;
     --light-text: #ffffff;
     --background-light: #f5f5f5;
@@ -15,6 +17,17 @@
     --text-muted: #cccccc;
     --max-width: 1200px;
     --header-height: 90px;
+    --success: #28a745;
+    --success-light: #d4edda;
+    --danger: #dc3545;
+    --danger-light: #f8d7da;
+    --danger-dark: #bd2130;
+    --border-color: #e9ecef;
+    --light: #f8f9fa;
+    
+    /* Variables RGB pour les effets de transparence */
+    --primary-rgb: 11, 26, 48;
+    --secondary-rgb: 176, 136, 176;
     
     /* Typographie */
     --font-primary: 'Poppins', sans-serif;
@@ -62,129 +75,205 @@ h1, h2, h3, h4, h5, h6 {
 /* Header */
 .header {
     background-color: var(--primary-color);
-    height: 90px;
+    height: var(--header-height);
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
 }
 
+/* Navigation principale */
 .nav-main {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: space-between;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 2rem;
     height: 100%;
-    padding: 0;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    padding-left: 0;
+    padding-left: 2rem; /* Ajout d'un padding à gauche */
+    margin-right: auto;
+    transform: translateX(-1rem); /* Décalage supplémentaire vers la gauche */
 }
 
 .logo a {
-    text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 0.2rem;
+    text-decoration: none;
+    gap: 1rem;
 }
 
 .logo-img {
-    height: 65px;
+    height: 55px;
     width: auto;
-    object-fit: contain;
-    margin-right: 0.2rem;
 }
 
 .logo-text {
-    font-family: var(--font-primary);
     font-size: 2.2rem;
     font-weight: 700;
-    color: var(--light-text);
-    letter-spacing: -0.5px;
-    display: flex;
-    align-items: center;
+    color: white;
 }
 
 .logo-text .highlight {
     color: var(--secondary-color);
-    margin-left: 1px;
 }
 
 .nav-links {
     display: flex;
-    justify-content: center;
+    align-items: center;
     gap: 2rem;
-    margin: 0;
+    justify-content: center;
 }
 
 .nav-links a {
     color: var(--light-text);
     text-decoration: none;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    font-size: var(--font-size-base);
-    font-weight: 500;
-    transition: color 0.3s ease;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
     white-space: nowrap;
 }
 
-.nav-links a:hover,
+.nav-links a i {
+    font-size: 1.1rem;
+}
+
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
 .nav-links a.active {
-    color: var(--secondary-color);
+    background: var(--secondary-color);
+    color: var(--light-text);
 }
 
-.nav-links i {
-    font-size: 1.2rem;
+.nav-links a.active:hover {
+    background: var(--secondary-dark);
 }
 
-/* Boutons d'authentification */
 .nav-auth {
     display: flex;
-    gap: 1rem;
     align-items: center;
-    margin-left: 1rem;
+    gap: 1rem;
 }
 
-.btn-outline {
-    border: 2px solid var(--light-text);
+.nav-auth .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-auth .btn-outline {
+    border-color: var(--light-text);
     color: var(--light-text);
-    background: transparent;
 }
 
-.btn-outline:hover {
-    background-color: var(--light-text);
-    color: var(--primary-color);
+.nav-auth .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--light-text);
+    transform: translateY(-1px);
+    box-shadow: none;
+}
+
+.nav-auth .btn-secondary {
+    background: var(--secondary-color);
+    color: var(--light-text);
+    border: none;
+}
+
+.nav-auth .btn-secondary:hover {
+    background: var(--secondary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(var(--secondary-rgb), 0.2);
+}
+
+/* Style pour le compteur du panier */
+.nav-links a .cart-count {
+    background: var(--danger);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 10px;
+    margin-left: 0.25rem;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-    .container {
-        padding: 0 15px;
+@media (max-width: 1200px) {
+    .nav-links {
+        gap: 1rem;
     }
-    
+}
+
+@media (max-width: 992px) {
     .nav-main {
-        padding: 0 0.5rem;
+        flex-wrap: wrap;
+        padding: 1rem;
     }
 
-    .logo {
-        padding-right: 1rem;
-    }
-    
     .nav-links {
-        display: none;
+        order: 3;
+        width: 100%;
+        justify-content: space-around;
+        margin: 1rem 0 0;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
+
+    .nav-links a {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
     .nav-auth {
         gap: 0.5rem;
-        margin-left: 1rem;
     }
-    
-    .btn {
-        padding: 8px 16px;
+
+    .nav-auth .btn {
+        padding: 0.4rem 0.8rem;
         font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .logo-text {
+        font-size: 1.2rem;
+    }
+
+    .logo-img {
+        height: 30px;
+    }
+
+    .nav-links {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .nav-links::-webkit-scrollbar {
+        height: 3px;
+    }
+
+    .nav-links::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
     }
 }
 
@@ -384,6 +473,42 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     gap: 1rem;
     justify-content: center;
+}
+
+.hero-buttons .btn-primary {
+    background: var(--primary-color);
+    color: var(--light-text);
+}
+
+.hero-buttons .btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.2);
+}
+
+.hero-buttons .btn-outline {
+    background: var(--secondary-color);
+    color: var(--light-text);
+    border: none;
+}
+
+.hero-buttons .btn-outline:hover {
+    background: var(--secondary-dark);
+    color: var(--light-text);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--secondary-rgb), 0.2);
+}
+
+.hero-buttons .btn-secondary {
+    background: var(--secondary-color);
+    color: var(--light-text);
+    border: none;
+}
+
+.hero-buttons .btn-secondary:hover {
+    background: var(--secondary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(var(--secondary-rgb), 0.2);
 }
 
 /* Section Recherche */
@@ -821,23 +946,126 @@ section {
 
 /* Boutons */
 .btn {
-    display: inline-block;
-    padding: 12px 28px;
-    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
     text-decoration: none;
-    font-weight: 500;
     transition: all 0.3s ease;
-    font-family: var(--font-primary);
-    font-size: var(--font-size-base);
-    letter-spacing: 0.5px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    white-space: nowrap;
+}
+
+.btn i {
+    font-size: 1.1rem;
 }
 
 .btn-primary {
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     color: var(--light-text);
 }
 
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.2);
+}
+
 .btn-secondary {
-    background-color: var(--secondary-color);
+    background: var(--secondary-color);
     color: var(--light-text);
+}
+
+.btn-secondary:hover {
+    background: var(--secondary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--secondary-rgb), 0.2);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: calc(0.8rem - 2px) calc(1.5rem - 2px);
+}
+
+.btn-outline:hover {
+    background: var(--primary-color);
+    color: var(--light-text);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.2);
+}
+
+.btn-link {
+    background: transparent;
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.btn-link:hover {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary-dark);
+}
+
+/* Navigation principale */
+.nav-links a {
+    color: var(--light-text);
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.nav-links a.active {
+    background: var(--secondary-color);
+    color: var(--light-text);
+}
+
+.nav-links a.active:hover {
+    background: var(--secondary-dark);
+}
+
+/* Boutons d'authentification */
+.nav-auth .btn-outline {
+    border-color: var(--light-text);
+    color: var(--light-text);
+}
+
+.nav-auth .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--light-text);
+    transform: translateY(-1px);
+    box-shadow: none;
+}
+
+.nav-auth .btn-secondary:hover {
+    background: var(--secondary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(var(--secondary-rgb), 0.2);
+}
+
+/* Style pour le compteur du panier */
+.nav-links a .cart-count {
+    background: var(--danger);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 10px;
+    margin-left: 0.25rem;
 } 

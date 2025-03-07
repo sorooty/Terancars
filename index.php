@@ -12,7 +12,7 @@ $testimonials = getTestimonials(3);
 
 // Variables de la page
 $pageTitle = "Accueil";
-$pageDescription = "Teran'Cars - Votre partenaire de confiance pour l'achat et la location de véhicules de qualité";
+$pageDescription = "Teran'Cars - Votre partenaire de confiance pour le transport et la mobilité à Dakar, Sénégal";
 $currentPage = 'home';
 
 // Début de la mise en mémoire tampon
@@ -23,7 +23,7 @@ ob_start();
 <section class="hero">
     <div class="hero-content container">
         <h1>Bienvenue chez Teran'Cars</h1>
-        <p class="hero-subtitle">Votre partenaire de confiance pour l'achat et la location de véhicules de qualité</p>
+        <p class="hero-subtitle">Votre partenaire de confiance pour des solutions de transport fiables et efficaces à Dakar</p>
         <div class="hero-buttons">
             <a href="<?= url('pages/catalogue/') ?>" class="btn btn-primary">Voir notre catalogue</a>
             <a href="<?= url('pages/contact/') ?>" class="btn btn-outline">Nous contacter</a>
@@ -65,7 +65,7 @@ ob_start();
                             <span><i class="fas fa-gas-pump"></i> <?= htmlspecialchars($vehicle['carburant']) ?></span>
                             <span><i class="fas fa-cog"></i> <?= htmlspecialchars($vehicle['transmission']) ?></span>
                         </div>
-                        <a href="<?= url('pages/vehicule/' . $vehicle['id_vehicule']) ?>" class="btn btn-primary">Voir détails</a>
+                        <a href="<?= url('vehicule/detail?id=' . $vehicle['id_vehicule']) ?>" class="btn btn-primary">Voir détails</a>
                     </div>
                 </div>
                 <?php endforeach; ?>

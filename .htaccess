@@ -20,6 +20,9 @@ RewriteRule ^(assets|images|js|css)/(.*)$ public/$1/$2 [L]
 # Redirection des pages d'authentification
 RewriteRule ^auth/([^/]+)$ public/pages/auth/$1.php [L,QSA]
 
+# Redirection des pages de détail des véhicules
+RewriteRule ^vehicule/detail$ public/pages/vehicule/detail.php [L,QSA]
+
 # Redirection des autres pages
 RewriteRule ^([^/]+)/?$ public/pages/$1/index.php [L,QSA]
 
