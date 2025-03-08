@@ -1,8 +1,5 @@
 # TeranCar - Plateforme de Vente et Location de Véhicules
 
-<div align="center">
-  <img src="public/images/logo/logo.png" alt="TeranCar Logo" width="400"/>
-  <br/>
   <img src="public/images/banners/TeranCarsBan.png" alt="TeranCar Banner" width="100%"/>
 </div>
 
@@ -27,7 +24,6 @@ TeranCar est une application web moderne pour la vente et la location de véhicu
 - 🔄 Tri par prix et année
 - 🛒 Système de panier pour l'achat et la location
 - 👤 Gestion des comptes utilisateurs
-- 💖 Système de favoris
 - 📱 Interface responsive
 
 ## 📋 Prérequis
@@ -69,7 +65,8 @@ Le projet est déployé automatiquement sur Railway à partir de la branche prin
 
 ## 📞 Informations de contact (Fictives)
 
-- **Téléphone** : +221 78 465 59 27 
+- **Téléphone** : +221 78 123 45 67 / +221 33 823 45 67
+
 - **Email** : contact@terancars.sn
 - **Adresse** : 97 Route de la Corniche Dakar, Sénégal
 
@@ -146,5 +143,5 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 Pour toute question ou suggestion :
 - Ouvrez une issue sur GitHub
-- Contactez-nous par email : contact@terancars.sn
-- Appelez-nous : +221 78 123 45 67 
+- Contactez-nous par email : senseybalde@gmail.com
+- Appelez-nous : +221 78 465 59 27
