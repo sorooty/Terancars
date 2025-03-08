@@ -12,22 +12,24 @@ define('SITE_NAME', 'Teran\'Cars');
 define('SITE_URL', '/DaCar');
 
 // Configuration de la base de données
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'terancar');
-define('DB_PORT', '3307');
+$url = parse_url(getenv("MYSQLDATABASE_URL") ?: "mysql://root:@localhost:3307/terancar");
+
+$host = $url["host"] ?? 'localhost';
+$username = $url["user"] ?? 'root';
+$password = $url["pass"] ?? '';
+$dbname = isset($url["path"]) ? ltrim($url["path"], '/') : 'terancar';
+$port = $url["port"] ?? 3307;
 
 // Connexion à la base de données
 try {
     $db = new PDO(
-        "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8",
-        DB_USER,
-        DB_PASS,
+        "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
+        $username,
+        $password,
         [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
         ]
     );
 } catch(PDOException $e) {
