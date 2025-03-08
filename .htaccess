@@ -1,5 +1,8 @@
 Options -Indexes
 
+# Activation PHP dans le cas où l'interpréteur ne fonctionnerait pas automatiquement
+AddType application/x-httpd-php .php
+
 # Activation du module de réécriture d'URL
 RewriteEngine On
 
@@ -38,4 +41,13 @@ ErrorDocument 403 /DaCar/public/pages/errors/403.php
 
 # Forcer HTTPS (à décommenter en production)
 # RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301] 
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Redirection de toutes les requêtes vers le dossier public
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Si le fichier demandé n'existe pas, rediriger vers index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L] 
