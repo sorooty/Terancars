@@ -1,206 +1,150 @@
 # TeranCar - Plateforme de Vente et Location de Véhicules
 
-![TeranCar Logo](public/assets/images/logo.png)
+<div align="center">
+  <img src="public/images/logo/logo.png" alt="TeranCar Logo" width="400"/>
+  <br/>
+  <img src="public/images/banners/TeranCarsBan.png" alt="TeranCar Banner" width="100%"/>
+</div>
 
-## 📝 Description
+TeranCar est une application web moderne pour la vente et la location de véhicules à Dakar, développée avec PHP et MySQL.
 
-TeranCar est une plateforme web moderne dédiée à la vente et à la location de véhicules de qualité. Notre site offre une expérience utilisateur intuitive et élégante, permettant aux clients de parcourir, comparer et choisir parmi une large sélection de véhicules.
+🌐 **Site en production** : [https://terancar-production.up.railway.app/](https://terancar-production.up.railway.app/)
+
+<div align="center">
+  <p>
+    <a href="https://terancar-production.up.railway.app/">
+      <img src="https://img.shields.io/badge/Production-Railway-blue?style=for-the-badge&logo=railway" alt="Railway Production"/>
+    </a>
+    <a href="LICENSE">
+      <img src="https://img.shields.io/badge/License-MIT-purple.svg?style=for-the-badge" alt="MIT License"/>
+    </a>
+  </p>
+</div>
 
 ## 🚀 Fonctionnalités
 
-- **Catalogue Interactif** : Parcourez notre sélection de véhicules avec des filtres avancés
-- **Système d'Authentification** : Création de compte et connexion sécurisée
-- **Interface Responsive** : Design adaptatif pour tous les appareils
-- **Section Marques** : Accès rapide aux véhicules par marque
-- **Système de Contact** : Formulaire de contact et informations de l'entreprise
-- **Avis Clients** : Témoignages et retours d'expérience
+- 🔍 Recherche et filtrage avancés des véhicules
+- 🔄 Tri par prix et année
+- 🛒 Système de panier pour l'achat et la location
+- 👤 Gestion des comptes utilisateurs
+- 💖 Système de favoris
+- 📱 Interface responsive
 
-## 🛠 Technologies Utilisées
+## 📋 Prérequis
 
-- HTML5
-- CSS3 (avec variables CSS pour une personnalisation facile)
-- JavaScript
-- PHP
-- Font Awesome pour les icônes
-- Google Fonts (Poppins)
+- PHP 8.0 ou supérieur
+- MySQL 5.7 ou supérieur
+- Apache 2.4 ou supérieur
+- XAMPP (recommandé pour le développement local)
 
-## 🎨 Design
+## ⚙️ Installation
 
-Le site utilise une palette de couleurs moderne et professionnelle :
-- Bleu marine (`#0B1A30`) : Couleur principale
-- Rose/Violet (`#B088B0`) : Couleur secondaire/accent
-- Blanc et nuances de gris pour le contraste
+### Développement local
 
-## 💻 Installation
-
-1. Clonez le repository :
+1. Clonez le dépôt dans votre dossier htdocs de XAMPP :
 ```bash
-git clone https://github.com/votre-username/TeranCar.git
+git clone https://github.com/votre-username/DaCar.git
+cd DaCar
 ```
 
-2. Placez les fichiers dans votre serveur web (par exemple, dans le dossier `htdocs` de XAMPP)
+2. Configurez votre base de données MySQL en important le fichier SQL fourni.
 
-3. Assurez-vous que PHP est installé et configuré
+3. Configurez les paramètres de connexion à la base de données dans `config/config.php`.
 
-4. Accédez au site via votre navigateur :
+4. Assurez-vous que les services Apache et MySQL sont démarrés dans XAMPP.
+
+### Déploiement Railway
+
+Le projet est déployé automatiquement sur Railway à partir de la branche principale. La configuration inclut :
+- Base de données MySQL hébergée sur Railway
+- Variables d'environnement pour les connexions sécurisées
+- HTTPS automatique
+- Déploiement continu
+
+## 🌐 Accès à l'application
+
+- **Production** : [https://terancar-production.up.railway.app/](https://terancar-production.up.railway.app/)
+- **Local** : `http://localhost/DaCar`
+- **PhpMyAdmin (local)** : `http://localhost/phpmyadmin`
+
+## 📞 Informations de contact (Fictives)
+
+- **Téléphone** : +221 78 465 59 27 
+- **Email** : contact@terancars.sn
+- **Adresse** : 97 Route de la Corniche Dakar, Sénégal
+
+## 🎨 Structure du projet
+
 ```
-http://localhost/TeranCar
-```
-
-## 📁 Structure du Projet
-
-```
-TeranCar/
-├── app/
-│   ├── config/
-│   │   ├── database.php      # Configuration de la base de données
-│   │   └── config.php        # Variables globales et constantes
-│   ├── controllers/
-│   │   ├── AuthController.php          # Gestion authentification
-│   │   ├── VehicleController.php       # Gestion des véhicules
-│   │   └── ContactController.php       # Gestion des contacts
-│   ├── models/
-│   │   ├── Database.php     # Classe de connexion à la BDD
-│   │   ├── User.php         # Gestion des utilisateurs
-│   │   ├── Vehicle.php      # Gestion des véhicules
-│   │   └── Booking.php      # Gestion des réservations
-│   └── views/
-│       ├── layouts/
-│       │   ├── header.php   # En-tête commune
-│       │   └── footer.php   # Pied de page commun
-│       ├── auth/
-│       │   ├── login.php    # Page de connexion
-│       │   └── register.php # Page d'inscription
-│       └── vehicles/
-│           ├── list.php     # Liste des véhicules
-│           └── detail.php   # Détail d'un véhicule
-├── public/
-│   ├── assets/
-│   │   ├── css/
-│   │   │   ├── style.css              # Styles globaux
-│   │   │   ├── components/            # Styles des composants
-│   │   │   │   ├── header.css
-│   │   │   │   ├── footer.css
-│   │   │   │   └── forms.css
-│   │   │   └── pages/                 # Styles spécifiques aux pages
-│   │   │       ├── home.css
-│   │   │       └── catalogue.css
-│   │   ├── js/
-│   │   │   ├── main.js               # JavaScript principal
-│   │   │   └── components/           # Scripts des composants
-│   │   │       ├── slider.js
-│   │   │       └── filter.js
-│   │   └── images/
-│   │       ├── logo/
-│   │       └── vehicles/
-│   ├── includes/             # Fichiers d'inclusion PHP
-│   │   ├── functions.php    # Fonctions utilitaires
-│   │   └── process/         # Traitement des formulaires
-│   │       ├── auth.php     # Traitement authentification
-│   │       └── contact.php  # Traitement formulaire contact
-│   └── index.php            # Point d'entrée principal
-├── database/
-│   └── terancar.sql         # Structure et données initiales
+DaCar/
+├── config/             # Configuration de la base de données
+├── includes/           # Fichiers d'inclusion PHP
+├── public/            
+│   ├── assets/        # CSS, JS, images
+│   ├── images/        # Images des véhicules
+│   └── pages/         # Pages de l'application
+├── .htaccess          # Configuration Apache
 └── README.md
-
 ```
 
-## 🔄 Liaison Front-end/Back-end
+## 🔧 Configuration
 
-### 1. Configuration de la Base de Données
-```php
-// app/config/database.php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'terancar');
-```
+### Base de données
+- **Local** :
+  - Nom de la base : `dacar`
+  - Utilisateur : `root`
+  - Mot de passe : `` (vide)
+- **Production** :
+  - Configuration via variables d'environnement Railway
+  - Connexion sécurisée SSL/TLS
 
-### 2. Exemple de Modèle
-```php
-// app/models/Vehicle.php
-class Vehicle {
-    private $db;
+### Apache
+Le fichier `.htaccess` est configuré pour :
+- Gérer les redirections
+- Protéger les fichiers sensibles
+- Activer la réécriture d'URL
+- Gérer les erreurs 404 et 403
+- Forcer HTTPS en production
 
-    public function __construct() {
-        $this->db = new Database();
-    }
+## 🛠️ Développement
 
-    public function getAllVehicles() {
-        $query = "SELECT * FROM vehicles";
-        return $this->db->query($query);
-    }
-}
-```
+Pour travailler sur le projet en local :
+1. Assurez-vous que XAMPP est installé et que les services sont démarrés
+2. Placez le projet dans le dossier `htdocs`
+3. Accédez à l'application via `http://localhost/DaCar`
 
-### 3. Exemple de Contrôleur
-```php
-// app/controllers/VehicleController.php
-class VehicleController {
-    private $vehicleModel;
+## 🔐 Sécurité
 
-    public function __construct() {
-        $this->vehicleModel = new Vehicle();
-    }
+- Protection contre les injections SQL
+- Validation des entrées utilisateur
+- Protection des fichiers sensibles
+- Gestion sécurisée des sessions
+- HTTPS forcé en production
+- Variables d'environnement sécurisées
 
-    public function showVehicles() {
-        $vehicles = $this->vehicleModel->getAllVehicles();
-        require_once '../app/views/vehicles/list.php';
-    }
-}
-```
+## 📱 Responsive Design
 
-### 4. Exemple de Vue
-```php
-// app/views/vehicles/list.php
-<?php require_once '../app/views/layouts/header.php'; ?>
-
-<div class="vehicles-list">
-    <?php foreach($vehicles as $vehicle): ?>
-        <div class="vehicle-card">
-            <img src="<?= $vehicle['image'] ?>" alt="<?= $vehicle['name'] ?>">
-            <h3><?= $vehicle['name'] ?></h3>
-            <p><?= $vehicle['price'] ?> €</p>
-        </div>
-    <?php endforeach; ?>
-</div>
-
-<?php require_once '../app/views/layouts/footer.php'; ?>
-```
-
-### 5. Traitement des Formulaires
-```php
-// public/includes/process/contact.php
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = htmlspecialchars($_POST['name']);
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    $message = htmlspecialchars($_POST['message']);
-    
-    // Traitement et envoi à la base de données
-}
-```
-
-Cette structure simplifiée permet :
-- Une séparation claire entre front-end et back-end
-- Une organisation logique des fichiers
-- Une maintenance facile
-- Une intégration simple du travail d'équipe
+L'application est entièrement responsive et s'adapte à tous les appareils :
+- Desktop (>1200px)
+- Tablette (768px - 1199px)
+- Mobile (<767px)
 
 ## 🤝 Contribution
 
 Les contributions sont les bienvenues ! N'hésitez pas à :
 1. Fork le projet
 2. Créer une branche pour votre fonctionnalité
-3. Commit vos changements
-4. Push sur la branche
+3. Commiter vos changements
+4. Pousser vers la branche
 5. Ouvrir une Pull Request
 
-## 📫 Contact
+## 📝 License
 
-- Site Web : (à insérer après hosting)
-- Email : contact@terancar.fr
-- Téléphone : +33 1 23 45 67
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
-## 📝 Licence
+## 📧 Contact
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails. 
+Pour toute question ou suggestion :
+- Ouvrez une issue sur GitHub
+- Contactez-nous par email : contact@terancars.sn
+- Appelez-nous : +221 78 123 45 67 

@@ -23,3 +23,82 @@ xampp/
 htdocs/
 .vscode/
 .idea/
+
+# Fichiers de configuration d'environnement
+.env
+*.env
+.env.local
+.env.*.local
+# => Contiennent des informations sensibles comme les clés API et les identifiants de base de données
+
+# Fichiers de configuration IDE/Editeur
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+# => Configurations spécifiques à l'environnement de développement local
+
+# Dépendances et packages
+/vendor/
+/node_modules/
+composer.lock
+package-lock.json
+# => Peuvent être régénérés à partir des fichiers composer.json/package.json
+
+# Fichiers de cache
+*.cache
+.php_cs.cache
+.phpunit.result.cache
+# => Fichiers temporaires qui peuvent être régénérés
+
+# Fichiers de logs
+/logs/
+*.log
+php_errors.log
+# => Contiennent des informations de débogage et peuvent révéler des détails sensibles
+
+# Fichiers de session PHP
+/sessions/
+# => Contiennent des données utilisateur temporaires
+
+# Fichiers de sauvegarde
+*.bak
+*.swp
+*~
+# => Fichiers temporaires créés par les éditeurs
+
+# Fichiers de configuration locale XAMPP
+/config/config.local.php
+# => Configuration spécifique à l'environnement local
+
+# Fichiers uploadés par les utilisateurs
+/public/uploads/
+/public/images/vehicules/*
+!/public/images/vehicules/default-car.jpg
+# => Contenu généré par les utilisateurs, à stocker séparément
+
+# Fichiers de build et de compilation
+/dist/
+/build/
+/public/assets/dist/
+# => Peuvent être régénérés à partir du code source
+
+# Fichiers de base de données
+*.sql
+*.sqlite
+# => Sauvegardes de base de données qui peuvent contenir des données sensibles
+
+# Certificats SSL et clés
+*.pem
+*.key
+*.crt
+# => Informations de sécurité sensibles
+
+# Fichiers de test et couverture
+/coverage/
+.phpunit.cache/
+# => Rapports générés localement
+
+# Documentation générée
+/docs/generated/
+# => Peut être régénérée à partir du code source
