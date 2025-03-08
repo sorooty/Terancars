@@ -1,6 +1,6 @@
 <?php
 /**
- * Fonctions utilitaires pour le site
+ * Fonctions utilitaires pour l'application
  */
 
 /**
@@ -11,17 +11,55 @@ function formatPrice($price) {
 }
 
 /**
- * Retourne l'URL complète d'un asset
+ * Vérifie si l'utilisateur est connecté
+ * @return bool
  */
-function asset($path) {
-    return '/DaCar/assets/' . ltrim($path, '/');
+function isLoggedIn() {
+    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
 
 /**
- * Retourne l'URL complète d'une page
+ * Redirige vers une URL
+ * @param string $url
  */
-function url($path) {
-    return '/DaCar/' . ltrim($path, '/');
+function redirect($url) {
+    header("Location: " . $url);
+    exit();
+}
+
+/**
+ * Génère une URL absolue
+ * @param string $path
+ * @return string
+ */
+function url($path = '') {
+    $baseUrl = '/DaCar/';
+    return $baseUrl . ltrim($path, '/');
+}
+
+/**
+ * Génère une URL pour les assets
+ * @param string $path
+ * @return string
+ */
+function asset($path = '') {
+    return url('assets/' . ltrim($path, '/'));
+}
+
+/**
+ * Affiche un message d'erreur
+ * @param string $message
+ */
+function displayError($message) {
+    $_SESSION['error_message'] = $message;
+}
+
+/**
+ * Affiche un message de succès
+ * @param string $message
+ */
+function displaySuccess($message) {
+    $_SESSION['success_message'] = $message;
 }
 
 /**
@@ -39,17 +77,26 @@ function getVehicleImage($marque, $modele) {
 }
 
 /**
- * Vérifie si l'utilisateur est connecté
- * @return bool
- */
-function isLoggedIn() {
-    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
-}
-
-/**
  * Vérifie si l'utilisateur est un administrateur
  * @return bool
  */
 function isAdmin() {
     return isLoggedIn() && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+}
+
+/**
+ * Retourne le chemin correct pour une image de véhicule
+ * @param int $vehicleId
+ * @param string $type
+ * @return string
+ */
+function getVehicleImagePath($vehicleId, $type = 'main') {
+    $basePath = $_SERVER['DOCUMENT_ROOT'] . '/DaCar/assets/images/vehicules/';
+    $imagePath = $basePath . $vehicleId . '/' . $type . '.jpg';
+    
+    if (file_exists($imagePath)) {
+        return asset('images/vehicules/' . $vehicleId . '/' . $type . '.jpg');
+    }
+    
+    return asset('images/default-car.jpg');
 } 

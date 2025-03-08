@@ -221,12 +221,7 @@ try {
                 <?php foreach ($vehicules as $vehicule): ?>
                     <div class="vehicule-card">
                         <div class="vehicule-image">
-                            <?php
-                            $imagePath = 'public/assets/images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg';
-                            $defaultImage = 'public/assets/images/default-car.jpg';
-                            $imageUrl = file_exists($imagePath) ? asset('images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg') : asset('images/default-car.jpg');
-                            ?>
-                            <img src="<?= $imageUrl ?>" 
+                            <img src="<?= getVehicleImagePath($vehicule['id_vehicule']) ?>" 
                                  alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>">
                             <?php if ($vehicule['stock'] > 0): ?>
                                 <span class="badge badge-success">Disponible</span>
