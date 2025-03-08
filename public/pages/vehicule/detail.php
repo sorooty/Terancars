@@ -1,6 +1,6 @@
 <?php
 // Inclusion du fichier d'initialisation
-require_once '../../../includes/init.php';
+require_once ROOT_PATH . '/includes/init.php';
 
 // Récupération de l'ID du véhicule depuis l'URL
 $vehicleId = isset($_GET['id']) ? intval($_GET['id']) : 0;

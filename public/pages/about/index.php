@@ -1,6 +1,6 @@
 <?php
 // Inclusion du fichier d'initialisation
-require_once '../../../includes/init.php';
+require_once ROOT_PATH . '/includes/init.php';
 
 // Variables de la page
 $pageTitle = "À propos";

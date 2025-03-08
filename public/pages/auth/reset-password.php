@@ -1,4 +1,7 @@
 <?php
+// Inclusion du fichier d'initialisation
+require_once ROOT_PATH . '/includes/init.php';
+
 require_once '../../../config/config.php';
 ?>
 <!DOCTYPE html>

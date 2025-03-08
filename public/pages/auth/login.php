@@ -1,5 +1,6 @@
 <?php
-require_once '../../../includes/init.php';
+// Inclusion du fichier d'initialisation
+require_once ROOT_PATH . '/includes/init.php';
 
 // Variables de la page
 $pageTitle = "Connexion";
