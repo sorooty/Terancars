@@ -4,18 +4,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetButton = document.getElementById('reset-filtres');
 
     if (filtresForm) {
-        // Mise à jour automatique lors du changement de valeur
+        // Gestion des champs de formulaire
         filtresForm.querySelectorAll('select, input').forEach(input => {
             input.addEventListener('change', () => {
-                if (input.type !== 'number' || input.value !== '') {
+                // Ne soumet pas automatiquement pour les champs numériques
+                if (input.type !== 'number') {
                     filtresForm.submit();
                 }
             });
+
+            // Pour les champs numériques, ajouter un délai
+            if (input.type === 'number') {
+                let timeout;
+                input.addEventListener('input', () => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        if (input.value !== '') {
+                            filtresForm.submit();
+                        }
+                    }, 1000); // Délai d'une seconde
+                });
+            }
         });
 
         // Gestion du bouton reset
         resetButton.addEventListener('click', (e) => {
             e.preventDefault();
+            // Réinitialiser tous les champs
+            filtresForm.querySelectorAll('select, input').forEach(input => {
+                input.value = '';
+            });
+            // Rediriger vers la page du catalogue sans paramètres
             window.location.href = window.location.pathname;
         });
 
@@ -26,28 +45,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const anneeMax = document.querySelector('input[name="annee_max"]');
 
         // Validation du prix
-        prixMin.addEventListener('change', () => {
-            if (prixMax.value && parseInt(prixMin.value) > parseInt(prixMax.value)) {
+        prixMin?.addEventListener('change', () => {
+            if (prixMax?.value && parseInt(prixMin.value) > parseInt(prixMax.value)) {
                 prixMin.value = prixMax.value;
+            }
+            if (prixMin.value !== '') {
+                filtresForm.submit();
             }
         });
 
-        prixMax.addEventListener('change', () => {
-            if (prixMin.value && parseInt(prixMax.value) < parseInt(prixMin.value)) {
+        prixMax?.addEventListener('change', () => {
+            if (prixMin?.value && parseInt(prixMax.value) < parseInt(prixMin.value)) {
                 prixMax.value = prixMin.value;
+            }
+            if (prixMax.value !== '') {
+                filtresForm.submit();
             }
         });
 
         // Validation de l'année
-        anneeMin.addEventListener('change', () => {
-            if (anneeMax.value && parseInt(anneeMin.value) > parseInt(anneeMax.value)) {
+        anneeMin?.addEventListener('change', () => {
+            if (anneeMax?.value && parseInt(anneeMin.value) > parseInt(anneeMax.value)) {
                 anneeMin.value = anneeMax.value;
+            }
+            if (anneeMin.value !== '') {
+                filtresForm.submit();
             }
         });
 
-        anneeMax.addEventListener('change', () => {
-            if (anneeMin.value && parseInt(anneeMax.value) < parseInt(anneeMin.value)) {
+        anneeMax?.addEventListener('change', () => {
+            if (anneeMin?.value && parseInt(anneeMax.value) < parseInt(anneeMin.value)) {
                 anneeMax.value = anneeMin.value;
+            }
+            if (anneeMax.value !== '') {
+                filtresForm.submit();
             }
         });
     }
@@ -58,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', async () => {
             const vehicleId = button.dataset.id;
             try {
-                const response = await fetch('/DaCar/public/ajax/toggle-favorite.php', {
+                const response = await fetch('/ajax/toggle-favorite.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -101,8 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, observerOptions);
 
     vehiculeCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
         observer.observe(card);
     });
-}); 
+});
