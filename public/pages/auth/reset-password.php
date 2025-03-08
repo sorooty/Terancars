@@ -47,8 +47,8 @@ require_once '../../../config/config.php';
             </div>
 
             <div class="nav-auth">
-                <a href="<?= url('public/pages/auth/login.php') ?>" class="btn btn-outline">Connexion</a>
-                <a href="<?= url('public/pages/auth/inscription.php') ?>" class="btn btn-secondary">Inscription</a>
+                <a href="<?= url('auth/login') ?>" class="btn btn-outline">Connexion</a>
+                <a href="<?= url('auth/inscription') ?>" class="btn btn-secondary">Inscription</a>
             </div>
         </nav>
     </header>

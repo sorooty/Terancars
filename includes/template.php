@@ -58,8 +58,8 @@ if (!defined('ROOT_PATH')) {
             </div>
 
             <div class="nav-auth">
-                <a href="<?= url('pages/auth/login') ?>" class="btn btn-outline">Connexion</a>
-                <a href="<?= url('pages/auth/inscription') ?>" class="btn btn-secondary">Inscription</a>
+                <a href="<?= url('auth/login') ?>" class="btn btn-outline">Connexion</a>
+                <a href="<?= url('auth/inscription') ?>" class="btn btn-secondary">Inscription</a>
             </div>
         </nav>
     </header>

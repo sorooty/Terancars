@@ -17,7 +17,8 @@ $routes = [
     '/catalogue' => '/public/pages/catalogue/index.php',
     '/panier' => '/public/pages/panier/index.php',
     '/auth/login' => '/public/pages/auth/login.php',
-    '/auth/register' => '/public/pages/auth/register.php',
+    '/auth/inscription' => '/public/pages/auth/inscription.php',
+    '/auth/reset-password' => '/public/pages/auth/reset-password.php',
     '/vehicule/detail' => '/public/pages/vehicule/detail.php'
 ];
 

@@ -53,8 +53,8 @@ ob_start();
         <button type="submit" class="btn btn-primary">Se connecter</button>
 
         <div class="auth-links">
-            <p>Pas encore de compte ? <a href="<?= url('pages/auth/inscription') ?>">Inscrivez-vous !</a></p>
-            <p><a href="<?= url('pages/auth/reset-password') ?>">Mot de passe oublié ?</a></p>
+            <p>Pas encore de compte ? <a href="<?= url('auth/inscription') ?>">Inscrivez-vous !</a></p>
+            <p><a href="<?= url('auth/reset-password') ?>">Mot de passe oublié ?</a></p>
         </div>
     </form>
 </div>
