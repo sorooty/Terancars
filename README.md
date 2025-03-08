@@ -1,8 +1,5 @@
 # TeranCar - Plateforme de Vente et Location de Véhicules
 
-<div align="center">
-  <img src="public/images/logo/logo.png" alt="TeranCar Logo" width="400"/>
-  <br/>
   <img src="public/images/banners/TeranCarsBan.png" alt="TeranCar Banner" width="100%"/>
 </div>
 
