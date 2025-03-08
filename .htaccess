@@ -1,15 +1,28 @@
-Options -Indexes
-
-# Activation PHP dans le cas où l'interpréteur ne fonctionnerait pas automatiquement
-AddType application/x-httpd-php .php
-
-# Activation du module de réécriture d'URL
 RewriteEngine On
 
-# Définition de la base de l'URL
-RewriteBase /DaCar/
+# Permettre les URLs propres
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
 
-# Permettre l'accès direct aux fichiers et dossiers existants
+# Configuration de base
+Options -Indexes
+AddDefaultCharset UTF-8
+
+# Activation de PHP
+AddType application/x-httpd-php .php
+
+# Protection des fichiers sensibles
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Pages d'erreur personnalisées
+ErrorDocument 404 /DaCar/public/pages/errors/404.php
+ErrorDocument 403 /DaCar/public/pages/errors/403.php
+
+# Activation du module de réécriture d'URL
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
@@ -28,16 +41,6 @@ RewriteRule ^vehicule/detail$ public/pages/vehicule/detail.php [L,QSA]
 
 # Redirection des autres pages
 RewriteRule ^([^/]+)/?$ public/pages/$1/index.php [L,QSA]
-
-# Protection des fichiers sensibles
-<FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Pages d'erreur personnalisées
-ErrorDocument 404 /DaCar/public/pages/errors/404.php
-ErrorDocument 403 /DaCar/public/pages/errors/403.php
 
 # Forcer HTTPS (à décommenter en production)
 # RewriteCond %{HTTPS} off

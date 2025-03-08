@@ -25,9 +25,11 @@ RUN echo '<Directory /var/www/html>\n\
     Options Indexes FollowSymLinks\n\
     AllowOverride All\n\
     Require all granted\n\
-</Directory>' >> /etc/apache2/apache2.conf
+</Directory>' > /etc/apache2/conf-available/docker-php.conf \
+    && a2enconf docker-php
 
 # Exposition du port Apache
 EXPOSE 80
 
+# Démarrage d'Apache
 CMD ["apache2-foreground"]
