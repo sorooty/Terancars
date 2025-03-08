@@ -66,7 +66,7 @@ function handleQuantityChange() {
 }
 
 function handleDelete(e) {
-    e.preventDefault();
+            e.preventDefault();
     
     if (!confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
         return;
@@ -107,7 +107,7 @@ function handleDelete(e) {
 }
 
 function handleOrder(e) {
-    e.preventDefault();
+                e.preventDefault();
 
     if (!confirm('Voulez-vous confirmer votre commande ?')) {
         return;

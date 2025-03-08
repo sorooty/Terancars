@@ -106,7 +106,7 @@ ob_start();
                             <option value="<?= $m ?>" <?= $marque === $m ? 'selected' : '' ?>><?= $m ?></option>
                         <?php endforeach; ?>
                     </select>
-                </div>
+    </div>
 
                 <!-- Modèle -->
                 <div class="form-group">
@@ -244,13 +244,13 @@ ob_start();
                                     <i class="fas fa-info-circle"></i> Voir les détails
                                 </a>
                             </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+                </div>
             </div>
+            <?php endforeach; ?>
+        </div>
         <?php endif; ?>
     </main>
-</div>
+    </div>
 
 <?php
 // Récupération du contenu mis en mémoire tampon
