@@ -14,61 +14,28 @@ function formatPrice($price) {
  * Retourne l'URL complète d'un asset
  */
 function asset($path) {
-    $path = trim($path, '/');
-    
-    // Images (dans assets/images)
-    if (strpos($path, 'images/') === 0) {
-        return SITE_URL . '/public/assets/' . $path;
-    }
-    
-    // CSS, JS et autres assets
-    return SITE_URL . '/public/assets/' . $path;
+    return '/DaCar/assets/' . ltrim($path, '/');
 }
 
 /**
  * Retourne l'URL complète d'une page
  */
-function url($path = '') {
-    $path = trim($path, '/');
-    
-    // Page d'accueil
-    if (empty($path)) {
-        return SITE_URL . '/';
-    }
-    
-    // Pages d'authentification
-    if (strpos($path, 'pages/auth/') === 0) {
-        $pathParts = explode('/', $path);
-        return SITE_URL . '/auth/' . end($pathParts);
-    }
-    
-    // Pages normales
-    if (strpos($path, 'pages/') === 0) {
-        $pathParts = explode('/', $path);
-        array_shift($pathParts); // Enlève "pages"
-        return SITE_URL . '/' . implode('/', $pathParts);
-    }
-    
-    // Autres URLs
-    return SITE_URL . '/' . $path;
+function url($path) {
+    return '/DaCar/' . ltrim($path, '/');
 }
 
 /**
- * Redirige vers une URL
+ * Retourne le chemin de l'image d'un véhicule
  */
-function redirect($path) {
-    header('Location: ' . url($path));
-    exit();
-}
-
-/**
- * Nettoie une entrée utilisateur
- */
-function clean_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
+function getVehicleImage($marque, $modele) {
+    $filename = strtolower(str_replace(' ', '-', $marque . '-' . $modele)) . '.jpg';
+    $filepath = 'images/vehicules/' . $filename;
+    
+    if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/DaCar/assets/' . $filepath)) {
+        return $filename;
+    }
+    
+    return 'default-car.jpg';
 }
 
 /**

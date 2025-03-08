@@ -5,10 +5,10 @@ require_once ROOT_PATH . '/includes/init.php';
 // Récupération des paramètres de filtrage
 $marque = isset($_GET['marque']) ? htmlspecialchars($_GET['marque']) : '';
 $modele = isset($_GET['modele']) ? htmlspecialchars($_GET['modele']) : '';
-$anneeMin = isset($_GET['annee_min']) && $_GET['annee_min'] !== '' ? intval($_GET['annee_min']) : null;
-$anneeMax = isset($_GET['annee_max']) && $_GET['annee_max'] !== '' ? intval($_GET['annee_max']) : null;
-$prixMin = isset($_GET['prix_min']) && $_GET['prix_min'] !== '' ? intval($_GET['prix_min']) : null;
-$prixMax = isset($_GET['prix_max']) && $_GET['prix_max'] !== '' ? intval($_GET['prix_max']) : null;
+$anneeMin = isset($_GET['annee_min']) ? intval($_GET['annee_min']) : null;
+$anneeMax = isset($_GET['annee_max']) ? intval($_GET['annee_max']) : null;
+$prixMin = isset($_GET['prix_min']) ? intval($_GET['prix_min']) : null;
+$prixMax = isset($_GET['prix_max']) ? intval($_GET['prix_max']) : null;
 $carburant = isset($_GET['carburant']) ? htmlspecialchars($_GET['carburant']) : '';
 $transmission = isset($_GET['transmission']) ? htmlspecialchars($_GET['transmission']) : '';
 $disponibilite = isset($_GET['disponibilite']) ? htmlspecialchars($_GET['disponibilite']) : '';
@@ -72,30 +72,23 @@ switch ($tri) {
         $sql .= " ORDER BY prix ASC";
 }
 
-try {
-    // Exécution de la requête
-    $stmt = $db->prepare($sql);
-    $stmt->execute($params);
-    $vehicules = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Exécution de la requête
+$stmt = $db->prepare($sql);
+$stmt->execute($params);
+$vehicules = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Récupération des marques distinctes pour le filtre
-    $stmt = $db->query("SELECT DISTINCT marque FROM vehicules ORDER BY marque");
-    $marques = $stmt->fetchAll(PDO::FETCH_COLUMN);
+// Récupération des marques distinctes pour le filtre
+$stmt = $db->query("SELECT DISTINCT marque FROM vehicules ORDER BY marque");
+$marques = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 // Variables de la page
-    $pageTitle = "Catalogue des véhicules";
-    $pageDescription = "Découvrez notre sélection de véhicules disponibles à l'achat et à la location.";
+$pageTitle = "Catalogue des véhicules";
+$pageDescription = "Découvrez notre sélection de véhicules disponibles à l'achat et à la location.";
 $currentPage = 'catalogue';
 $additionalCss = ['css/catalogue.css'];
-    $additionalJs = ['js/catalogue.js'];
 
 // Début de la mise en mémoire tampon
 ob_start();
-} catch (PDOException $e) {
-    // Log l'erreur et affiche un message générique
-    error_log("Erreur base de données: " . $e->getMessage());
-    die("Une erreur est survenue lors de la récupération des véhicules.");
-}
 ?>
 
 <div class="catalogue-container">
@@ -103,7 +96,7 @@ ob_start();
     <aside class="filtres-sidebar">
         <div class="filtre-section">
             <h3>Filtres</h3>
-            <form id="filtres-form" class="filtres-form" method="GET" action="<?= url('catalogue') ?>">
+            <form id="filtres-form" class="filtres-form" method="GET">
                 <!-- Marque -->
                 <div class="form-group">
                     <label for="marque">Marque</label>
@@ -126,10 +119,10 @@ ob_start();
                 <div class="form-group">
                     <label>Prix</label>
                     <div class="range-inputs">
-                        <input type="number" name="prix_min" id="prix_min" placeholder="Min" 
-                               value="<?= $prixMin ?>" class="form-control" min="0">
-                        <input type="number" name="prix_max" id="prix_max" placeholder="Max" 
-                               value="<?= $prixMax ?>" class="form-control" min="0">
+                        <input type="number" name="prix_min" placeholder="Min" 
+                               value="<?= $prixMin ?>" class="form-control">
+                        <input type="number" name="prix_max" placeholder="Max" 
+                               value="<?= $prixMax ?>" class="form-control">
                     </div>
                 </div>
 
@@ -137,10 +130,10 @@ ob_start();
                 <div class="form-group">
                     <label>Année</label>
                     <div class="range-inputs">
-                        <input type="number" name="annee_min" id="annee_min" placeholder="Min" 
-                               value="<?= $anneeMin ?>" class="form-control" min="1900" max="<?= date('Y') ?>">
-                        <input type="number" name="annee_max" id="annee_max" placeholder="Max" 
-                               value="<?= $anneeMax ?>" class="form-control" min="1900" max="<?= date('Y') ?>">
+                        <input type="number" name="annee_min" placeholder="Min" 
+                               value="<?= $anneeMin ?>" class="form-control">
+                        <input type="number" name="annee_max" placeholder="Max" 
+                               value="<?= $anneeMax ?>" class="form-control">
                     </div>
                 </div>
 
@@ -188,14 +181,8 @@ ob_start();
                 </div>
 
                 <div class="filtres-actions">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-filter"></i>
-                        Appliquer les filtres
-                    </button>
-                    <button type="button" class="btn btn-outline" id="reset-filtres">
-                        <i class="fas fa-sync"></i>
-                        Réinitialiser
-                    </button>
+                    <button type="submit" class="btn btn-primary">Appliquer les filtres</button>
+                    <button type="reset" class="btn btn-outline" id="reset-filtres">Réinitialiser</button>
                 </div>
             </form>
         </div>
@@ -211,7 +198,7 @@ ob_start();
         <?php if (empty($vehicules)): ?>
             <div class="no-results">
                 <p>Aucun véhicule ne correspond à vos critères de recherche.</p>
-                <a href="<?= url('catalogue') ?>" class="btn btn-primary">
+                <a href="<?= url('catalogue/') ?>" class="btn btn-primary">
                     <i class="fas fa-sync"></i>
                     Réinitialiser les filtres
                 </a>
@@ -221,13 +208,9 @@ ob_start();
                 <?php foreach ($vehicules as $vehicule): ?>
                     <div class="vehicule-card">
                         <div class="vehicule-image">
-                            <?php
-                            $imagePath = 'public/assets/images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg';
-                            $defaultImage = 'public/assets/images/default-car.jpg';
-                            $imageUrl = file_exists($imagePath) ? asset('images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg') : asset('images/default-car.jpg');
-                            ?>
-                            <img src="<?= $imageUrl ?>" 
-                                 alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>">
+                            <img src="<?= asset('images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg') ?>" 
+                                 alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
+                                 onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
                             <?php if ($vehicule['stock'] > 0): ?>
                                 <span class="badge badge-success">Disponible</span>
                             <?php else: ?>
@@ -255,8 +238,11 @@ ob_start();
                             </div>
                             <div class="vehicule-actions">
                                 <a href="<?= url('vehicule/detail?id=' . $vehicule['id_vehicule']) ?>" class="btn btn-primary">
-                                    <i class="fas fa-info-circle"></i> Voir les détails
+                                    <i class="fas fa-info-circle"></i> Détails
                                 </a>
+                                <button class="btn btn-outline favorite-btn" data-id="<?= $vehicule['id_vehicule'] ?>">
+                                    <i class="fas fa-heart"></i>
+                                </button>
                             </div>
                 </div>
             </div>
