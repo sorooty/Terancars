@@ -1,111 +1,27 @@
 /* Styles pour la page À propos */
-.about-container {
-    max-width: var(--max-width);
+.container {
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 0 20px;
 }
 
 .about-header {
-    text-align: center;
-    margin-bottom: 4rem;
-    padding: 3rem 0;
     background-color: var(--primary-color);
-    border-radius: 8px;
-    color: var(--light-text);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    text-align: center;
 }
 
 .about-header h1 {
-    font-size: var(--font-size-3xl);
-    margin-bottom: 1rem;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
 }
 
-.about-header .subtitle {
-    font-size: var(--font-size-lg);
+.about-header p {
+    font-size: 1.1rem;
     opacity: 0.9;
-}
-
-.about-section {
-    margin-bottom: 4rem;
-}
-
-.about-section h2 {
-    color: var(--primary-color);
-    font-size: var(--font-size-2xl);
-    margin-bottom: 1.5rem;
-    position: relative;
-    padding-bottom: 0.5rem;
-}
-
-.about-section h2::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background-color: var(--secondary-color);
-}
-
-.about-section p {
-    color: var(--text-color);
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-}
-
-.about-section ul {
-    list-style: none;
-    padding-left: 1.5rem;
-}
-
-.about-section ul li {
-    position: relative;
-    padding-left: 1.5rem;
-    margin-bottom: 1rem;
-    line-height: 1.6;
-}
-
-.about-section ul li::before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    color: var(--secondary-color);
-}
-
-.values-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.value-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: transform 0.3s ease;
-}
-
-.value-card:hover {
-    transform: translateY(-5px);
-}
-
-.value-card i {
-    font-size: 2.5rem;
-    color: var(--secondary-color);
-    margin-bottom: 1rem;
-}
-
-.value-card h3 {
-    color: var(--primary-color);
-    font-size: var(--font-size-lg);
-    margin-bottom: 1rem;
-}
-
-.value-card p {
-    color: var(--text-muted);
-    line-height: 1.5;
 }
 
 /* Section Histoire */
@@ -138,6 +54,55 @@
     margin-bottom: 1.5rem;
     line-height: 1.6;
     color: var(--text-color);
+}
+
+/* Grille des valeurs */
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.value-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.value-card i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    background: var(--light-bg);
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.value-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.value-card p {
+    margin: 0;
+    line-height: 1.4;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    padding: 0 1rem;
 }
 
 /* Statistiques */
@@ -262,28 +227,6 @@
 }
 
 @media (max-width: 768px) {
-    .about-container {
-        padding: 1rem;
-    }
-
-    .about-header {
-        padding: 2rem 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .about-header h1 {
-        font-size: var(--font-size-2xl);
-    }
-
-    .about-section {
-        margin-bottom: 2rem;
-    }
-
-    .values-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
     .story-stats {
         grid-template-columns: 1fr;
     }

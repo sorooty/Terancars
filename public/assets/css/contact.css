@@ -1,26 +1,23 @@
 /* Styles pour la page de contact */
 
 .contact-page {
-    padding: 0;
+    padding: 2rem 0;
 }
 
-.contact-banner {
-    background-color: var(--primary-color);
-    color: var(--light-text);
-    padding: 3rem 0;
-    margin-bottom: 3rem;
+.contact-header {
     text-align: center;
+    margin-bottom: 3rem;
 }
 
-.contact-banner h1 {
+.contact-header h1 {
+    color: var(--primary-color);
     font-size: var(--font-size-3xl);
     margin-bottom: 1rem;
-    color: var(--light-text);
 }
 
-.contact-banner p {
+.contact-header p {
+    color: var(--text-muted);
     font-size: var(--font-size-lg);
-    opacity: 0.9;
 }
 
 .contact-content {
@@ -28,7 +25,7 @@
     grid-template-columns: 2fr 1fr;
     gap: 3rem;
     max-width: var(--max-width);
-    margin: 0 auto 3rem;
+    margin: 0 auto;
 }
 
 .contact-form {
@@ -36,24 +33,6 @@
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.contact-form h2 {
-    color: var(--primary-color);
-    margin-bottom: 2rem;
-    font-size: var(--font-size-2xl);
-    position: relative;
-    padding-bottom: 0.5rem;
-}
-
-.contact-form h2::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background-color: var(--secondary-color);
 }
 
 .form-row {
@@ -81,7 +60,7 @@
     border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: var(--font-size-base);
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease;
 }
 
 .form-group input:focus,
@@ -156,20 +135,18 @@
     background: white;
     padding: 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .social-media h3 {
     color: var(--primary-color);
-    margin-bottom: 1.5rem;
-    font-size: var(--font-size-lg);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
 }
 
 .social-icons {
     display: flex;
     gap: 1rem;
-    justify-content: center;
 }
 
 .social-icon {
@@ -182,7 +159,7 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: transform 0.3s, background-color 0.3s;
 }
 
 .social-icon:hover {
@@ -198,29 +175,13 @@
 .map-section h2 {
     color: var(--primary-color);
     margin-bottom: 1.5rem;
-    font-size: var(--font-size-2xl);
-    position: relative;
-    padding-bottom: 0.5rem;
-}
-
-.map-section h2::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background-color: var(--secondary-color);
+    font-size: 1.8rem;
 }
 
 .map-container {
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.map-container iframe {
-    display: block;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* Responsive */
@@ -235,20 +196,16 @@
 }
 
 @media (max-width: 768px) {
-    .contact-banner h1 {
-        font-size: var(--font-size-2xl);
-    }
-
-    .contact-banner p {
-        font-size: var(--font-size-base);
-    }
-
     .form-row {
         grid-template-columns: 1fr;
     }
 
     .contact-info {
         grid-template-columns: 1fr;
+    }
+
+    .contact-header h1 {
+        font-size: var(--font-size-2xl);
     }
 }
 
@@ -265,7 +222,6 @@
 }
 
 .contact-form,
-.info-card,
-.map-container {
+.info-card {
     animation: fadeInUp 0.5s ease forwards;
 } 

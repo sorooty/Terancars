@@ -9,18 +9,16 @@ $base_path = parse_url($request_uri, PHP_URL_PATH);
 // Supprimer le slash final s'il existe
 $base_path = rtrim($base_path, '/');
 
-// Routes de l'application
+// Routes définies
 $routes = [
     '/' => '/public/pages/home.php',
     '/catalogue' => '/public/pages/catalogue/index.php',
     '/contact' => '/public/pages/contact.php',
-    '/a-propos' => '/public/pages/about.php',
-    '/panier' => '/public/pages/panier/index.php',
     '/auth/login' => '/public/pages/auth/login.php',
     '/auth/inscription' => '/public/pages/auth/inscription.php',
-    '/auth/logout' => '/public/pages/auth/logout.php',
     '/auth/reset-password' => '/public/pages/auth/reset-password.php',
-    '/vehicule/detail' => '/public/pages/vehicule/detail.php'
+    '/vehicule/detail' => '/public/pages/vehicule/detail.php',
+    '/panier' => '/public/pages/panier.php'
 ];
 
 // Vérifier si la route existe
