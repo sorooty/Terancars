@@ -124,14 +124,14 @@ ob_start();
         </div>
 
         <div class="car-info">
-            <div class="tag <?= $vehicle['stock'] > 0 ? 'available' : 'unavailable' ?>">
-                <?= $vehicle['stock'] > 0 ? 'Disponible' : 'Indisponible' ?>
+            <div class="tag <?= isset($vehicle['stock']) && $vehicle['stock'] > 0 ? 'available' : 'unavailable' ?>">
+                <?= isset($vehicle['stock']) && $vehicle['stock'] > 0 ? 'Disponible' : 'Indisponible' ?>
             </div>
             
             <h1><?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?></h1>
             <h2 class="price"><?= number_format($vehicle['prix'], 2, ',', ' ') ?> €</h2>
             
-            <?php if ($vehicle['disponible_location'] && $vehicle['tarif_location_journalier'] > 0): ?>
+            <?php if (isset($vehicle['disponible_location']) && isset($vehicle['tarif_location_journalier']) && $vehicle['disponible_location'] && $vehicle['tarif_location_journalier'] > 0): ?>
             <div class="rental-price">
                 Location: <?= number_format($vehicle['tarif_location_journalier'], 2, ',', ' ') ?> € / jour
             </div>
@@ -140,7 +140,7 @@ ob_start();
             <div class="dropdowns">
                 <div class="dropdown-container">
                     <div class="label">Stock disponible</div>
-                    <div class="value"><?= $vehicle['stock'] ?> unité(s)</div>
+                    <div class="value"><?= isset($vehicle['stock']) ? $vehicle['stock'] : 0 ?> unité(s)</div>
                 </div>
 
                 <div class="dropdown-container">
@@ -150,7 +150,7 @@ ob_start();
             </div>
 
             <div class="button-group">
-                <?php if ($vehicle['stock'] > 0): ?>
+                <?php if (isset($vehicle['stock']) && $vehicle['stock'] > 0): ?>
                 <form method="post" class="cart-form">
                     <input type="hidden" name="action" value="add_to_cart">
                     <input type="hidden" name="type" value="achat">
@@ -161,7 +161,7 @@ ob_start();
                 </form>
                 <?php endif; ?>
                 
-                <?php if ($vehicle['disponible_location'] && $vehicle['stock'] > 0): ?>
+                <?php if (isset($vehicle['disponible_location']) && isset($vehicle['stock']) && isset($vehicle['tarif_location_journalier']) && $vehicle['disponible_location'] && $vehicle['stock'] > 0 && $vehicle['tarif_location_journalier'] > 0): ?>
                 <form method="post" class="cart-form">
                     <input type="hidden" name="action" value="add_to_cart">
                     <input type="hidden" name="type" value="location">
