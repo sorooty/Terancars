@@ -546,7 +546,7 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     text-align: center;
     padding: 4rem 0;
-    background: linear-gradient(rgba(33, 33, 33, 0.7), rgba(33, 33, 33, 0.7)), url('/DaCar/public/images/banners/TeranCarsBan.png');
+    background: linear-gradient(rgba(33, 33, 33, 0.7), rgba(33, 33, 33, 0.7)), url('../images/banners/TeranCarsBan.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
