@@ -1,13 +1,7 @@
 <?php
 session_start();
 
-/**
- * Vérifie si l'utilisateur est connecté
- * @return bool
- */
-function isLoggedIn() {
-    return isset($_SESSION['user_id']);
-}
+
 
 /**
  * Connecte l'utilisateur
