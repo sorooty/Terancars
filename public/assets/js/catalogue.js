@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: `vehicle_id=${vehicleId}`
+                    body: `id_vehicule=${vehicleId}`
                 });
                 
                 const data = await response.json();

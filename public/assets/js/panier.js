@@ -48,7 +48,7 @@ function handleQuantityChange() {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `action=update&vehicle_id=${vehicleId}&quantity=${newQuantity}`
+        body: `action=update&id_vehicule=${vehicleId}&quantity=${newQuantity}`
     })
     .then(response => response.json())
     .then(data => {
@@ -79,7 +79,7 @@ function handleDelete(e) {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `action=remove&vehicle_id=${vehicleId}`
+        body: `action=remove&id_vehicule=${vehicleId}`
     })
     .then(response => response.json())
     .then(data => {
