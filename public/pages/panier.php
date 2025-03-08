@@ -5,6 +5,8 @@ require_once ROOT_PATH . '/includes/init.php';
 $pageTitle = "Mon panier";
 $pageDescription = "Gérez votre panier d'achats et de locations";
 $currentPage = 'panier';
+$additionalCss = ['css/panier.css'];
+$additionalJs = ['js/panier.js'];
 
 // Initialisation du panier si nécessaire
 if (!isset($_SESSION['panier'])) {
@@ -119,32 +121,36 @@ $vehiculesLocation = [];
 
 if (!empty($_SESSION['panier']['achat'])) {
     $ids = array_keys($_SESSION['panier']['achat']);
-    $placeholders = str_repeat('?,', count($ids) - 1) . '?';
-    
-    $query = "SELECT * FROM vehicules WHERE id_vehicule IN ($placeholders)";
-    $stmt = $db->prepare($query);
-    $stmt->execute($ids);
-    $vehiculesAchat = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (!empty($ids)) {
+        $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+        $query = "SELECT * FROM vehicules WHERE id_vehicule IN ($placeholders)";
+        $stmt = $db->prepare($query);
+        $stmt->execute($ids);
+        $vehiculesAchat = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 if (!empty($_SESSION['panier']['location'])) {
     $ids = array_keys($_SESSION['panier']['location']);
-    $placeholders = str_repeat('?,', count($ids) - 1) . '?';
-    
-    $query = "SELECT * FROM vehicules WHERE id_vehicule IN ($placeholders)";
-    $stmt = $db->prepare($query);
-    $stmt->execute($ids);
-    $vehiculesLocation = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (!empty($ids)) {
+        $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+        $query = "SELECT * FROM vehicules WHERE id_vehicule IN ($placeholders)";
+        $stmt = $db->prepare($query);
+        $stmt->execute($ids);
+        $vehiculesLocation = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 // Calcul des totaux
 function calculateTotal() {
     $total = 0;
-    foreach ($_SESSION['panier'] as $type => $items) {
-        foreach ($items as $item) {
-            $total += $type === 'achat' 
-                ? $item['prix'] * $item['quantite']
-                : $item['tarif_location_journalier'] * $item['quantite'];
+    if (isset($_SESSION['panier'])) {
+        foreach ($_SESSION['panier'] as $type => $items) {
+            foreach ($items as $item) {
+                $total += $type === 'achat' 
+                    ? $item['prix'] * $item['quantite']
+                    : $item['tarif_location_journalier'] * $item['quantite'];
+            }
         }
     }
     return $total;
@@ -165,14 +171,14 @@ ob_start();
 
         <?php if (isset($_SESSION['success_message'])): ?>
             <div class="alert alert-success">
-                <?= $_SESSION['success_message'] ?>
+                <?= htmlspecialchars($_SESSION['success_message']) ?>
                 <?php unset($_SESSION['success_message']); ?>
             </div>
         <?php endif; ?>
 
         <?php if (isset($_SESSION['error_message'])): ?>
             <div class="alert alert-danger">
-                <?= $_SESSION['error_message'] ?>
+                <?= htmlspecialchars($_SESSION['error_message']) ?>
                 <?php unset($_SESSION['error_message']); ?>
             </div>
         <?php endif; ?>
@@ -184,14 +190,14 @@ ob_start();
                     <?php foreach ($vehiculesAchat as $vehicule): ?>
                         <div class="panier-item">
                             <div class="item-image">
-                                <img src="<?= asset('images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg') ?>" 
+                                <img src="<?= asset('images/vehicules/' . $vehicule['id_vehicule'] . '.jpg') ?>" 
                                      alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
-                                     onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
+                                     onerror="this.src='<?= asset('images/vehicules/default.jpg') ?>'">
                             </div>
                             
                             <div class="item-info">
                                 <h3><?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?></h3>
-                                <p class="item-price"><?= number_format($vehicule['prix'], 2, ',', ' ') ?> €</p>
+                                <p class="item-price"><?= formatPrice($vehicule['prix']) ?></p>
                                 
                                 <form method="POST" class="item-quantity">
                                     <input type="hidden" name="action" value="update">
@@ -232,14 +238,14 @@ ob_start();
                     <?php foreach ($vehiculesLocation as $vehicule): ?>
                         <div class="panier-item">
                             <div class="item-image">
-                                <img src="<?= asset('images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg') ?>" 
+                                <img src="<?= asset('images/vehicules/' . $vehicule['id_vehicule'] . '.jpg') ?>" 
                                      alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
-                                     onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
+                                     onerror="this.src='<?= asset('images/vehicules/default.jpg') ?>'">
                             </div>
                             
                             <div class="item-info">
                                 <h3><?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?></h3>
-                                <p class="item-price"><?= number_format($vehicule['tarif_location_journalier'], 2, ',', ' ') ?> € / jour</p>
+                                <p class="item-price"><?= formatPrice($vehicule['tarif_location_journalier']) ?> / jour</p>
                                 
                                 <form method="POST" class="item-quantity">
                                     <input type="hidden" name="action" value="update">
@@ -278,20 +284,19 @@ ob_start();
                 <div class="summary-content">
                     <div class="summary-total">
                         <span>Total:</span>
-                        <span class="total-amount"><?= number_format(calculateTotal(), 2, ',', ' ') ?> €</span>
+                        <span class="total-amount"><?= formatPrice(calculateTotal()) ?></span>
                     </div>
 
-                    <form method="POST" class="summary-actions">
-                        <input type="hidden" name="action" value="commander">
-                        <button type="submit" class="btn btn-primary btn-block">
+                    <div class="summary-actions">
+                        <a href="<?= url('auth/login') ?>" class="btn btn-primary btn-block">
                             <i class="fas fa-shopping-cart"></i>
-                            Passer la commande
-                        </button>
+                            Se connecter pour commander
+                        </a>
                         <a href="<?= url('catalogue') ?>" class="btn btn-outline btn-block">
                             <i class="fas fa-arrow-left"></i>
                             Continuer mes achats
                         </a>
-                    </form>
+                    </div>
                 </div>
             </div>
         <?php else: ?>
@@ -308,9 +313,6 @@ ob_start();
 </div>
 
 <?php
-// Récupération du contenu mis en mémoire tampon
 $pageContent = ob_get_clean();
-
-// Inclusion du template
 require_once ROOT_PATH . '/includes/template.php';
 ?> 
