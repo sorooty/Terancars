@@ -1,4 +1,7 @@
 <?php
+// Protection de la page
+require_once 'protect.php';
+
 // Inclusion du fichier d'initialisation
 require_once ROOT_PATH . '/includes/init.php';
 
@@ -24,7 +27,8 @@ if (isset($_POST['action'])) {
             break;
         case 'update':
             if (isset($_POST['id']) && isset($_POST['quantity'])) {
-                $_SESSION['panier'][$_POST['id']]['quantity'] = max(1, intval($_POST['quantity']));
+                $quantity = max(1, min(10, intval($_POST['quantity'])));
+                $_SESSION['panier'][$_POST['id']]['quantity'] = $quantity;
             }
             break;
         case 'clear':
@@ -76,9 +80,7 @@ ob_start();
                             <form method="post" class="quantity-form">
                                 <input type="hidden" name="action" value="update">
                                 <input type="hidden" name="id" value="<?= $id ?>">
-                                <button type="button" class="quantity-btn minus">-</button>
-                                <input type="number" name="quantity" value="<?= $item['quantity'] ?>" min="1" max="99" class="quantity-input">
-                                <button type="button" class="quantity-btn plus">+</button>
+                                <input type="number" name="quantity" value="<?= $item['quantity'] ?>" min="1" max="10" onchange="this.form.submit()">
                             </form>
                         </div>
 
