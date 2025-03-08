@@ -80,14 +80,54 @@ function clean_input($data) {
  * Retourne le chemin de l'image d'un véhicule
  */
 function getVehicleImage($marque, $modele) {
-    $filename = strtolower(str_replace(' ', '-', $marque . '-' . $modele)) . '.jpg';
-    $filepath = 'images/vehicules/' . $filename;
+    $marque = strtolower(trim($marque));
+    $modele = strtolower(trim($modele));
     
-    if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/DaCar/assets/' . $filepath)) {
-        return $filename;
+    // Nettoyage des caractères spéciaux mais conservation des espaces
+    $marque = preg_replace('/[^a-z0-9\s-]/', '', $marque);
+    $modele = preg_replace('/[^a-z0-9\s-]/', '', $modele);
+    
+    // Tableau des extensions d'images possibles
+    $extensions = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
+    
+    // Dossier des images
+    $imageDir = ROOT_PATH . '/public/images/vehicules/';
+    
+    // Récupérer tous les fichiers du dossier
+    $files = scandir($imageDir);
+    
+    // Différentes variantes de noms à essayer
+    $variants = [
+        // Exact match avec différents séparateurs
+        $marque . ' ' . $modele,
+        $marque . '-' . $modele,
+        $marque . '_' . $modele,
+        // Juste la marque et le modèle séparément
+        $marque,
+        $modele
+    ];
+    
+    // Recherche insensible à la casse
+    foreach ($files as $file) {
+        if ($file === '.' || $file === '..') continue;
+        
+        $fileLower = strtolower($file);
+        foreach ($variants as $variant) {
+            if (strpos($fileLower, str_replace(' ', '-', $variant)) !== false ||
+                strpos($fileLower, str_replace(' ', '_', $variant)) !== false ||
+                strpos($fileLower, $variant) !== false) {
+                return $file; // Retourne le nom exact du fichier
+            }
+        }
     }
     
-    return 'default-car.jpg';
+    // Si aucune correspondance n'est trouvée, retourner l'image par défaut
+    if (file_exists($imageDir . 'default-car.jpg')) {
+        return 'default-car.jpg';
+    }
+    
+    // Si même l'image par défaut n'existe pas
+    return '';
 }
 
 /**
