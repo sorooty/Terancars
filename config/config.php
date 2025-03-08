@@ -56,60 +56,10 @@ date_default_timezone_set('Africa/Dakar');
 // Démarrage de la session
 session_start();
 
-// Fonctions utilitaires
-function asset($path) {
-    $path = trim($path, '/');
-    
-    // Images (dans public/images)
-    if (strpos($path, 'images/') === 0) {
-        return SITE_URL . '/public/' . $path;
-    }
-    
-    // CSS, JS et autres assets
-    if (strpos($path, 'css/') === 0 || strpos($path, 'js/') === 0) {
-        return SITE_URL . '/public/assets/' . $path;
-    }
-    
-    // Par défaut, chercher dans assets
-    return SITE_URL . '/public/assets/' . $path;
-}
-
-function url($path = '') {
-    $path = trim($path, '/');
-    
-    // Page d'accueil
-    if (empty($path)) {
-        return SITE_URL . '/';
-    }
-    
-    // Pages d'authentification
-    if (strpos($path, 'pages/auth/') === 0) {
-        $pathParts = explode('/', $path);
-        return SITE_URL . '/auth/' . end($pathParts);
-    }
-    
-    // Pages normales
-    if (strpos($path, 'pages/') === 0) {
-        $pathParts = explode('/', $path);
-        array_shift($pathParts); // Enlève "pages"
-        return SITE_URL . '/' . implode('/', $pathParts);
-    }
-    
-    // Autres URLs
-    return SITE_URL . '/' . $path;
-}
-
-function redirect($path) {
-    header('Location: ' . url($path));
-    exit();
-}
-
-function clean_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
+// Inclusion des fonctions utilitaires
+require_once ROOT_PATH . '/includes/functions.php';
+require_once ROOT_PATH . '/includes/image_utils.php';
+require_once ROOT_PATH . '/includes/database.php';
 
 // Fonction pour récupérer les véhicules
 function getVehicles($limit = null) {
