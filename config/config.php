@@ -7,33 +7,30 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Définition du chemin racine
+define('ROOT_PATH', __DIR__);
+
 // Configuration de base
 define('SITE_NAME', 'Teran\'Cars');
 define('SITE_URL', '/DaCar');
 
-// Configuration de la base de données
-$url = parse_url(getenv("MYSQLDATABASE_URL") ?: "mysql://root:@localhost:3307/terancar");
+// Lecture des informations de Railway
+$url = parse_url(getenv("MYSQLDATABASE_URL"));
 
-$host = $url["host"] ?? 'localhost';
-$username = $url["user"] ?? 'root';
-$password = $url["pass"] ?? '';
-$dbname = isset($url["path"]) ? ltrim($url["path"], '/') : 'terancar';
-$port = $url["port"] ?? 3307;
+$host = $url["host"];
+$username = $url["user"];
+$password = $url["pass"];
+$dbname = ltrim($url["path"], '/');
+$port = $url["port"] ?? 3306; // Railway utilise généralement le port 3306
 
-// Connexion à la base de données sans MYSQL_ATTR_INIT_COMMAND
+// Connexion PDO avec Railway
 try {
     $db = new PDO(
         "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
         $username,
         $password,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
-
-    // Configuration explicite du charset UTF-8
-    $db->exec("SET NAMES utf8mb4");
 } catch(PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }
