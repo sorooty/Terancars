@@ -82,7 +82,7 @@ ob_start();
         <div class="brands-grid">
             <?php foreach ($popularBrands as $brand): ?>
             <a href="<?= url('catalogue/?marque=' . urlencode($brand)) ?>" class="brand-logo">
-                <img src="<?= asset('images/brands/' . strtolower($brand) . '-logo.png') ?>" 
+                <img src="<?= asset('images/brands/' . strtolower($brand) . '.png') ?>" 
                      alt="Logo <?= htmlspecialchars($brand) ?>" 
                      title="Voir les véhicules <?= htmlspecialchars($brand) ?>"
                      onerror="this.src='<?= asset('images/brands/default-brand.png') ?>'">
