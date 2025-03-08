@@ -2,19 +2,30 @@
 .catalogue-header {
     background-color: var(--primary-color);
     color: var(--light-text);
-    padding: 3rem 0;
-    text-align: center;
+    padding: 2rem 0;
     margin-bottom: 2rem;
+    border-radius: 8px;
 }
 
 .catalogue-header h1 {
-    font-size: var(--font-size-3xl);
-    margin-bottom: 1rem;
+    font-size: var(--font-size-2xl);
+    margin-bottom: 0.5rem;
+    color: var(--light-text);
 }
 
 .catalogue-header p {
     font-size: var(--font-size-lg);
     opacity: 0.9;
+}
+
+.results-count {
+    font-size: var(--font-size-lg);
+    color: var(--light-text);
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 0.5rem;
 }
 
 /* Filtres */
@@ -281,8 +292,9 @@
 
 .vehicule-image {
     position: relative;
-    height: 200px;
+    height: 220px;
     overflow: hidden;
+    background-color: #f5f5f5;
 }
 
 .vehicule-image img {
@@ -301,19 +313,20 @@
     top: 1rem;
     right: 1rem;
     padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
     font-weight: 500;
+    text-transform: uppercase;
 }
 
 .badge-success {
-    background: var(--success-light);
-    color: var(--success);
+    background-color: var(--success);
+    color: white;
 }
 
 .badge-danger {
-    background: var(--danger-light);
-    color: var(--danger);
+    background-color: var(--danger);
+    color: white;
 }
 
 .vehicule-info {
@@ -321,42 +334,44 @@
 }
 
 .vehicule-info h3 {
-    color: var(--text-color);
-    font-size: var(--font-size-lg);
+    color: var(--primary-color);
+    font-size: var(--font-size-xl);
     margin-bottom: 1rem;
+    font-weight: 600;
 }
 
 .vehicule-specs {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     margin-bottom: 1rem;
-    color: var(--text-muted);
-    font-size: 0.875rem;
+    flex-wrap: wrap;
 }
 
 .vehicule-specs span {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    color: var(--text-color);
+    font-size: var(--font-size-base);
+}
+
+.vehicule-specs i {
+    color: var(--primary-color);
 }
 
 .vehicule-prix {
-    margin-bottom: 1.5rem;
-    padding: 1rem 0;
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    margin: 1.5rem 0;
 }
 
 .prix-achat, .prix-location {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 0.5rem;
 }
 
 .prix-achat .label, .prix-location .label {
     color: var(--text-muted);
-    font-size: 0.875rem;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 0.25rem;
 }
 
 .prix-achat .montant {
@@ -374,32 +389,16 @@
 .vehicule-actions {
     display: flex;
     gap: 1rem;
+    margin-top: 1.5rem;
 }
 
 .vehicule-actions .btn {
     flex: 1;
 }
 
+/* Suppression du bouton favoris */
 .favorite-btn {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.favorite-btn i {
-    font-size: 1.2rem;
-    transition: transform 0.3s ease;
-}
-
-.favorite-btn:hover i {
-    transform: scale(1.2);
-}
-
-.favorite-btn.active i {
-    color: var(--danger);
+    display: none;
 }
 
 /* Message pas de résultats */

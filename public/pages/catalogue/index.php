@@ -106,7 +106,7 @@ ob_start();
                             <option value="<?= $m ?>" <?= $marque === $m ? 'selected' : '' ?>><?= $m ?></option>
                         <?php endforeach; ?>
                     </select>
-    </div>
+                </div>
 
                 <!-- Modèle -->
                 <div class="form-group">
@@ -208,7 +208,10 @@ ob_start();
                 <?php foreach ($vehicules as $vehicule): ?>
                     <div class="vehicule-card">
                         <div class="vehicule-image">
-                            <img src="<?= asset('images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg') ?>" 
+                            <?php
+                            $imagePath = 'images/vehicules/' . strtolower($vehicule['marque']) . '/' . strtolower($vehicule['modele']) . '.jpg';
+                            ?>
+                            <img src="<?= asset($imagePath) ?>" 
                                  alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
                                  onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
                             <?php if ($vehicule['stock'] > 0): ?>
@@ -237,20 +240,17 @@ ob_start();
                                 <?php endif; ?>
                             </div>
                             <div class="vehicule-actions">
-                                <a href="<?= url('vehicule/detail?id=' . $vehicule['id_vehicule']) ?>" class="btn btn-primary">
-                                    <i class="fas fa-info-circle"></i> Détails
+                                <a href="<?= url('vehicule/detail?id_vehicule=' . $vehicule['id_vehicule']) ?>" class="btn btn-primary">
+                                    <i class="fas fa-info-circle"></i> Voir les détails
                                 </a>
-                                <button class="btn btn-outline favorite-btn" data-id="<?= $vehicule['id_vehicule'] ?>">
-                                    <i class="fas fa-heart"></i>
-                                </button>
                             </div>
-                </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
-            <?php endforeach; ?>
-        </div>
         <?php endif; ?>
     </main>
-    </div>
+</div>
 
 <?php
 // Récupération du contenu mis en mémoire tampon
