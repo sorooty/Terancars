@@ -1,7 +1,5 @@
+# Activation du module de réécriture
 RewriteEngine On
-
-# Définition de la base de l'URL
-RewriteBase /DaCar/
 
 # Configuration de base
 Options -Indexes
@@ -15,6 +13,13 @@ AddType application/x-httpd-php .php
     Order allow,deny
     Deny from all
 </FilesMatch>
+
+# Définition conditionnelle de la base de l'URL
+RewriteCond %{HTTP_HOST} ^terancar-production\.up\.railway\.app$ [NC]
+RewriteRule .* - [E=BASE:/]
+RewriteCond %{HTTP_HOST} !^terancar-production\.up\.railway\.app$ [NC]
+RewriteRule .* - [E=BASE:/DaCar/]
+RewriteBase %{ENV:BASE}
 
 # Permettre l'accès direct aux fichiers et dossiers existants
 RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -37,6 +42,10 @@ RewriteRule ^vehicule/detail$ public/pages/vehicule/detail.php [L,QSA]
 RewriteRule ^([^/]+)/?$ public/pages/$1/index.php [L,QSA]
 
 # Pages d'erreur personnalisées
+RewriteCond %{HTTP_HOST} ^terancar-production\.up\.railway\.app$ [NC]
+ErrorDocument 404 /public/pages/errors/404.php
+ErrorDocument 403 /public/pages/errors/403.php
+RewriteCond %{HTTP_HOST} !^terancar-production\.up\.railway\.app$ [NC]
 ErrorDocument 404 /DaCar/public/pages/errors/404.php
 ErrorDocument 403 /DaCar/public/pages/errors/403.php
 
