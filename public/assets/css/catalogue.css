@@ -157,4 +157,323 @@
     .vehicle-info {
         font-size: 0.8rem;
     }
+}
+
+/* Layout du catalogue */
+.catalogue-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Sidebar des filtres */
+.filtres-sidebar {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+    position: sticky;
+    top: calc(var(--header-height) + 2rem);
+}
+
+.filtre-section {
+    padding: 1.5rem;
+}
+
+.filtre-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.filtres-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.form-control {
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+}
+
+.range-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.filtres-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+/* Section principale */
+.catalogue-main {
+    flex: 1;
+}
+
+.catalogue-header {
+    margin-bottom: 2rem;
+}
+
+.catalogue-header h1 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.results-count {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Grille des véhicules */
+.vehicules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.vehicule-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.vehicule-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.vehicule-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.vehicule-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.vehicule-card:hover .vehicule-image img {
+    transform: scale(1.05);
+}
+
+.badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-success {
+    background: var(--success-light);
+    color: var(--success);
+}
+
+.badge-danger {
+    background: var(--danger-light);
+    color: var(--danger);
+}
+
+.vehicule-info {
+    padding: 1.5rem;
+}
+
+.vehicule-info h3 {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.vehicule-specs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.vehicule-specs span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.vehicule-specs i {
+    color: var(--primary-color);
+}
+
+.vehicule-prix {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--light);
+    border-radius: 4px;
+}
+
+.prix-achat, .prix-location {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.prix-achat:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.prix-achat .label, .prix-location .label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.prix-achat .montant {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.prix-location .montant {
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.vehicule-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.vehicule-actions .btn {
+    flex: 1;
+}
+
+.favorite-btn {
+    width: 40px;
+    flex: none !important;
+}
+
+.favorite-btn i {
+    color: var(--danger);
+    transition: transform 0.3s ease;
+}
+
+.favorite-btn:hover i {
+    transform: scale(1.2);
+}
+
+/* Message pas de résultats */
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.no-results p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .catalogue-container {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .catalogue-container {
+        grid-template-columns: 1fr;
+    }
+
+    .filtres-sidebar {
+        position: static;
+        margin-bottom: 2rem;
+    }
+
+    .vehicules-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .vehicules-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .vehicule-image {
+        height: 180px;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.vehicule-card {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Style des select et inputs */
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M8 11.5l-6-6h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+input[type="number"].form-control {
+    -moz-appearance: textfield;
+}
+
+input[type="number"].form-control::-webkit-outer-spin-button,
+input[type="number"].form-control::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 } 
