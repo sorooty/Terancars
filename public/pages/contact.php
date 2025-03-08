@@ -5,6 +5,7 @@ require_once ROOT_PATH . '/includes/init.php';
 $pageTitle = "Nous contacter";
 $pageDescription = "Contactez TeranCar pour toute question ou demande d'information";
 $currentPage = 'contact';
+$additionalCss = ['css/contact.css'];
 
 // Traitement du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
