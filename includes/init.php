@@ -5,6 +5,9 @@ define('ROOT_PATH', dirname(__DIR__));
 // Configuration
 require_once ROOT_PATH . '/config/config.php';
 
+// Fonctions utilitaires
+require_once ROOT_PATH . '/includes/functions.php';
+
 // Démarrage de la session si pas déjà démarrée
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
