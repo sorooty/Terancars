@@ -164,9 +164,9 @@
     display: grid;
     grid-template-columns: 300px 1fr;
     gap: 2rem;
+    padding: 2rem;
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 2rem;
 }
 
 /* Sidebar des filtres */
@@ -174,19 +174,16 @@
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
     height: fit-content;
     position: sticky;
     top: calc(var(--header-height) + 2rem);
 }
 
-.filtre-section {
-    padding: 1.5rem;
-}
-
 .filtre-section h3 {
     color: var(--primary-color);
+    font-size: var(--font-size-xl);
     margin-bottom: 1.5rem;
-    font-size: 1.2rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--border-color);
 }
@@ -194,32 +191,32 @@
 .filtres-form {
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 1.5rem;
 }
 
 .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .form-group label {
-    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 0.5rem;
     color: var(--text-color);
     font-weight: 500;
 }
 
 .form-control {
+    width: 100%;
     padding: 0.8rem;
     border: 1px solid var(--border-color);
     border-radius: 4px;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    font-size: var(--font-size-base);
+    transition: border-color 0.3s ease;
 }
 
 .form-control:focus {
-    border-color: var(--primary-color);
     outline: none;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
 }
 
@@ -232,7 +229,7 @@
 .filtres-actions {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 1rem;
     margin-top: 1rem;
 }
 
@@ -247,12 +244,13 @@
 
 .catalogue-header h1 {
     color: var(--primary-color);
+    font-size: var(--font-size-3xl);
     margin-bottom: 0.5rem;
 }
 
 .results-count {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: var(--font-size-lg);
 }
 
 /* Grille des véhicules */
@@ -265,14 +263,20 @@
 .vehicule-card {
     background: white;
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    transition: transform 0.3s ease, opacity 0.5s ease;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.vehicule-card.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .vehicule-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .vehicule-image {
@@ -298,8 +302,8 @@
     right: 1rem;
     padding: 0.5rem 1rem;
     border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
 .badge-success {
@@ -317,8 +321,8 @@
 }
 
 .vehicule-info h3 {
-    font-size: 1.2rem;
-    color: var(--primary-color);
+    color: var(--text-color);
+    font-size: var(--font-size-lg);
     margin-bottom: 1rem;
 }
 
@@ -326,8 +330,8 @@
     display: flex;
     gap: 1rem;
     margin-bottom: 1rem;
-    font-size: 0.9rem;
     color: var(--text-muted);
+    font-size: 0.875rem;
 }
 
 .vehicule-specs span {
@@ -336,41 +340,34 @@
     gap: 0.5rem;
 }
 
-.vehicule-specs i {
-    color: var(--primary-color);
-}
-
 .vehicule-prix {
     margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: var(--light);
-    border-radius: 4px;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .prix-achat, .prix-location {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0;
-}
-
-.prix-achat:not(:last-child) {
-    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.5rem;
 }
 
 .prix-achat .label, .prix-location .label {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
 }
 
 .prix-achat .montant {
     color: var(--primary-color);
-    font-size: 1.2rem;
+    font-size: var(--font-size-xl);
     font-weight: 600;
 }
 
 .prix-location .montant {
     color: var(--secondary-color);
+    font-size: var(--font-size-lg);
     font-weight: 500;
 }
 
@@ -385,11 +382,15 @@
 
 .favorite-btn {
     width: 40px;
-    flex: none !important;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .favorite-btn i {
-    color: var(--danger);
+    font-size: 1.2rem;
     transition: transform 0.3s ease;
 }
 
@@ -397,10 +398,14 @@
     transform: scale(1.2);
 }
 
+.favorite-btn.active i {
+    color: var(--danger);
+}
+
 /* Message pas de résultats */
 .no-results {
     text-align: center;
-    padding: 3rem;
+    padding: 4rem 2rem;
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -408,13 +413,15 @@
 
 .no-results p {
     color: var(--text-muted);
-    margin-bottom: 1.5rem;
+    font-size: var(--font-size-lg);
+    margin-bottom: 2rem;
 }
 
 /* Responsive */
 @media (max-width: 1200px) {
     .catalogue-container {
-        padding: 1rem;
+        grid-template-columns: 250px 1fr;
+        padding: 1.5rem;
     }
 }
 
@@ -424,16 +431,21 @@
     }
 
     .filtres-sidebar {
-        position: static;
+        position: relative;
+        top: 0;
         margin-bottom: 2rem;
     }
 
     .vehicules-grid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 576px) {
+    .catalogue-container {
+        padding: 1rem;
+    }
+
     .vehicules-grid {
         grid-template-columns: 1fr;
     }
@@ -476,4 +488,5 @@ input[type="number"].form-control::-webkit-outer-spin-button,
 input[type="number"].form-control::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+} 
 } 

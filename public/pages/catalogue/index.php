@@ -208,7 +208,7 @@ ob_start();
                 <?php foreach ($vehicules as $vehicule): ?>
                     <div class="vehicule-card">
                         <div class="vehicule-image">
-                            <img src="<?= asset('images/vehicules/' . $vehicule['id'] . '/main.jpg') ?>" 
+                            <img src="<?= asset('images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg') ?>" 
                                  alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
                                  onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
                             <?php if ($vehicule['stock'] > 0): ?>
@@ -237,10 +237,10 @@ ob_start();
                                 <?php endif; ?>
                             </div>
                             <div class="vehicule-actions">
-                                <a href="<?= url('vehicule/detail?id=' . $vehicule['id']) ?>" class="btn btn-primary">
+                                <a href="<?= url('vehicule/detail?id=' . $vehicule['id_vehicule']) ?>" class="btn btn-primary">
                                     <i class="fas fa-info-circle"></i> Détails
                                 </a>
-                                <button class="btn btn-outline favorite-btn" data-id="<?= $vehicule['id'] ?>">
+                                <button class="btn btn-outline favorite-btn" data-id="<?= $vehicule['id_vehicule'] ?>">
                                     <i class="fas fa-heart"></i>
                                 </button>
                             </div>

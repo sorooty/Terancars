@@ -36,4 +36,20 @@ function getVehicleImage($marque, $modele) {
     }
     
     return 'default-car.jpg';
+}
+
+/**
+ * Vérifie si l'utilisateur est connecté
+ * @return bool
+ */
+function isLoggedIn() {
+    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
+}
+
+/**
+ * Vérifie si l'utilisateur est un administrateur
+ * @return bool
+ */
+function isAdmin() {
+    return isLoggedIn() && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 } 
