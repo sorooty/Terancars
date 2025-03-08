@@ -7,23 +7,41 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Définition du chemin racine
-define('ROOT_PATH', __DIR__);
+// Définition du chemin racine (seulement si pas déjà défini)
+if (!defined('ROOT_PATH')) {
+    define('ROOT_PATH', __DIR__);
+}
 
 // Configuration de base
 define('SITE_NAME', 'Teran\'Cars');
 define('SITE_URL', '/DaCar');
 
-// Lecture des informations de Railway
-$url = parse_url(getenv("MYSQLDATABASE_URL"));
+// Lecture des informations de Railway ou utilisation des valeurs par défaut pour le développement local
+$database_url = getenv("MYSQLDATABASE_URL");
 
-$host = $url["host"];
-$username = $url["user"];
-$password = $url["pass"];
-$dbname = ltrim($url["path"], '/');
-$port = $url["port"] ?? 3306; // Railway utilise généralement le port 3306
+if ($database_url) {
+    // Mode production (Railway)
+    $url = parse_url($database_url);
+    
+    if ($url === false || !isset($url["host"]) || !isset($url["user"]) || !isset($url["pass"]) || !isset($url["path"])) {
+        die("Configuration de base de données invalide");
+    }
 
-// Connexion PDO avec Railway
+    $host = $url["host"];
+    $username = $url["user"];
+    $password = $url["pass"];
+    $dbname = ltrim($url["path"], '/');
+    $port = $url["port"] ?? 3306;
+} else {
+    // Mode développement local
+    $host = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "terancar";
+    $port = 3307;
+}
+
+// Connexion PDO
 try {
     $db = new PDO(
         "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
