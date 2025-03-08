@@ -15,4 +15,12 @@ function getBaseUrl() {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'];
     return $protocol . '://' . $host . SITE_URL;
+}
+
+/**
+ * Vérifie si l'utilisateur est connecté
+ * @return bool
+ */
+function isLoggedIn() {
+    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 } 

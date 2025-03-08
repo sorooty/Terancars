@@ -5,6 +5,7 @@ require_once ROOT_PATH . '/includes/init.php';
 $pageTitle = "Nous contacter";
 $pageDescription = "Contactez TeranCar pour toute question ou demande d'information";
 $currentPage = 'contact';
+$additionalCss = ['css/contact.css'];
 
 // Traitement du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -53,8 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ob_start();
 ?>
 
-<div class="container">
-    <div class="contact-page">
+<div class="contact-page">
+    <div class="container">
         <div class="contact-header">
             <h1>Contactez-nous</h1>
             <p>Notre équipe est à votre disposition pour répondre à toutes vos questions.</p>
