@@ -59,7 +59,10 @@ ob_start();
                             <span><i class="fas fa-gas-pump"></i> <?= htmlspecialchars($vehicle['carburant']) ?></span>
                             <span><i class="fas fa-cog"></i> <?= htmlspecialchars($vehicle['transmission']) ?></span>
                         </div>
-                        <a href="<?= url('vehicule/detail?id=' . $vehicle['id']) ?>" class="btn btn-primary">Voir détails</a>
+                        <a href="<?= url('vehicule/detail?id=' . $vehicle['id']) ?>" class="btn">
+                            <i class="fas fa-eye"></i>
+                            Voir détails
+                        </a>
                     </div>
                 </div>
                 <?php endforeach; ?>

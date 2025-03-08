@@ -901,21 +901,29 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
 }
 
+.offer-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
 .offer-year, .offer-price {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: var(--text-color);
     font-size: 0.9rem;
-    margin-bottom: 0.5rem;
 }
 
 .offer-price {
-    font-weight: 600;
     color: var(--primary-color);
+    font-weight: 600;
 }
 
 .offer-specs {
     display: flex;
     gap: 1rem;
-    margin: 1rem 0;
+    margin-bottom: 1rem;
     font-size: 0.9rem;
     color: var(--text-color);
 }
@@ -928,6 +936,33 @@ h1, h2, h3, h4, h5, h6 {
 
 .offer-specs i {
     color: var(--primary-color);
+}
+
+.offer-details .btn {
+    width: 100%;
+    padding: 0.8rem;
+    text-align: center;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.offer-details .btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.2);
+}
+
+.offer-details .btn i {
+    font-size: 0.9rem;
 }
 
 .slider-arrow {
