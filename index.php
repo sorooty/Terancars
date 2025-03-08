@@ -45,15 +45,16 @@ ob_start();
                 <?php foreach ($vehicles as $vehicle): ?>
                 <div class="offer-card">
                     <div class="offer-image">
-                        <img src="<?= asset('images/vehicules/' . getVehicleImage($vehicle['marque'], $vehicle['modele'])) ?>" 
+                        <img src="<?= asset('images/vehicules/' . $vehicle['id'] . '/main.jpg') ?>" 
                              alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?>"
+                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'"
                              loading="lazy">
                     </div>
                     <div class="offer-details">
                         <h3><?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?></h3>
                         <div class="offer-info">
                             <p class="offer-year"><i class="fas fa-calendar"></i> <?= htmlspecialchars($vehicle['annee']) ?></p>
-                            <p class="offer-price"><i class="fas fa-tag"></i> <?= formatPrice($vehicle['prix']) ?></p>
+                            <p class="offer-price"><i class="fas fa-tag"></i> <?= formatPrice($vehicle['prix']) ?> FCFA</p>
                         </div>
                         <div class="offer-specs">
                             <span><i class="fas fa-gas-pump"></i> <?= htmlspecialchars($vehicle['carburant']) ?></span>
