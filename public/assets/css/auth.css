@@ -1,24 +1,36 @@
 /* Styles pour les pages d'authentification */
-.auth-container {
-    background-color: white;
-    max-width: 400px;
-    margin: 100px auto;
+.auth-page {
+    min-height: calc(100vh - var(--header-height));
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    background: var(--background-light);
 }
 
-.auth-container h2 {
-    color: var(--primary-color);
+.auth-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+}
+
+.auth-header {
     text-align: center;
     margin-bottom: 2rem;
-    font-size: 1.8rem;
 }
 
-.auth-container p {
-    color: #666;
-    text-align: center;
-    margin-bottom: 1.5rem;
+.auth-header h1 {
+    color: var(--primary-color);
+    font-size: var(--font-size-2xl);
+    margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+    color: var(--text-muted);
+    font-size: var(--font-size-base);
 }
 
 .auth-form {
@@ -28,28 +40,96 @@
 }
 
 .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .form-group label {
-    color: #333;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
     font-weight: 500;
 }
 
 .form-group input {
     width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 50px;
-    font-size: 1rem;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: var(--font-size-base);
     transition: border-color 0.3s ease;
 }
 
 .form-group input:focus {
-    border-color: var(--color-primary);
     outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+}
+
+.form-group.has-error input {
+    border-color: var(--danger);
+}
+
+.error-message {
+    color: var(--danger);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: block;
+}
+
+.password-input {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+}
+
+.toggle-password:hover {
+    color: var(--primary-color);
+}
+
+.form-actions {
+    margin-top: 1rem;
+}
+
+.btn-block {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.btn-block i {
+    margin-right: 0.5rem;
+}
+
+.auth-links {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.auth-links p {
+    color: var(--text-muted);
+    font-size: var(--font-size-base);
+}
+
+.auth-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
 }
 
 .remember-me {
@@ -61,31 +141,59 @@
 
 .remember-me input[type="checkbox"] {
     width: auto;
+    margin: 0;
 }
 
-.auth-container .btn {
-    width: 100%;
-    padding: 1rem;
-    font-size: 1rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.remember-me label {
+    color: var(--text-muted);
+    font-size: var(--font-size-base);
+    margin: 0;
 }
 
-.auth-links {
-    text-align: center;
-    margin-top: 1.5rem;
+.forgot-password {
+    text-align: right;
+    margin-top: 0.5rem;
 }
 
-.auth-links a {
-    color: var(--primary-color);
+.forgot-password a {
+    color: var(--text-muted);
+    font-size: var(--font-size-base);
     text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
 }
 
-.auth-links a:hover {
-    color: var(--secondary-color);
+.forgot-password a:hover {
+    color: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .auth-card {
+        padding: 1.5rem;
+    }
+
+    .auth-header h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .btn-block {
+        padding: 0.8rem;
+    }
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.auth-card {
+    animation: slideIn 0.5s ease forwards;
 }
 
 /* Message de validation/erreur */
