@@ -2,7 +2,7 @@
 RewriteEngine On
 
 # Configuration de base
-Options -Indexes
+Options +FollowSymLinks
 AddDefaultCharset UTF-8
 
 # Activation de PHP
@@ -14,43 +14,16 @@ AddType application/x-httpd-php .php
     Deny from all
 </FilesMatch>
 
-# Définition conditionnelle de la base de l'URL
-RewriteCond %{HTTP_HOST} ^terancar-production\.up\.railway\.app$ [NC]
-RewriteRule .* - [E=BASE:/]
-RewriteCond %{HTTP_HOST} !^terancar-production\.up\.railway\.app$ [NC]
-RewriteRule .* - [E=BASE:/DaCar/]
-RewriteBase %{ENV:BASE}
+# Redirection vers HTTPS
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Permettre l'accès direct aux fichiers et dossiers existants
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
-
-# Redirection de la page d'accueil
-RewriteRule ^$ index.php [L,QSA]
-
-# Redirection des fichiers statiques dans public
-RewriteRule ^(assets|images|js|css)/(.*)$ public/$1/$2 [L]
-
-# Redirection des pages d'authentification
-RewriteRule ^auth/([^/]+)$ public/pages/auth/$1.php [L,QSA]
-
-# Redirection des pages de détail des véhicules
-RewriteRule ^vehicule/detail$ public/pages/vehicule/detail.php [L,QSA]
-
-# Redirection des autres pages
-RewriteRule ^([^/]+)/?$ public/pages/$1/index.php [L,QSA]
+# Redirection vers public/index.php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ public/index.php [QSA,L]
 
 # Pages d'erreur personnalisées
-RewriteCond %{HTTP_HOST} ^terancar-production\.up\.railway\.app$ [NC]
 ErrorDocument 404 /public/pages/errors/404.php
 ErrorDocument 403 /public/pages/errors/403.php
-RewriteCond %{HTTP_HOST} !^terancar-production\.up\.railway\.app$ [NC]
-ErrorDocument 404 /DaCar/public/pages/errors/404.php
-ErrorDocument 403 /DaCar/public/pages/errors/403.php
-
-# Forcer HTTPS en production
-RewriteCond %{HTTPS} off
-RewriteCond %{HTTP:X-Forwarded-Proto} !https
-RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
-RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301,NE] 
+ErrorDocument 500 /public/pages/errors/500.php 
