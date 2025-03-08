@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/../config/config.php';
+// Inclusion du fichier d'initialisation
+require_once __DIR__ . '/../includes/init.php';
 
 // Récupérer l'URI demandée
 $request_uri = $_SERVER['REQUEST_URI'];
@@ -22,7 +23,7 @@ $routes = [
 
 // Vérifier si la route existe
 if (isset($routes[$base_path])) {
-    $file_path = __DIR__ . '/..' . $routes[$base_path];
+    $file_path = ROOT_PATH . $routes[$base_path];
     if (file_exists($file_path)) {
         require $file_path;
         exit;
