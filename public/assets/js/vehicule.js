@@ -5,26 +5,127 @@ let autoPlayInterval = null;
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
-    // Récupération du nombre total d'images
-    const images = document.querySelectorAll('.gallery-img');
-    totalImages = images.length;
+    // Éléments du carrousel
+    const slider = document.querySelector('.gallery-slider');
+    const slides = document.querySelectorAll('.gallery-img');
+    const thumbs = document.querySelectorAll('.thumb');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const favoriteBtn = document.getElementById('favoriteBtn');
+    
+    let currentIndex = 0;
+    let autoSlideInterval = null;
 
-    // Configuration des boutons de navigation
-    setupNavigationButtons();
+    // Fonction pour mettre à jour l'affichage du carrousel
+    function updateSlider(index) {
+        // Gérer les limites de l'index
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
 
-    // Configuration des points de navigation
-    setupNavigationDots();
+        // Mettre à jour les images
+        slides.forEach(slide => slide.classList.remove('active'));
+        slides[index].classList.add('active');
 
-    // Configuration du bouton favori
-    setupFavoriteButton();
+        // Mettre à jour les miniatures
+        thumbs.forEach(thumb => thumb.classList.remove('active'));
+        thumbs[index].classList.add('active');
 
-    // Démarrage du défilement automatique
-    startAutoPlay();
+        currentIndex = index;
+    }
 
-    // Arrêt du défilement automatique au survol
-    const gallery = document.querySelector('.image-gallery');
-    gallery.addEventListener('mouseenter', stopAutoPlay);
-    gallery.addEventListener('mouseleave', startAutoPlay);
+    // Fonction pour le défilement automatique
+    function startAutoSlide() {
+        stopAutoSlide(); // Arrêter l'intervalle existant si présent
+        autoSlideInterval = setInterval(() => {
+            updateSlider(currentIndex + 1);
+        }, 5000);
+    }
+
+    function stopAutoSlide() {
+        if (autoSlideInterval) {
+            clearInterval(autoSlideInterval);
+            autoSlideInterval = null;
+        }
+    }
+
+    // Gestionnaire d'événements pour les boutons de navigation
+    prevBtn.addEventListener('click', () => {
+        updateSlider(currentIndex - 1);
+        stopAutoSlide();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        updateSlider(currentIndex + 1);
+        stopAutoSlide();
+    });
+
+    // Gestionnaire d'événements pour les miniatures
+    thumbs.forEach((thumb, index) => {
+        thumb.addEventListener('click', () => {
+            updateSlider(index);
+            stopAutoSlide();
+        });
+    });
+
+    // Navigation au clavier
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            updateSlider(currentIndex - 1);
+            stopAutoSlide();
+        } else if (e.key === 'ArrowRight') {
+            updateSlider(currentIndex + 1);
+            stopAutoSlide();
+        }
+    });
+
+    // Support tactile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    slider.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        stopAutoSlide();
+    }, false);
+
+    slider.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].clientX;
+        const swipeDistance = touchEndX - touchStartX;
+        
+        if (Math.abs(swipeDistance) > 50) { // Seuil minimum pour le swipe
+            if (swipeDistance > 0) {
+                updateSlider(currentIndex - 1); // Swipe vers la droite
+            } else {
+                updateSlider(currentIndex + 1); // Swipe vers la gauche
+            }
+        }
+    }, false);
+
+    // Gestion du survol
+    slider.addEventListener('mouseenter', stopAutoSlide);
+    slider.addEventListener('mouseleave', startAutoSlide);
+
+    // Gestion des favoris
+    if (favoriteBtn) {
+        const vehicleId = new URLSearchParams(window.location.search).get('id');
+        const isFavorite = localStorage.getItem(`favorite_${vehicleId}`);
+        
+        if (isFavorite) {
+            favoriteBtn.classList.add('active');
+        }
+
+        favoriteBtn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            if (this.classList.contains('active')) {
+                localStorage.setItem(`favorite_${vehicleId}`, 'true');
+            } else {
+                localStorage.removeItem(`favorite_${vehicleId}`);
+            }
+        });
+    }
+
+    // Démarrer le carrousel
+    updateSlider(0);
+    startAutoSlide();
 });
 
 // Configuration des boutons de navigation
