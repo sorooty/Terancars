@@ -148,11 +148,6 @@ function getPopularBrands() {
     ];
 }
 
-// Fonction pour formater le prix
-function formatPrice($price) {
-    return number_format($price, 0, ',', ' ') . ' FCFA';
-}
-
 // Fonction pour obtenir l'image d'un véhicule
 function getVehicleImage($marque, $modele) {
     $marque = strtolower(trim($marque));
