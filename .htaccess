@@ -18,12 +18,18 @@ AddType application/x-httpd-php .php
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Redirection vers index.php
+# Permettre l'accès direct aux assets dans le dossier public
+RewriteCond %{REQUEST_URI} !^/public/assets/
+RewriteCond %{REQUEST_URI} !^/public/images/
+RewriteCond %{REQUEST_URI} !^/public/js/
+RewriteCond %{REQUEST_URI} !^/public/css/
+
+# Redirection vers public/index.php pour toutes les autres requêtes
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ index.php [QSA,L]
+RewriteRule ^(.*)$ public/index.php [QSA,L]
 
 # Pages d'erreur personnalisées
-ErrorDocument 404 /pages/errors/404.php
-ErrorDocument 403 /pages/errors/403.php
-ErrorDocument 500 /pages/errors/500.php 
+ErrorDocument 404 /public/pages/errors/404.php
+ErrorDocument 403 /public/pages/errors/403.php
+ErrorDocument 500 /public/pages/errors/500.php 

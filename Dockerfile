@@ -18,9 +18,10 @@ COPY . /var/www/html/
 
 # Configuration des permissions
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+    && chmod -R 755 /var/www/html \
+    && chmod -R 777 /var/www/html/public/images
 
-# Configuration d'Apache
+# Configuration d'Apache pour permettre .htaccess
 RUN echo '<Directory /var/www/html>\n\
     Options Indexes FollowSymLinks\n\
     AllowOverride All\n\
