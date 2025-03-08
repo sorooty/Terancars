@@ -44,7 +44,7 @@ if (!defined('ROOT_PATH')) {
                     <i class="fas fa-envelope"></i>
                     Contact
                 </a>
-                <a href="<?= url('pages/about/') ?>" class="<?= $currentPage === 'about' ? 'active' : '' ?>">
+                <a href="<?= url('about') ?>" class="<?= $currentPage === 'about' ? 'active' : '' ?>">
                     <i class="fas fa-info-circle"></i>
                     À propos
                 </a>

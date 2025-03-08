@@ -72,36 +72,43 @@ ob_start();
         <h2>Notre Équipe</h2>
         <p>Une équipe passionnée qui incarne les valeurs de la Teranga au quotidien</p>
         <div class="team-grid">
-            <div class="team-member">
-                <img src="<?= asset('images/team/ceo.jpg') ?>" alt="CEO">
-                <h3>Abdoulaye Watt</h3>
-                <p>CEO & Chef de projet</p>
-            </div>
-            <div class="team-member">
-                <img src="<?= asset('images/team/coo.jpg') ?>" alt="COO">
-                <h3>Omar ElGhazal</h3>
-                <p>COO</p>
-            </div>
-            <div class="team-member">
-                <img src="<?= asset('images/team/cto.jpg') ?>" alt="CTO">
-                <h3>Seyni Baldé</h3>
-                <p>CTO & Fullstack Engineer</p>
-            </div>
-            <div class="team-member">
-                <img src="<?= asset('images/team/engineer.jpg') ?>" alt="Fullstack Engineer">
-                <h3>Thierno Diallo</h3>
-                <p>Fullstack Engineer & Logistics</p>
-            </div>
-            <div class="team-member">
-                <img src="<?= asset('images/team/community.jpg') ?>" alt="Community Manager">
-                <h3>Jean Tiemtoré</h3>
-                <p>Community Manager & Front-end Dev</p>
-            </div>
-            <div class="team-member">
-                <img src="<?= asset('images/team/designer.jpg') ?>" alt="Webdesigner">
-                <h3>Hameg Sonia</h3>
-                <p>Webdesigner & Front-end Dev</p>
-            </div>
+            <?php
+            $team_members = [
+                [
+                    'name' => 'Abdoulaye Watt',
+                    'role' => 'CEO & Chef de projet',
+                ],
+                [
+                    'name' => 'Omar ElGhazal',
+                    'role' => 'COO',
+                ],
+                [
+                    'name' => 'Seyni Baldé',
+                    'role' => 'CTO & Fullstack Engineer',
+                ],
+                [
+                    'name' => 'Thierno Diallo',
+                    'role' => 'Fullstack Engineer & Logistics',
+                ],
+                [
+                    'name' => 'Jean Tiemtoré',
+                    'role' => 'Community Manager & Front-end Dev',
+                ],
+                [
+                    'name' => 'Hameg Sonia',
+                    'role' => 'Webdesigner & Front-end Dev',
+                ]
+            ];
+
+            foreach ($team_members as $member): ?>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3><?= htmlspecialchars($member['name']) ?></h3>
+                    <p><?= htmlspecialchars($member['role']) ?></p>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
