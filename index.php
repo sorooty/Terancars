@@ -45,8 +45,36 @@ ob_start();
                 <?php foreach ($vehicles as $vehicle): ?>
                 <div class="offer-card">
                     <div class="offer-image">
-                        <img src="<?= asset('images/vehicules/' . getVehicleImage($vehicle['marque'], $vehicle['modele'])) ?>" 
+                        <?php
+                        // Fonction pour obtenir le nom du fichier image en fonction de la marque et du modèle
+                        function getVehicleImageFilename($marque, $modele) {
+                            $filename = strtolower($marque . ' ' . $modele);
+                            $filename = str_replace(' ', '-', $filename);
+                            return $filename;
+                        }
+
+                        // Essayer différentes extensions d'image possibles
+                        $extensions = ['.jpg', '.jpeg', '.webp', '.avif'];
+                        $imageFound = false;
+                        $imagePath = '';
+                        
+                        foreach ($extensions as $ext) {
+                            $testPath = 'images/vehicules/' . getVehicleImageFilename($vehicle['marque'], $vehicle['modele']) . $ext;
+                            if (file_exists(ROOT_PATH . '/public/' . $testPath)) {
+                                $imagePath = $testPath;
+                                $imageFound = true;
+                                break;
+                            }
+                        }
+
+                        // Si aucune image n'est trouvée, utiliser l'image par défaut
+                        if (!$imageFound) {
+                            $imagePath = 'images/vehicules/default-car.jpg';
+                        }
+                        ?>
+                        <img src="<?= asset($imagePath) ?>" 
                              alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?>"
+                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'"
                              loading="lazy">
                     </div>
                     <div class="offer-details">
@@ -59,7 +87,11 @@ ob_start();
                             <span><i class="fas fa-gas-pump"></i> <?= htmlspecialchars($vehicle['carburant']) ?></span>
                             <span><i class="fas fa-cog"></i> <?= htmlspecialchars($vehicle['transmission']) ?></span>
                         </div>
-                        <a href="<?= url('vehicule/detail?id=' . $vehicle['id']) ?>" class="btn btn-primary">Voir détails</a>
+                        <div class="offer-actions">
+                            <a href="<?= url('vehicule/detail') ?>?id=<?= $vehicle['id'] ?>" class="btn btn-primary btn-block">
+                                <i class="fas fa-eye"></i> Voir détails
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <?php endforeach; ?>
