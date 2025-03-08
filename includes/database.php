@@ -3,7 +3,9 @@
  * Fonctions liées à la base de données
  */
 
-// Fonction pour récupérer les véhicules
+/**
+ * Récupère les véhicules
+ */
 function getVehicles($limit = null) {
     global $db;
     $sql = "SELECT * FROM vehicules";
@@ -14,7 +16,9 @@ function getVehicles($limit = null) {
     return $stmt->fetchAll();
 }
 
-// Fonction pour récupérer les avis clients
+/**
+ * Récupère les avis clients
+ */
 function getTestimonials($limit = 3) {
     global $db;
     $sql = "SELECT ac.*, c.nom as client_nom 
@@ -26,21 +30,9 @@ function getTestimonials($limit = 3) {
     return $stmt->fetchAll();
 }
 
-// Fonction pour récupérer les marques populaires
-function getPopularBrands() {
-    return [
-        'Renault',
-        'Peugeot',
-        'Volkswagen',
-        'Toyota',
-        'BMW',
-        'Mercedes',
-        'Audi',
-        'Ford'
-    ];
-}
-
-// Fonction pour récupérer un véhicule par son ID
+/**
+ * Récupère un véhicule par son ID
+ */
 function getVehicleById($id) {
     global $db;
     try {
@@ -63,7 +55,7 @@ function getVehicleById($id) {
             
             // Récupération des images
             $vehicleImage = getVehicleImage($vehicle['marque'], $vehicle['modele']);
-            $vehicle['images'] = $vehicleImage ? [$vehicleImage] : ['images/vehicles/default-car.jpg'];
+            $vehicle['images'] = $vehicleImage ? [$vehicleImage] : ['default-car.jpg'];
             
             return $vehicle;
         }
@@ -74,7 +66,25 @@ function getVehicleById($id) {
     }
 }
 
-// Fonction pour ajouter un véhicule au panier
+/**
+ * Récupère les marques populaires
+ */
+function getPopularBrands() {
+    return defined('POPULAR_BRANDS') ? POPULAR_BRANDS : [
+        'Renault',
+        'Peugeot',
+        'Volkswagen',
+        'Toyota',
+        'BMW',
+        'Mercedes',
+        'Audi',
+        'Ford'
+    ];
+}
+
+/**
+ * Ajoute un véhicule au panier
+ */
 function addToCart($vehicleId, $type = 'achat') {
     if (!isset($_SESSION['panier'])) {
         $_SESSION['panier'] = [];
@@ -103,7 +113,7 @@ function addToCart($vehicleId, $type = 'achat') {
         'modele' => $vehicle['modele'],
         'type' => $type,
         'prix' => $type === 'location' ? $vehicle['prix_location'] : $vehicle['prix'],
-        'image' => $vehicle['images'][0],
+        'image' => $vehicle['images'][0] ?? 'default-car.jpg',
         'quantity' => 1
     ];
 
