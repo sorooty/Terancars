@@ -248,7 +248,7 @@ function toggleFavorite() {
 // Récupération de l'ID du véhicule depuis l'URL
 function getVehicleId() {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('id');
+    return urlParams.get('id_vehicule');
 }
 
 // Support du tactile pour la galerie

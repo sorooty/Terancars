@@ -3,7 +3,7 @@
 require_once ROOT_PATH . '/includes/init.php';
 
 // Récupération de l'ID du véhicule depuis l'URL
-$vehicleId = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$vehicleId = isset($_GET['id_vehicule']) ? intval($_GET['id_vehicule']) : 0;
 
 // Traitement de l'ajout au panier
 if (isset($_POST['action']) && $_POST['action'] === 'add_to_cart') {
