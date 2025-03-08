@@ -1,9 +1,7 @@
 RewriteEngine On
 
-# Permettre les URLs propres
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+# Définition de la base de l'URL
+RewriteBase /DaCar/
 
 # Configuration de base
 Options -Indexes
@@ -18,11 +16,7 @@ AddType application/x-httpd-php .php
     Deny from all
 </FilesMatch>
 
-# Pages d'erreur personnalisées
-ErrorDocument 404 /DaCar/public/pages/errors/404.php
-ErrorDocument 403 /DaCar/public/pages/errors/403.php
-
-# Activation du module de réécriture d'URL
+# Permettre l'accès direct aux fichiers et dossiers existants
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
@@ -42,15 +36,12 @@ RewriteRule ^vehicule/detail$ public/pages/vehicule/detail.php [L,QSA]
 # Redirection des autres pages
 RewriteRule ^([^/]+)/?$ public/pages/$1/index.php [L,QSA]
 
-# Forcer HTTPS (à décommenter en production)
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Pages d'erreur personnalisées
+ErrorDocument 404 /DaCar/public/pages/errors/404.php
+ErrorDocument 403 /DaCar/public/pages/errors/403.php
 
-# Redirection de toutes les requêtes vers le dossier public
-RewriteCond %{REQUEST_URI} !^/public/
-RewriteRule ^(.*)$ public/$1 [L]
-
-# Si le fichier demandé n'existe pas, rediriger vers index.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L] 
+# Forcer HTTPS en production
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301,NE] 
