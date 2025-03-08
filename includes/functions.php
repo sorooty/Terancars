@@ -11,13 +11,6 @@ function formatPrice($price) {
 }
 
 /**
- * Retourne l'URL complète d'un asset
- */
-function asset($path) {
-    return '/DaCar/assets/' . ltrim($path, '/');
-}
-
-/**
  * Retourne l'URL complète d'une page
  */
 function url($path) {
