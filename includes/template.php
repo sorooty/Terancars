@@ -36,11 +36,11 @@ if (!defined('ROOT_PATH')) {
                     <i class="fas fa-home"></i>
                     Accueil
                 </a>
-                <a href="<?= url('pages/catalogue/') ?>" class="<?= $currentPage === 'catalogue' ? 'active' : '' ?>">
+                <a href="<?= url('catalogue') ?>" class="<?= $currentPage === 'catalogue' ? 'active' : '' ?>">
                     <i class="fas fa-car"></i>
                     Catalogue
                 </a>
-                <a href="<?= url('pages/contact/') ?>" class="<?= $currentPage === 'contact' ? 'active' : '' ?>">
+                <a href="<?= url('contact') ?>" class="<?= $currentPage === 'contact' ? 'active' : '' ?>">
                     <i class="fas fa-envelope"></i>
                     Contact
                 </a>
@@ -77,12 +77,13 @@ if (!defined('ROOT_PATH')) {
             
             <div class="footer-section links">
                 <h3>Liens rapides</h3>
-                <ul>
-                    <li><a href="<?= url('/') ?>">Accueil</a></li>
-                    <li><a href="<?= url('pages/catalogue/') ?>">Catalogue</a></li>
-                    <li><a href="<?= url('pages/contact/') ?>">Contact</a></li>
-                    <li><a href="<?= url('pages/about/') ?>">À propos</a></li>
-                </ul>
+                <div class="footer-links">
+                    <ul>
+                        <li><a href="<?= url('') ?>">Accueil</a></li>
+                        <li><a href="<?= url('catalogue') ?>">Catalogue</a></li>
+                        <li><a href="<?= url('contact') ?>">Contact</a></li>
+                    </ul>
+                </div>
             </div>
             
             <div class="footer-section contact">

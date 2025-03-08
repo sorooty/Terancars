@@ -11,15 +11,14 @@ $base_path = rtrim($base_path, '/');
 
 // Routes définies
 $routes = [
-    '' => '/index.php',
-    '/about' => '/public/pages/about/index.php',
-    '/contact' => '/public/pages/contact/index.php',
+    '/' => '/public/pages/home.php',
     '/catalogue' => '/public/pages/catalogue/index.php',
-    '/panier' => '/public/pages/panier/index.php',
+    '/contact' => '/public/pages/contact.php',
     '/auth/login' => '/public/pages/auth/login.php',
     '/auth/inscription' => '/public/pages/auth/inscription.php',
     '/auth/reset-password' => '/public/pages/auth/reset-password.php',
-    '/vehicule/detail' => '/public/pages/vehicule/detail.php'
+    '/vehicule/detail' => '/public/pages/vehicule/detail.php',
+    '/panier' => '/public/pages/panier.php'
 ];
 
 // Vérifier si la route existe
