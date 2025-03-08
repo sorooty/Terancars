@@ -1,0 +1,98 @@
+/* Styles des boutons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: var(--font-size-base);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    gap: 0.5rem;
+}
+
+.btn i {
+    font-size: 1.1em;
+}
+
+/* Bouton primaire */
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.2);
+}
+
+/* Bouton secondaire */
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: var(--light-text);
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--secondary-rgb), 0.2);
+}
+
+/* Bouton outline */
+.btn-outline {
+    background-color: transparent;
+    border-color: currentColor;
+    color: var(--primary-color);
+}
+
+.btn-outline:hover {
+    background-color: rgba(var(--primary-rgb), 0.1);
+    transform: translateY(-2px);
+}
+
+/* Bouton danger */
+.btn-danger {
+    background-color: var(--danger);
+    color: var(--light-text);
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--danger), 0.2);
+}
+
+/* Bouton pleine largeur */
+.btn-block {
+    display: flex;
+    width: 100%;
+}
+
+/* Bouton désactivé */
+.btn:disabled,
+.btn.disabled {
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+/* Tailles de boutons */
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .btn {
+        padding: 0.625rem 1.25rem;
+    }
+} 

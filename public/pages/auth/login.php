@@ -12,6 +12,7 @@ if (isLoggedIn()) {
 $pageTitle = "Connexion";
 $pageDescription = "Connectez-vous à votre compte TeranCar";
 $currentPage = 'login';
+$additionalCss = ['css/auth.css'];
 
 // Traitement du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

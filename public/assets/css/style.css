@@ -1,6 +1,7 @@
 /* Import des composants */
 @import url('../css/components/brands.css');
 @import url('../css/components/testimonials.css');
+@import url('../css/components/buttons.css');
 
 /* Variables globales */
 :root {
