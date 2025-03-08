@@ -4,11 +4,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetButton = document.getElementById('reset-filtres');
 
     if (filtresForm) {
-        // Empêcher la soumission automatique sur les changements
+        // Gestion des champs de formulaire
         filtresForm.querySelectorAll('select, input').forEach(input => {
-            input.addEventListener('change', (e) => {
-                e.preventDefault(); // Empêche la soumission automatique
+            input.addEventListener('change', () => {
+                // Ne soumet pas automatiquement pour les champs numériques
+                if (input.type !== 'number') {
+                    filtresForm.submit();
+                }
             });
+
+            // Pour les champs numériques, ajouter un délai
+            if (input.type === 'number') {
+                let timeout;
+                input.addEventListener('input', () => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        if (input.value !== '') {
+                            filtresForm.submit();
+                        }
+                    }, 1000); // Délai d'une seconde
+                });
+            }
+        });
+
+        // Gestion du bouton reset
+        resetButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Réinitialiser tous les champs
+            filtresForm.querySelectorAll('select, input').forEach(input => {
+                input.value = '';
+            });
+            // Rediriger vers la page du catalogue sans paramètres
+            window.location.href = window.location.pathname;
         });
 
         // Validation des champs de prix et d'année
@@ -18,42 +45,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const anneeMax = document.querySelector('input[name="annee_max"]');
 
         // Validation du prix
-        if (prixMin && prixMax) {
-            prixMin.addEventListener('change', () => {
-                if (prixMax.value && parseInt(prixMin.value) > parseInt(prixMax.value)) {
-                    prixMin.value = prixMax.value;
-                }
-            });
+        prixMin?.addEventListener('change', () => {
+            if (prixMax?.value && parseInt(prixMin.value) > parseInt(prixMax.value)) {
+                prixMin.value = prixMax.value;
+            }
+            if (prixMin.value !== '') {
+                filtresForm.submit();
+            }
+        });
 
-            prixMax.addEventListener('change', () => {
-                if (prixMin.value && parseInt(prixMax.value) < parseInt(prixMin.value)) {
-                    prixMax.value = prixMin.value;
-                }
-            });
-        }
+        prixMax?.addEventListener('change', () => {
+            if (prixMin?.value && parseInt(prixMax.value) < parseInt(prixMin.value)) {
+                prixMax.value = prixMin.value;
+            }
+            if (prixMax.value !== '') {
+                filtresForm.submit();
+            }
+        });
 
         // Validation de l'année
-        if (anneeMin && anneeMax) {
-            anneeMin.addEventListener('change', () => {
-                if (anneeMax.value && parseInt(anneeMin.value) > parseInt(anneeMax.value)) {
-                    anneeMin.value = anneeMax.value;
-                }
-            });
+        anneeMin?.addEventListener('change', () => {
+            if (anneeMax?.value && parseInt(anneeMin.value) > parseInt(anneeMax.value)) {
+                anneeMin.value = anneeMax.value;
+            }
+            if (anneeMin.value !== '') {
+                filtresForm.submit();
+            }
+        });
 
-            anneeMax.addEventListener('change', () => {
-                if (anneeMin.value && parseInt(anneeMax.value) < parseInt(anneeMin.value)) {
-                    anneeMax.value = anneeMin.value;
-                }
-            });
-        }
-
-        // Gestion du bouton reset
-        resetButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            filtresForm.querySelectorAll('select, input').forEach(input => {
-                input.value = '';
-            });
-            filtresForm.submit();
+        anneeMax?.addEventListener('change', () => {
+            if (anneeMin?.value && parseInt(anneeMax.value) < parseInt(anneeMin.value)) {
+                anneeMax.value = anneeMin.value;
+            }
+            if (anneeMax.value !== '') {
+                filtresForm.submit();
+            }
         });
     }
 

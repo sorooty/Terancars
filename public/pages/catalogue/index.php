@@ -82,15 +82,15 @@ try {
     $stmt = $db->query("SELECT DISTINCT marque FROM vehicules ORDER BY marque");
     $marques = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    // Variables de la page
+// Variables de la page
     $pageTitle = "Catalogue des véhicules";
     $pageDescription = "Découvrez notre sélection de véhicules disponibles à l'achat et à la location.";
-    $currentPage = 'catalogue';
-    $additionalCss = ['css/catalogue.css'];
+$currentPage = 'catalogue';
+$additionalCss = ['css/catalogue.css'];
     $additionalJs = ['js/catalogue.js'];
 
-    // Début de la mise en mémoire tampon
-    ob_start();
+// Début de la mise en mémoire tampon
+ob_start();
 } catch (PDOException $e) {
     // Log l'erreur et affiche un message générique
     error_log("Erreur base de données: " . $e->getMessage());
@@ -113,7 +113,7 @@ try {
                             <option value="<?= $m ?>" <?= $marque === $m ? 'selected' : '' ?>><?= $m ?></option>
                         <?php endforeach; ?>
                     </select>
-                </div>
+    </div>
 
                 <!-- Modèle -->
                 <div class="form-group">
@@ -221,7 +221,12 @@ try {
                 <?php foreach ($vehicules as $vehicule): ?>
                     <div class="vehicule-card">
                         <div class="vehicule-image">
-                            <img src="<?= getVehicleImagePath($vehicule['id_vehicule']) ?>" 
+                            <?php
+                            $imagePath = 'public/assets/images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg';
+                            $defaultImage = 'public/assets/images/default-car.jpg';
+                            $imageUrl = file_exists($imagePath) ? asset('images/vehicules/' . $vehicule['id_vehicule'] . '/main.jpg') : asset('images/default-car.jpg');
+                            ?>
+                            <img src="<?= $imageUrl ?>" 
                                  alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>">
                             <?php if ($vehicule['stock'] > 0): ?>
                                 <span class="badge badge-success">Disponible</span>
@@ -253,13 +258,13 @@ try {
                                     <i class="fas fa-info-circle"></i> Voir les détails
                                 </a>
                             </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+                </div>
             </div>
+            <?php endforeach; ?>
+        </div>
         <?php endif; ?>
     </main>
-</div>
+    </div>
 
 <?php
 // Récupération du contenu mis en mémoire tampon
