@@ -1,14 +1,6 @@
 <?php
 require_once ROOT_PATH . '/includes/init.php';
 
-// Redirection si non connecté
-if (!isLoggedIn()) {
-    $_SESSION['redirect_after_login'] = url('panier');
-    $_SESSION['error_message'] = "Vous devez être connecté pour accéder au panier";
-    header('Location: ' . url('auth/login'));
-    exit;
-}
-
 // Variables de la page
 $pageTitle = "Mon panier";
 $pageDescription = "Gérez votre panier d'achats et de locations";
