@@ -15,10 +15,11 @@ $routes = [
     '/catalogue' => '/public/pages/catalogue/index.php',
     '/contact' => '/public/pages/contact.php',
     '/a-propos' => '/public/pages/about.php',
-    '/panier' => '/public/pages/panier.php',
-    '/login' => '/public/pages/auth/login.php',
-    '/register' => '/public/pages/auth/register.php',
-    '/logout' => '/public/pages/auth/logout.php',
+    '/panier' => '/public/pages/panier/index.php',
+    '/auth/login' => '/public/pages/auth/login.php',
+    '/auth/inscription' => '/public/pages/auth/inscription.php',
+    '/auth/logout' => '/public/pages/auth/logout.php',
+    '/auth/reset-password' => '/public/pages/auth/reset-password.php',
     '/vehicule/detail' => '/public/pages/vehicule/detail.php'
 ];
 

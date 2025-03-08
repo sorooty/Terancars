@@ -55,12 +55,14 @@ ob_start();
 ?>
 
 <div class="contact-page">
-    <div class="container">
-        <div class="contact-header">
+    <div class="contact-banner">
+        <div class="container">
             <h1>Contactez-nous</h1>
             <p>Notre équipe est à votre disposition pour répondre à toutes vos questions.</p>
         </div>
+    </div>
 
+    <div class="container">
         <?php if (isset($_SESSION['success_message'])): ?>
             <div class="alert alert-success">
                 <?= $_SESSION['success_message'] ?>
@@ -77,6 +79,7 @@ ob_start();
 
         <div class="contact-content">
             <div class="contact-form">
+                <h2>Envoyez-nous un message</h2>
                 <form method="POST" action="<?= url('contact') ?>">
                     <div class="form-row">
                         <div class="form-group <?= isset($errors['nom']) ? 'has-error' : '' ?>">
@@ -140,19 +143,19 @@ ob_start();
                 <div class="info-card">
                     <i class="fas fa-map-marker-alt"></i>
                     <h3>Notre adresse</h3>
-                    <p>123 Avenue des Champs-Élysées<br>75008 Paris, France</p>
+                    <p>97 Route de la Corniche<br>Dakar, Sénégal</p>
                 </div>
 
                 <div class="info-card">
                     <i class="fas fa-phone"></i>
                     <h3>Téléphone</h3>
-                    <p>+33 1 23 45 67 89</p>
+                    <p>+221 78 123 45 67<br>+221 33 823 45 67</p>
                 </div>
 
                 <div class="info-card">
                     <i class="fas fa-envelope"></i>
                     <h3>Email</h3>
-                    <p>contact@terancar.fr</p>
+                    <p>contact@terancars.sn</p>
                 </div>
 
                 <div class="info-card">
@@ -162,6 +165,36 @@ ob_start();
                        Samedi : 10h - 18h<br>
                        Dimanche : Fermé</p>
                 </div>
+
+                <div class="social-media">
+                    <h3>Suivez-nous</h3>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/Terancars" class="social-icon" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/terancars_sn" class="social-icon" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/company/terancars" class="social-icon" title="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-section">
+            <h2>Notre localisation</h2>
+            <div class="map-container">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3859.0517242430837!2d-17.4977493!3d14.7168292!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xec173c3878ba43d%3A0x73726e01cc6e3c37!2sRoute%20de%20la%20Corniche%2C%20Dakar%2C%20S%C3%A9n%C3%A9gal!5e0!3m2!1sfr!2sfr!4v1709913439044!5m2!1sfr!2sfr"
+                    width="100%" 
+                    height="450" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
             </div>
         </div>
     </div>

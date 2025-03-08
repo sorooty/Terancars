@@ -25,41 +25,40 @@ if (!defined('ROOT_PATH')) {
     <header class="header">
         <nav class="nav-main container">
             <div class="logo">
-                <a href="<?= url('/') ?>">
-                    <img src="<?= asset('images/icones/Tlogo.png') ?>" alt="<?= SITE_NAME ?> Logo" class="logo-img">
-                    <span class="logo-text">Teran<span class="highlight">'Cars</span></span>
+                <a href="<?= url('') ?>">
+                    <img src="<?= asset('images/logo.png') ?>" alt="TeranCar Logo" class="logo-img">
+                    <span class="logo-text">Teran<span class="highlight">Cars</span></span>
                 </a>
             </div>
             
             <div class="nav-links">
-                <a href="<?= url('/') ?>" class="<?= $currentPage === 'home' ? 'active' : '' ?>">
-                    <i class="fas fa-home"></i>
-                    Accueil
+                <a href="<?= url('') ?>" class="<?= $currentPage === 'home' ? 'active' : '' ?>">
+                    <i class="fas fa-home"></i> Accueil
                 </a>
                 <a href="<?= url('catalogue') ?>" class="<?= $currentPage === 'catalogue' ? 'active' : '' ?>">
-                    <i class="fas fa-car"></i>
-                    Catalogue
+                    <i class="fas fa-car"></i> Catalogue
                 </a>
                 <a href="<?= url('contact') ?>" class="<?= $currentPage === 'contact' ? 'active' : '' ?>">
-                    <i class="fas fa-envelope"></i>
-                    Contact
+                    <i class="fas fa-envelope"></i> Contact
                 </a>
-                <a href="<?= url('pages/about/') ?>" class="<?= $currentPage === 'about' ? 'active' : '' ?>">
-                    <i class="fas fa-info-circle"></i>
-                    À propos
+                <a href="<?= url('a-propos') ?>" class="<?= $currentPage === 'about' ? 'active' : '' ?>">
+                    <i class="fas fa-info-circle"></i> À propos
                 </a>
-                <a href="<?= url('pages/panier/') ?>" class="<?= $currentPage === 'panier' ? 'active' : '' ?>">
-                    <i class="fas fa-shopping-cart"></i>
-                    Panier
-                    <?php if (!empty($_SESSION['panier'])): ?>
+                <a href="<?= url('panier') ?>" class="<?= $currentPage === 'panier' ? 'active' : '' ?>">
+                    <i class="fas fa-shopping-cart"></i> Panier
+                    <?php if (isset($_SESSION['panier']) && !empty($_SESSION['panier'])): ?>
                         <span class="cart-count"><?= count($_SESSION['panier']) ?></span>
                     <?php endif; ?>
                 </a>
             </div>
 
             <div class="nav-auth">
-                <a href="<?= url('auth/login') ?>" class="btn btn-outline">Connexion</a>
-                <a href="<?= url('auth/inscription') ?>" class="btn btn-secondary">Inscription</a>
+                <?php if (isLoggedIn()): ?>
+                    <a href="<?= url('auth/logout') ?>" class="btn btn-outline">Déconnexion</a>
+                <?php else: ?>
+                    <a href="<?= url('auth/login') ?>" class="btn btn-outline">Connexion</a>
+                    <a href="<?= url('auth/inscription') ?>" class="btn btn-secondary">Inscription</a>
+                <?php endif; ?>
             </div>
         </nav>
     </header>
