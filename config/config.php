@@ -20,7 +20,7 @@ $password = $url["pass"] ?? '';
 $dbname = isset($url["path"]) ? ltrim($url["path"], '/') : 'terancar';
 $port = $url["port"] ?? 3307;
 
-// Connexion à la base de données
+// Connexion à la base de données sans MYSQL_ATTR_INIT_COMMAND
 try {
     $db = new PDO(
         "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
@@ -28,10 +28,12 @@ try {
         $password,
         [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]
     );
+
+    // Configuration explicite du charset UTF-8
+    $db->exec("SET NAMES utf8mb4");
 } catch(PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }
