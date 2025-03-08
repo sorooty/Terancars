@@ -216,61 +216,24 @@ function getVehicleById($id) {
 
         if ($vehicle) {
             // Ajout des champs manquants avec des valeurs par défaut si nécessaire
-            $vehicle['disponible'] = isset($vehicle['disponible']) ? $vehicle['disponible'] : true;
-            $vehicle['disponible_location'] = isset($vehicle['disponible_location']) ? $vehicle['disponible_location'] : true;
-            $vehicle['prix_location'] = isset($vehicle['prix_location']) ? $vehicle['prix_location'] : round($vehicle['prix'] * 0.002); // 0.2% du prix comme tarif journalier par défaut
-            $vehicle['description'] = isset($vehicle['description']) ? $vehicle['description'] : 
-                "Découvrez notre {$vehicle['marque']} {$vehicle['modele']} {$vehicle['annee']}. " .
-                "Un véhicule {$vehicle['carburant']} avec transmission {$vehicle['transmission']}, " .
-                "offrant un excellent rapport qualité-prix.";
-            $vehicle['puissance'] = isset($vehicle['puissance']) ? $vehicle['puissance'] : 0;
-            $vehicle['couleur'] = isset($vehicle['couleur']) ? $vehicle['couleur'] : 'Non spécifiée';
-            
-            // Récupération des images
-            $vehicleImage = getVehicleImage($vehicle['marque'], $vehicle['modele']);
-            $vehicle['images'] = $vehicleImage ? [$vehicleImage] : ['default-car.jpg'];
+            if (!isset($vehicle['disponible_location'])) {
+                $vehicle['disponible_location'] = true;
+            }
+            if (!isset($vehicle['tarif_location_journalier'])) {
+                $vehicle['tarif_location_journalier'] = round($vehicle['prix'] * 0.002); // 0.2% du prix comme tarif journalier par défaut
+            }
+            if (!isset($vehicle['stock'])) {
+                $vehicle['stock'] = 0;
+            }
             
             return $vehicle;
         }
 
-        // Données de test si le véhicule n'est pas trouvé
-        return [
-            'id_vehicule' => $id,
-            'marque' => 'Honda',
-            'modele' => 'Civic',
-            'annee' => 2021,
-            'prix' => 21000000,
-            'prix_location' => 42000,
-            'kilometrage' => 12000,
-            'carburant' => 'essence',
-            'transmission' => 'manuelle',
-            'puissance' => 130,
-            'couleur' => 'Gris métallisé',
-            'description' => 'Honda Civic 2021 en excellent état. Parfaite pour une conduite urbaine confortable et économique.',
-            'disponible' => true,
-            'disponible_location' => true,
-            'images' => ['civic1.jpg', 'civic2.jpg', 'civic3.jpg']
-        ];
+        return false;
+
     } catch (PDOException $e) {
-        // En cas d'erreur, retourner les données de test
-        error_log("Erreur lors de la récupération du véhicule : " . $e->getMessage());
-        return [
-            'id_vehicule' => $id,
-            'marque' => 'Honda',
-            'modele' => 'Civic',
-            'annee' => 2021,
-            'prix' => 21000000,
-            'prix_location' => 42000,
-            'kilometrage' => 12000,
-            'carburant' => 'essence',
-            'transmission' => 'manuelle',
-            'puissance' => 130,
-            'couleur' => 'Gris métallisé',
-            'description' => 'Honda Civic 2021 en excellent état. Parfaite pour une conduite urbaine confortable et économique.',
-            'disponible' => true,
-            'disponible_location' => true,
-            'images' => ['civic1.jpg', 'civic2.jpg', 'civic3.jpg']
-        ];
+        error_log("Erreur lors de la récupération du véhicule: " . $e->getMessage());
+        return false;
     }
 }
 
