@@ -11,6 +11,12 @@ $currentPage = 'home';
 ob_start();
 ?>
 
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
 <!-- Section Hero -->
 <section class="hero">
     <div class="hero-content">
@@ -57,17 +63,17 @@ ob_start();
             ];
 
             foreach ($marques as $marque) {
-                $logoPath = isset($logosPaths[$marque]) 
+                $logoPath = isset($logosPaths[$marque])
                     ? asset('images/brands/' . $logosPaths[$marque])
                     : asset('images/brands/default-brand.png');
-                ?>
+            ?>
                 <a href="<?= url('catalogue/?marque=' . urlencode($marque)) ?>" class="brand-logo">
-                    <img src="<?= $logoPath ?>" 
-                         alt="Logo <?= htmlspecialchars($marque) ?>" 
-                         title="Voir les véhicules <?= htmlspecialchars($marque) ?>"
-                         onerror="this.src='<?= asset('images/brands/default-brand.png') ?>'">
+                    <img src="<?= $logoPath ?>"
+                        alt="Logo <?= htmlspecialchars($marque) ?>"
+                        title="Voir les véhicules <?= htmlspecialchars($marque) ?>"
+                        onerror="this.src='<?= asset('images/brands/default-brand.png') ?>'">
                 </a>
-                <?php
+            <?php
             }
             ?>
         </div>
@@ -80,4 +86,4 @@ $pageContent = ob_get_clean();
 
 // Inclusion du template
 require_once ROOT_PATH . '/includes/template.php';
-?> 
+?>
