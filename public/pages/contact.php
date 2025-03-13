@@ -159,8 +159,16 @@ ob_start();
                     <i class="fas fa-clock"></i>
                     <h3>Horaires d'ouverture</h3>
                     <p>Lundi - Vendredi : 9h - 19h<br>
-                       Samedi : 10h - 18h<br>
-                       Dimanche : Fermé</p>
+                        Samedi : 10h - 18h<br>
+                        Dimanche : Fermé</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <i class="fas fa-map"></i>
+                <h3>Localisation</h3>
+                <div id="map" style="height: 300px; width: 100%;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3859.083326451043!2d-17.48962052183473!3d14.707879649155013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xec16d5e9fb6cc65%3A0x3d545fddafdf606d!2s97%20Rte%20de%20la%20Corniche%20O%2C%20Dakar!5e0!3m2!1sfr!2ssn!4v1741907218532!5m2!1sfr!2ssn" width="100%" height="300" style="border:0; width: 100%;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
         </div>
@@ -173,4 +181,4 @@ $pageContent = ob_get_clean();
 
 // Inclusion du template
 require_once ROOT_PATH . '/includes/template.php';
-?> 
+?>

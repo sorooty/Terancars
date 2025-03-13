@@ -1,5 +1,6 @@
 # Activation du module de réécriture
 RewriteEngine On
+RewriteBase /DaCar/
 
 # Configuration de base
 Options +FollowSymLinks
@@ -16,21 +17,28 @@ AddType application/x-httpd-php .php
 
 # Redirection vers HTTPS SAUF EN LOCAL (localhost)
 RewriteCond %{HTTP_HOST} !^localhost [NC]
+RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Permettre l'accès direct aux assets dans le dossier public
-RewriteCond %{REQUEST_URI} !^/public/assets/
-RewriteCond %{REQUEST_URI} !^/public/images/
-RewriteCond %{REQUEST_URI} !^/public/js/
-RewriteCond %{REQUEST_URI} !^/public/css/
+# Permettre l'accès direct aux assets (CSS, JS, images)
+RewriteCond %{REQUEST_URI} ^/public/assets/ [OR]
+RewriteCond %{REQUEST_URI} ^/public/images/ [OR]
+RewriteCond %{REQUEST_URI} ^/public/js/ [OR]
+RewriteCond %{REQUEST_URI} ^/public/css/
+RewriteRule ^ - [L]
 
-# Redirection vers public/index.php pour toutes les autres requêtes
+# Redirection vers `public/index.php` pour toutes les autres requêtes
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ public/index.php [QSA,L]
 
+# Headers pour les fichiers statiques (optimisation performance)
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|eot|mp4|webm|ogg|mp3|wav)$">
+    Header set Cache-Control "public, max-age=31536000"
+</FilesMatch>
+
 # Pages d'erreur personnalisées
 ErrorDocument 404 /public/pages/errors/404.php
 ErrorDocument 403 /public/pages/errors/403.php
-ErrorDocument 500 /public/pages/errors/500.php  
+ErrorDocument 500 /public/pages/errors/500.php
