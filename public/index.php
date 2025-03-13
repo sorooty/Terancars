@@ -2,12 +2,17 @@
 // Inclusion du fichier d'initialisation
 require_once __DIR__ . '/../includes/init.php';
 
-// Récupérer l'URI demandée
-$request_uri = $_SERVER['REQUEST_URI'];
-$base_path = parse_url($request_uri, PHP_URL_PATH);
+// Récupérer l'URI demandée et supprimer les paramètres
+$request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Supprimer le slash final s'il existe
-$base_path = rtrim($base_path, '/');
+// Définir le sous-dossier de ton application
+$base_url = SITE_URL; // '/DaCar' en local ou '' en production
+
+// Enlever le sous-dossier de l'URL pour obtenir la vraie route
+$route = substr($request_uri, strlen($base_url));
+
+// Supprimer le slash final éventuel
+$route = rtrim($route, '/') ?: '/';
 
 // Routes définies
 $routes = [
@@ -23,8 +28,8 @@ $routes = [
 ];
 
 // Vérifier si la route existe
-if (isset($routes[$base_path])) {
-    $file_path = ROOT_PATH . $routes[$base_path];
+if (isset($routes[$route])) {
+    $file_path = ROOT_PATH . $routes[$route];
     if (file_exists($file_path)) {
         require $file_path;
         exit;
@@ -33,4 +38,4 @@ if (isset($routes[$base_path])) {
 
 // Si aucune route ne correspond, afficher la page 404
 http_response_code(404);
-require __DIR__ . '/pages/errors/404.php'; 
+require __DIR__ . '/pages/errors/404.php';

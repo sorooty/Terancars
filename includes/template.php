@@ -82,6 +82,7 @@ if (!defined('ROOT_PATH')) {
                         <li><a href="<?= url('') ?>">Accueil</a></li>
                         <li><a href="<?= url('catalogue') ?>">Catalogue</a></li>
                         <li><a href="<?= url('contact') ?>">Contact</a></li>
+                        <li><a href="<?= url('about') ?>">A propos</a></li>
                     </ul>
                 </div>
             </div>

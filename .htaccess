@@ -14,7 +14,8 @@ AddType application/x-httpd-php .php
     Deny from all
 </FilesMatch>
 
-# Redirection vers HTTPS
+# Redirection vers HTTPS SAUF EN LOCAL (localhost)
+RewriteCond %{HTTP_HOST} !^localhost [NC]
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
@@ -32,4 +33,4 @@ RewriteRule ^(.*)$ public/index.php [QSA,L]
 # Pages d'erreur personnalisées
 ErrorDocument 404 /public/pages/errors/404.php
 ErrorDocument 403 /public/pages/errors/403.php
-ErrorDocument 500 /public/pages/errors/500.php 
+ErrorDocument 500 /public/pages/errors/500.php  

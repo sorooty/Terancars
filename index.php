@@ -59,7 +59,8 @@ ob_start();
                             <span><i class="fas fa-gas-pump"></i> <?= htmlspecialchars($vehicle['carburant']) ?></span>
                             <span><i class="fas fa-cog"></i> <?= htmlspecialchars($vehicle['transmission']) ?></span>
                         </div>
-                        <a href="<?= getBaseUrl() ?>vehicule/detail?id_vehicule=<?= $vehicle['id'] ?>" class="btn btn-primary">
+                            <!-- correction sécurisée et fonctionnelle -->
+                            <a href="/DaCar/public/pages/vehicule/detail.php?id=<?php echo htmlspecialchars($vehicle['id']); ?>" class="btn btn-primary">Voir détails</a>
                             <i class="fas fa-eye"></i>
                             Voir détails
                         </a>
