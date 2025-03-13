@@ -62,7 +62,6 @@ ob_start();
                             <!-- correction sécurisée et fonctionnelle -->
                             <a href="/DaCar/public/pages/vehicule/detail.php?id=<?php echo htmlspecialchars($vehicle['id_vehicule']); ?>" class="btn btn-primary">Voir détails</a>
                             <i class="fas fa-eye"></i>
-                            Voir détails
                         </a>
                     </div>
                 </div>
