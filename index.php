@@ -60,8 +60,7 @@ ob_start();
                             <span><i class="fas fa-cog"></i> <?= htmlspecialchars($vehicle['transmission']) ?></span>
                         </div>
                             <!-- correction sécurisée et fonctionnelle -->
-                            <a href="/DaCar/public/pages/vehicule/detail.php?id=<?php echo htmlspecialchars($vehicle['id_vehicule']); ?>" class="btn btn-primary">Voir détails</a>
-                            <i class="fas fa-eye"></i>
+                            <a href="/DaCar/public/pages/vehicule/detail.php?id=<?php echo htmlspecialchars($vehicle['id_vehicule']); ?>" class="btn btn-primary"> <i class="fas fa-eye"></i> Voir détails</a>
                         </a>
                     </div>
                 </div>
