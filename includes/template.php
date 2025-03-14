@@ -50,7 +50,7 @@ if (!defined('ROOT_PATH')) {
                     <i class="fas fa-info-circle"></i>
                     À propos
                 </a>
-                <a href="<?= url('pages/panier/') ?>" class="<?= $currentPage === 'panier' ? 'active' : '' ?>">
+                <a href="<?= url('panier') ?>" class="<?= $currentPage === 'panier' ? 'active' : '' ?>">
                     <i class="fas fa-shopping-cart"></i>
                     Panier
                     <?php if (!empty($_SESSION['panier'])): ?>

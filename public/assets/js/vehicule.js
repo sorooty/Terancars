@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gestion des favoris
     if (favoriteBtn) {
-        const vehicleId = new URLSearchParams(window.location.search).get('id');
+        const vehicleId = new URLSearchParams(window.location.search).get('id_vehicule');
         const isFavorite = localStorage.getItem(`favorite_${vehicleId}`);
         
         if (isFavorite) {

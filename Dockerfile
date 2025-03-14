@@ -2,40 +2,31 @@ FROM php:8.1-apache
 
 # Installation des dépendances système
 RUN apt-get update && apt-get install -y \
-    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     zip \
     unzip \
-    && docker-php-ext-install zip pdo_mysql
+    git \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql
 
-# ✅ Activation des modules Apache nécessaires (sans php8.1)
+# Activation des modules Apache nécessaires
 RUN a2enmod rewrite headers
 
-# Installation des extensions PHP
-RUN docker-php-ext-install mysqli pdo pdo_mysql
-
-# ✅ Configuration d'Apache pour forcer l'exécution des fichiers PHP
-RUN echo "<FilesMatch \.php$> \n\
-    SetHandler application/x-httpd-php\n\
-    </FilesMatch>" > /etc/apache2/conf-available/php-handler.conf \
-    && a2enconf php-handler
+# Configuration du DocumentRoot d'Apache
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # Copie des fichiers du projet
 COPY . /var/www/html/
 
 # Configuration des permissions
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html \
-    && chmod -R 777 /var/www/html/public/images
+    && chmod -R 755 /var/www/html/public
 
-# Configuration d'Apache pour permettre .htaccess
-RUN echo '<Directory /var/www/html>\n\
-    Options Indexes FollowSymLinks\n\
-    AllowOverride All\n\
-    Require all granted\n\
-    </Directory>' > /etc/apache2/conf-available/docker-php.conf \
-    && a2enconf docker-php
-
-# Exposition du port Apache
+# Exposition du port 80
 EXPOSE 80
 
 # Copie et exécution du script de démarrage

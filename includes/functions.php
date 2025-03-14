@@ -47,6 +47,17 @@ function url($path = '') {
         return SITE_URL . '/auth/' . end($pathParts);
     }
     
+    // Gestion spéciale du panier
+    if ($path === 'panier' || $path === 'pages/panier' || $path === 'pages/panier/index.php') {
+        return SITE_URL . '/panier';
+    }
+    
+    // Gestion spéciale des pages de détail des véhicules
+    if (strpos($path, 'pages/vehicule/detail') === 0 || strpos($path, 'vehicule/detail') === 0) {
+        $query = parse_url($path, PHP_URL_QUERY);
+        return SITE_URL . '/vehicule/detail' . ($query ? '?' . $query : '');
+    }
+    
     // Pages normales
     if (strpos($path, 'pages/') === 0) {
         $pathParts = explode('/', $path);

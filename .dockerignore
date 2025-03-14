@@ -1,0 +1,16 @@
+.git
+.gitignore
+.env
+.env.example
+.dockerignore
+Dockerfile
+README.md
+vendor/
+node_modules/
+*.log
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db 

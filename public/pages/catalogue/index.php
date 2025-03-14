@@ -240,7 +240,7 @@ ob_start();
                                 <?php endif; ?>
                             </div>
                             <div class="vehicule-actions">
-                                <a href="<?= url('vehicule/detail?id_vehicule=' . $vehicule['id_vehicule']) ?>" class="btn btn-primary">
+                                <a href="<?= url('pages/vehicule/detail.php?id_vehicule=' . $vehicule['id_vehicule']) ?>" class="btn btn-primary">
                                     <i class="fas fa-info-circle"></i> Voir les détails
                                 </a>
                             </div>
@@ -251,6 +251,87 @@ ob_start();
         <?php endif; ?>
     </main>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion du formulaire de filtres
+    const form = document.getElementById('filtres-form');
+    const resetButton = document.getElementById('reset-filtres');
+
+    // Mise à jour automatique lors du changement de tri
+    document.getElementById('tri').addEventListener('change', function() {
+        form.submit();
+    });
+
+    // Réinitialisation des filtres
+    resetButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Réinitialisation de tous les champs
+        form.reset();
+        // Soumission du formulaire
+        form.submit();
+    });
+
+    // Gestion des filtres de prix et d'année
+    const rangeInputs = document.querySelectorAll('.range-inputs input');
+    rangeInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const group = this.closest('.range-inputs');
+            const min = group.querySelector('[name$="_min"]');
+            const max = group.querySelector('[name$="_max"]');
+            
+            // Validation des valeurs min/max
+            if (min.value && max.value && parseInt(min.value) > parseInt(max.value)) {
+                alert('La valeur minimale ne peut pas être supérieure à la valeur maximale.');
+                this.value = '';
+                return;
+            }
+        });
+    });
+
+    // Animation des cartes de véhicules
+    const vehiculeCards = document.querySelectorAll('.vehicule-card');
+    vehiculeCards.forEach((card, index) => {
+        card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+    });
+});
+</script>
+
+<style>
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.vehicule-card {
+    opacity: 0;
+}
+
+.filtres-form select,
+.filtres-form input {
+    transition: border-color 0.3s ease;
+}
+
+.filtres-form select:focus,
+.filtres-form input:focus {
+    border-color: var(--primary-color);
+}
+
+.vehicule-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.vehicule-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+</style>
 
 <?php
 // Récupération du contenu mis en mémoire tampon

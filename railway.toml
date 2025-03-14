@@ -1,0 +1,16 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "apache2-foreground"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+[env]
+SITE_URL = "https://dacar.up.railway.app"
+DB_HOST = "${{ Railway.MYSQL_HOST }}"
+DB_PORT = "${{ Railway.MYSQL_PORT }}"
+DB_DATABASE = "${{ Railway.MYSQL_DATABASE }}"
+DB_USERNAME = "${{ Railway.MYSQL_USERNAME }}"
+DB_PASSWORD = "${{ Railway.MYSQL_PASSWORD }}" 

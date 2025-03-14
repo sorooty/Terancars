@@ -1,5 +1,5 @@
-
 <?php
+
 /**
  * Configuration globale de l'application TeranCar
  */
@@ -16,12 +16,22 @@ define('SITE_NAME', 'Teran\'Cars');
 $public_domain = getenv('RAILWAY_PUBLIC_DOMAIN');
 define('SITE_URL', $public_domain ? '' : '/DaCar');
 
-// 🚨 Suppression de `MYSQLDATABASE_URL` (inexistant sur Railway)
-$host = getenv('MYSQLHOST') ?: 'localhost';
-$username = getenv('MYSQLUSER') ?: 'root';
-$password = getenv('MYSQLPASSWORD') ?: '';
-$dbname = getenv('MYSQLDATABASE') ?: 'terancar';
-$port = getenv('MYSQLPORT') ?: 3306;
+// Vérifier si on est en local ou sur Railway
+if (getenv('RAILWAY_ENVIRONMENT')) {
+    // Mode production (Railway)
+    $host = getenv('MYSQLHOST') ?: 'localhost';
+    $username = getenv('MYSQLUSER') ?: 'root';
+    $password = getenv('MYSQLPASSWORD') ?: '';
+    $dbname = getenv('MYSQLDATABASE') ?: 'terancar';
+    $port = getenv('MYSQLPORT') ?: 3306;
+} else {
+    // Mode développement local (Docker Compose)
+    $host = 'localhost'; // Nom du service MySQL dans docker-compose.yml
+    $username = 'root';
+    $password = '';
+    $dbname = 'terancar';
+    $port = 3307;
+}
 
 // Connexion à la base de données PDO
 try {
@@ -43,8 +53,6 @@ session_start();
 
 // Inclusion des fonctions utilitaires
 require_once ROOT_PATH . '/includes/functions.php';
-
-
 
 // Fonctions liées à la base de données
 function getVehicles($limit = null)
