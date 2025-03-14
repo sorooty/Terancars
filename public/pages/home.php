@@ -4,8 +4,15 @@ require_once ROOT_PATH . '/includes/init.php';
 
 // Variables de la page
 $pageTitle = "TeranCar - Vente et Location de Véhicules";
-$pageDescription = "Découvrez notre sélection de véhicules de qualité pour la vente et la location. Des voitures pour tous les besoins et tous les budgets.";
+$pageDescription = "Découvrez notre sélection de véhicules de qualité pour la vente et la location.";
 $currentPage = 'home';
+
+// Fonction de conversion FCFA → EUR
+function convertToEUR($prixFCFA)
+{
+    $rate = 655; // 1 EUR = 655 FCFA
+    return number_format($prixFCFA / $rate, 2, ',', ' ') . ' €';
+}
 
 // Début de la mise en mémoire tampon
 ob_start();
@@ -15,7 +22,6 @@ ob_start();
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
 
 <!-- Section Hero -->
 <section class="hero">
@@ -41,13 +47,11 @@ ob_start();
         <h2 class="section-title">Nos marques populaires</h2>
         <div class="brands-grid">
             <?php
-            // Récupération des marques distinctes depuis la table vehicules
             $query = "SELECT DISTINCT marque FROM vehicules ORDER BY marque";
             $stmt = $db->prepare($query);
             $stmt->execute();
             $marques = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-            // Tableau associatif des logos de marques
             $logosPaths = [
                 'Toyota' => 'toyota.png',
                 'BMW' => 'bmw.png',
@@ -73,9 +77,31 @@ ob_start();
                         title="Voir les véhicules <?= htmlspecialchars($marque) ?>"
                         onerror="this.src='<?= asset('images/brands/default-brand.png') ?>'">
                 </a>
-            <?php
-            }
-            ?>
+            <?php } ?>
+        </div>
+    </div>
+</section>
+
+<!-- Section Véhicules -->
+<section class="vehicles">
+    <div class="container">
+        <h2 class="section-title">Nos véhicules</h2>
+        <div class="vehicles-grid">
+            <?php foreach (getVehicles(8) as $vehicule): ?>
+                <?php
+                $imagePath = 'images/vehicules/' . $vehicule['id_vehicule'] . '.jpg';
+                $imageUrl = file_exists(ROOT_PATH . '/' . $imagePath) ? asset($imagePath) : asset('images/vehicules/default.jpg');
+                ?>
+                <div class="vehicle-card">
+                    <img src="<?= $imageUrl ?>"
+                        alt="<?= htmlspecialchars($vehicule['nom'] ?? 'Voiture') ?>">
+                    <h3><?= htmlspecialchars($vehicule['nom']) ?></h3>
+                    <p class="price">
+                        <?= htmlspecialchars($vehicule['prix']) ?> FCFA
+                        <span class="price-eur">(≈ <?= convertToEUR($vehicule['prix']) ?>)</span>
+                    </p>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
