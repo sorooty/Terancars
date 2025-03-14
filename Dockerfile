@@ -1,51 +1,42 @@
-FROM php:8.1-apache
+FROM php:8.2-apache
 
 # Installation des dépendances système
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    zip \
-    unzip \
-    git \
-    netcat \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get update -y \
+    && apt-get install -y \
+        libpng-dev \
+        libjpeg-dev \
+        libfreetype6-dev \
+        zip \
+        unzip \
+        git \
+        netcat-traditional \
+    && rm -rf /var/lib/apt/lists/*
 
-# Activation des modules Apache nécessaires
-RUN a2enmod rewrite headers
+# Configuration et installation des extensions PHP
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        gd \
+        pdo \
+        pdo_mysql
 
-# Configuration du DocumentRoot d'Apache
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+# Configuration d'Apache
+RUN a2enmod rewrite
+COPY apache.conf /etc/apache2/sites-available/000-default.conf
 
-# Configuration PHP pour la production
-RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
-    && sed -i 's/memory_limit = 128M/memory_limit = 256M/g' "$PHP_INI_DIR/php.ini" \
-    && sed -i 's/max_execution_time = 30/max_execution_time = 60/g' "$PHP_INI_DIR/php.ini"
-
-# Variables d'environnement par défaut
-ENV RAILWAY_ENVIRONMENT=production \
-    MYSQLHOST=localhost \
-    MYSQLPORT=3306 \
-    MYSQLDATABASE=terancar \
-    MYSQLUSER=root \
-    MYSQLPASSWORD=
+# Configuration du répertoire de travail
+WORKDIR /var/www/html
 
 # Copie des fichiers du projet
-COPY . /var/www/html/
+COPY . .
 
-# Configuration des permissions
+# Permissions
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/public \
-    && chmod -R 777 /var/www/html/public/images
+    && chmod -R 755 /var/www/html
 
-# Copie et exécution du script de démarrage
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-# Exposition du port 80
+# Exposition du port
 EXPOSE 80
 
-CMD ["/start.sh"]
+# Commande par défaut
+CMD ["apache2-foreground"]
