@@ -5,13 +5,16 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
-    && docker-php-ext-install zip pdo_mysql
+    && docker-php-ext-install zip pdo_mysql mysqli
 
 # Activation des modules Apache nécessaires
-RUN a2enmod rewrite headers
+RUN a2enmod rewrite headers php8.1
 
-# Installation des extensions PHP
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Configuration pour forcer l’exécution de PHP dans Apache
+RUN echo "<FilesMatch \.php$> \n\
+    SetHandler application/x-httpd-php\n\
+    </FilesMatch>" > /etc/apache2/conf-available/php.conf \
+    && a2enconf php
 
 # Copie des fichiers du projet
 COPY . /var/www/html/
@@ -28,6 +31,9 @@ RUN echo '<Directory /var/www/html>\n\
     Require all granted\n\
     </Directory>' > /etc/apache2/conf-available/docker-php.conf \
     && a2enconf docker-php
+
+# Définition du répertoire de travail
+WORKDIR /var/www/html
 
 # Exposition du port Apache
 EXPOSE 80
