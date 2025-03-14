@@ -16,6 +16,11 @@ define('SITE_NAME', 'Teran\'Cars');
 $public_domain = getenv('RAILWAY_PUBLIC_DOMAIN');
 define('SITE_URL', $public_domain ? '' : '/DaCar');
 
+// Configuration des chemins
+define('PUBLIC_PATH', ROOT_PATH . '/public');
+define('PAGES_PATH', PUBLIC_PATH . '/pages');
+define('ASSETS_PATH', PUBLIC_PATH . '/assets');
+
 // Vérifier si on est en local ou sur Railway
 if (getenv('RAILWAY_ENVIRONMENT')) {
     // Mode production (Railway)
@@ -26,7 +31,7 @@ if (getenv('RAILWAY_ENVIRONMENT')) {
     $port = getenv('MYSQLPORT') ?: 3306;
 } else {
     // Mode développement local (Docker Compose)
-    $host = 'localhost'; // Nom du service MySQL dans docker-compose.yml
+    $host = 'localhost';
     $username = 'root';
     $password = '';
     $dbname = 'terancar';

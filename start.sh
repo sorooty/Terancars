@@ -1,8 +1,15 @@
 #!/bin/bash
 
-# Mettre à jour les permissions si nécessaire (optionnel, à tester)
+# Attendre que MySQL soit prêt
+echo "Attente de la disponibilité de MySQL..."
+while ! nc -z $MYSQLHOST $MYSQLPORT; do
+  sleep 1
+done
+echo "MySQL est prêt !"
+
+# Mettre à jour les permissions si nécessaire
 chmod -R 755 /var/www/html
 chmod -R 777 /var/www/html/public/images
 
-# Activer Apache et forcer le mode foreground pour éviter l'arrêt du conteneur
+# Démarrer Apache en arrière-plan
 apache2-foreground

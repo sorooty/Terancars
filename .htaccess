@@ -22,11 +22,15 @@ RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # Permettre l'accès direct aux assets (CSS, JS, images)
-RewriteCond %{REQUEST_URI} ^/public/assets/ [OR]
-RewriteCond %{REQUEST_URI} ^/public/images/ [OR]
-RewriteCond %{REQUEST_URI} ^/public/js/ [OR]
-RewriteCond %{REQUEST_URI} ^/public/css/
+RewriteCond %{REQUEST_URI} ^/DaCar/public/assets/ [OR]
+RewriteCond %{REQUEST_URI} ^/DaCar/public/images/ [OR]
+RewriteCond %{REQUEST_URI} ^/DaCar/public/js/ [OR]
+RewriteCond %{REQUEST_URI} ^/DaCar/public/css/
 RewriteRule ^ - [L]
+
+# Règles spécifiques pour le panier
+RewriteRule ^panier/?$ public/pages/panier/index.php [L]
+RewriteRule ^pages/panier/?$ public/pages/panier/index.php [L]
 
 # Redirection vers `public/index.php` pour toutes les autres requêtes
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -39,6 +43,6 @@ RewriteRule ^(.*)$ public/index.php [QSA,L]
 </FilesMatch>
 
 # Pages d'erreur personnalisées
-ErrorDocument 404 /public/pages/errors/404.php
-ErrorDocument 403 /public/pages/errors/403.php
-ErrorDocument 500 /public/pages/errors/500.php
+ErrorDocument 404 /DaCar/public/pages/errors/404.php
+ErrorDocument 403 /DaCar/public/pages/errors/403.php
+ErrorDocument 500 /DaCar/public/pages/errors/500.php

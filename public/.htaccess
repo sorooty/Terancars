@@ -2,17 +2,19 @@
 Options +FollowSymLinks
 RewriteEngine On
 
+# Base du répertoire
+RewriteBase /DaCar/public/
+
 # Permettre l'accès direct aux fichiers existants
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
 Options -MultiViews
-RewriteEngine On
 
-# Redirection de HTTP vers HTTPS
-RewriteCond %{HTTP:X-Forwarded-Proto} =http
-RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Règles spécifiques pour le panier
+RewriteRule ^panier/?$ pages/panier/index.php [L]
+RewriteRule ^pages/panier/?$ pages/panier/index.php [L]
 
 # Redirection vers le fichier index.php
 RewriteCond %{REQUEST_FILENAME} !-d
