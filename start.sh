@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # Attendre que MySQL soit prêt
-echo "Attente de la disponibilité de MySQL..."
-while ! nc -z $MYSQLHOST $MYSQLPORT; do
-  sleep 1
-done
-echo "MySQL est prêt !"
+if [ ! -z "$MYSQLHOST" ]; then
+    echo "Waiting for MySQL to be ready..."
+    while ! nc -z $MYSQLHOST ${MYSQLPORT:-3306}; do
+        sleep 1
+    done
+    echo "MySQL is ready!"
+fi
 
 # Mettre à jour les permissions si nécessaire
 chmod -R 755 /var/www/html

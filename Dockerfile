@@ -31,12 +31,24 @@ WORKDIR /var/www/html
 # Copie des fichiers du projet
 COPY . .
 
+# Configuration du script de démarrage
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 # Permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
+# Variables d'environnement par défaut
+ENV RAILWAY_ENVIRONMENT=production \
+    MYSQLHOST=localhost \
+    MYSQLPORT=3306 \
+    MYSQLDATABASE=terancar \
+    MYSQLUSER=root \
+    MYSQLPASSWORD=
+
 # Exposition du port
 EXPOSE 80
 
-# Commande par défaut
-CMD ["apache2-foreground"]
+# Utilisation du script de démarrage
+CMD ["/start.sh"]
