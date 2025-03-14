@@ -14,6 +14,9 @@ RUN apt-get clean \
         netcat-traditional \
         vim \
         procps \
+        default-mysql-client \
+        iputils-ping \
+        telnet \
     && rm -rf /var/lib/apt/lists/*
 
 # Configuration et installation des extensions PHP
@@ -37,6 +40,11 @@ RUN { \
         echo 'post_max_size = 64M'; \
         echo 'max_execution_time = 600'; \
         echo 'max_input_vars = 3000'; \
+        echo 'default_socket_timeout = 120'; \
+        echo 'mysql.connect_timeout = 120'; \
+        echo 'mysql.allow_persistent = On'; \
+        echo 'mysql.max_persistent = -1'; \
+        echo 'mysql.max_links = -1'; \
     } > /usr/local/etc/php/conf.d/custom.ini
 
 # Configuration d'Apache
@@ -63,12 +71,14 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Variables d'environnement par défaut
 ENV RAILWAY_ENVIRONMENT=production \
-    MYSQLHOST=localhost \
-    MYSQLPORT=3306 \
-    MYSQLDATABASE=terancar \
-    MYSQLUSER=root \
-    MYSQLPASSWORD= \
-    PHP_OPCACHE_VALIDATE_TIMESTAMPS=1
+    MYSQL_URL=localhost \
+    MYSQL_PORT=3306 \
+    MYSQL_DATABASE=terancar \
+    MYSQL_USER=root \
+    MYSQL_ROOT_PASSWORD= \
+    PHP_OPCACHE_VALIDATE_TIMESTAMPS=1 \
+    MYSQL_ATTR_CONNECT_TIMEOUT=120 \
+    MYSQL_ATTR_READ_TIMEOUT=120
 
 # Exposition du port
 EXPOSE 80
