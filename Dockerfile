@@ -7,10 +7,10 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && docker-php-ext-install zip pdo_mysql
 
-# Activation des modules Apache nécessaires
-RUN a2enmod rewrite
+# Activation des modules PHP et Apache nécessaires
+RUN a2enmod rewrite headers php8.1
 
-# Activation explicite du module PHP dans Apache
+# Installation des extensions PHP
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Copie des fichiers du projet
@@ -32,13 +32,7 @@ RUN echo '<Directory /var/www/html>\n\
 # Exposition du port Apache
 EXPOSE 80
 
-# Démarrage d'Apache
-RUN a2enmod headers
-CMD ["apache2-foreground"]
-
+# Copie et exécution du script de démarrage
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 CMD ["/start.sh"]
-
-# Activer les modules Apache nécessaires
-RUN a2enmod rewrite headers
