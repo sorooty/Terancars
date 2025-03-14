@@ -105,10 +105,6 @@ ob_start();
         </div>
     </div>
 </section>
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap JS pour le carrousel -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Section Témoignages -->
 <section class="testimonials">
@@ -136,28 +132,18 @@ ob_start();
                                     </div>
                                 </div>
                             </div>
+                        <?php endforeach; ?>
                         </div>
-                    <?php endforeach; ?>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselTestimonials" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Précédent</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselTestimonials" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Suivant</span>
-                </button>
+            <?php else: ?>
+                <p class="text-center text-muted">Aucun avis client disponible pour le moment.</p>
+            <?php endif; ?>
             </div>
-        <?php else: ?>
-            <p class="text-center text-muted">Aucun avis client disponible pour le moment.</p>
-        <?php endif; ?>
-    </div>
 </section>
 
 <?php
 // Récupération du contenu mis en mémoire tampon
 $pageContent = ob_get_clean();
 
-// Inclusion du template
+// Inclusion du template commun (header + footer inclus dedans)
 require_once ROOT_PATH . '/includes/template.php';
-?>

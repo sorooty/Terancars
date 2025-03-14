@@ -106,23 +106,23 @@ ob_start();
                             <option value="<?= $m ?>" <?= $marque === $m ? 'selected' : '' ?>><?= $m ?></option>
                         <?php endforeach; ?>
                     </select>
-    </div>
+                </div>
 
                 <!-- Modèle -->
                 <div class="form-group">
                     <label for="modele">Modèle</label>
-                    <input type="text" name="modele" id="modele" class="form-control" 
-                           value="<?= $modele ?>" placeholder="Rechercher un modèle">
+                    <input type="text" name="modele" id="modele" class="form-control"
+                        value="<?= $modele ?>" placeholder="Rechercher un modèle">
                 </div>
 
                 <!-- Prix -->
                 <div class="form-group">
                     <label>Prix</label>
                     <div class="range-inputs">
-                        <input type="number" name="prix_min" placeholder="Min" 
-                               value="<?= $prixMin ?>" class="form-control">
-                        <input type="number" name="prix_max" placeholder="Max" 
-                               value="<?= $prixMax ?>" class="form-control">
+                        <input type="number" name="prix_min" placeholder="Min"
+                            value="<?= $prixMin ?>" class="form-control">
+                        <input type="number" name="prix_max" placeholder="Max"
+                            value="<?= $prixMax ?>" class="form-control">
                     </div>
                 </div>
 
@@ -130,10 +130,10 @@ ob_start();
                 <div class="form-group">
                     <label>Année</label>
                     <div class="range-inputs">
-                        <input type="number" name="annee_min" placeholder="Min" 
-                               value="<?= $anneeMin ?>" class="form-control">
-                        <input type="number" name="annee_max" placeholder="Max" 
-                               value="<?= $anneeMax ?>" class="form-control">
+                        <input type="number" name="annee_min" placeholder="Min"
+                            value="<?= $anneeMin ?>" class="form-control">
+                        <input type="number" name="annee_max" placeholder="Max"
+                            value="<?= $anneeMax ?>" class="form-control">
                     </div>
                 </div>
 
@@ -211,9 +211,9 @@ ob_start();
                             <?php
                             $imagePath = 'images/vehicules/' . strtolower($vehicule['marque']) . '/' . strtolower($vehicule['modele']) . '.jpg';
                             ?>
-                            <img src="<?= asset($imagePath) ?>" 
-                                 alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
-                                 onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
+                            <img src="<?= asset($imagePath) ?>"
+                                alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
+                                onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
                             <?php if ($vehicule['stock'] > 0): ?>
                                 <span class="badge badge-success">Disponible</span>
                             <?php else: ?>
@@ -244,13 +244,13 @@ ob_start();
                                     <i class="fas fa-info-circle"></i> Voir les détails
                                 </a>
                             </div>
-                </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
-            <?php endforeach; ?>
-        </div>
         <?php endif; ?>
     </main>
-    </div>
+</div>
 
 <?php
 // Récupération du contenu mis en mémoire tampon
@@ -258,4 +258,4 @@ $pageContent = ob_get_clean();
 
 // Inclusion du template
 require_once ROOT_PATH . '/includes/template.php';
-?> 
+?>
