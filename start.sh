@@ -5,7 +5,7 @@ echo "Starting initialization process..."
 
 # Mapping des variables Railway vers nos variables
 export MYSQLHOST=${MYSQL_URL:-$MYSQLHOST}
-export MYSQLPORT=${MYSQL_PORT:-$MYSQLPORT}
+export MYSQLPORT=${MYSQL_PORT:-3306}
 export MYSQLDATABASE=${MYSQL_DATABASE:-$MYSQLDATABASE}
 export MYSQLUSER=${MYSQL_USER:-$MYSQLUSER}
 export MYSQLPASSWORD=${MYSQL_ROOT_PASSWORD:-$MYSQLPASSWORD}
@@ -19,10 +19,9 @@ echo "MYSQLDATABASE: $MYSQLDATABASE"
 echo "MYSQLUSER: $MYSQLUSER"
 
 # Vérification des variables d'environnement
-if [ -z "$MYSQLHOST" ] || [ -z "$MYSQLPORT" ] || [ -z "$MYSQLDATABASE" ] || [ -z "$MYSQLUSER" ]; then
+if [ -z "$MYSQLHOST" ] || [ -z "$MYSQLDATABASE" ] || [ -z "$MYSQLUSER" ]; then
     echo "Error: Required environment variables are not set"
     echo "MYSQLHOST: ${MYSQLHOST:-not set}"
-    echo "MYSQLPORT: ${MYSQLPORT:-not set}"
     echo "MYSQLDATABASE: ${MYSQLDATABASE:-not set}"
     echo "MYSQLUSER: ${MYSQLUSER:-not set}"
     exit 1
@@ -30,10 +29,10 @@ fi
 
 # Attendre que MySQL soit prêt (avec plus de tentatives)
 echo "Waiting for MySQL to be ready..."
-max_tries=60
+max_tries=90  # Augmentation du nombre de tentatives
 count=0
 while [ $count -lt $max_tries ]; do
-    if nc -z -w1 $MYSQLHOST ${MYSQLPORT:-3306}; then
+    if mysql -h"$MYSQLHOST" -P"${MYSQLPORT}" -u"$MYSQLUSER" -p"$MYSQLPASSWORD" -e "SELECT 1" >/dev/null 2>&1; then
         echo "MySQL is available!"
         break
     fi
@@ -44,10 +43,13 @@ done
 
 if [ $count -eq $max_tries ]; then
     echo "Error: MySQL did not become available in time"
+    echo "Trying to get more information about MySQL status..."
+    ping -c 3 "$MYSQLHOST" || echo "Cannot ping MySQL host"
+    nc -zv "$MYSQLHOST" "$MYSQLPORT" || echo "Cannot connect to MySQL port"
     exit 1
 fi
 
-# Test plus détaillé de la connexion MySQL
+# Test plus détaillé de la connexion MySQL avec SSL désactivé
 echo "Testing MySQL connection..."
 php -r "
 try {
@@ -57,14 +59,24 @@ try {
     
     while (!\$connected && \$attempts < \$maxAttempts) {
         try {
-            \$dbh = new PDO(
-                'mysql:host=${MYSQLHOST};port=${MYSQLPORT};dbname=${MYSQLDATABASE}',
-                '${MYSQLUSER}',
-                '${MYSQLPASSWORD}',
-                array(PDO::ATTR_TIMEOUT => 5, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+            \$options = array(
+                PDO::ATTR_TIMEOUT => 5,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+                PDO::MYSQL_ATTR_SSL_CA => false
             );
+            
+            \$dsn = 'mysql:host=${MYSQLHOST};port=${MYSQLPORT};dbname=${MYSQLDATABASE}';
+            echo \"Attempting connection with DSN: {\$dsn}\n\";
+            
+            \$dbh = new PDO(\$dsn, '${MYSQLUSER}', '${MYSQLPASSWORD}', \$options);
             echo \"Successfully connected to MySQL (attempt \" . (\$attempts + 1) . \")\n\";
             \$connected = true;
+            
+            // Vérifier la version de MySQL
+            \$version = \$dbh->query('SELECT VERSION()')->fetchColumn();
+            echo \"MySQL Version: {\$version}\n\";
+            
         } catch (PDOException \$e) {
             \$attempts++;
             echo \"Connection attempt \" . \$attempts . \" failed: \" . \$e->getMessage() . \"\n\";
