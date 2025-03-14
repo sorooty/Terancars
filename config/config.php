@@ -1,3 +1,4 @@
+
 <?php
 /**
  * Configuration globale de l'application TeranCar
@@ -15,28 +16,12 @@ define('SITE_NAME', 'Teran\'Cars');
 $public_domain = getenv('RAILWAY_PUBLIC_DOMAIN');
 define('SITE_URL', $public_domain ? '' : '/DaCar');
 
-// Lecture des informations Railway
-$db_url = getenv('MYSQLDATABASE_URL');
-
-if (!$db_url) {
-    // Mode développement local
-    $host = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "terancar";
-    $port = 3307;
-} else {
-    // Mode production (Railway)
-    $url = parse_url($db_url);
-    if ($url === false || !isset($url["host"]) || !isset($url["user"]) || !isset($url["pass"]) || !isset($url["path"])) {
-        die('Configuration de base de données invalide');
-    }
-    $host = $url["host"];
-    $username = $url["user"];
-    $password = $url["pass"];
-    $dbname = ltrim($url["path"], '/');
-    $port = $url["port"] ?? 3306;
-}
+// 🚨 Suppression de `MYSQLDATABASE_URL` (inexistant sur Railway)
+$host = getenv('MYSQLHOST') ?: 'localhost';
+$username = getenv('MYSQLUSER') ?: 'root';
+$password = getenv('MYSQLPASSWORD') ?: '';
+$dbname = getenv('MYSQLDATABASE') ?: 'terancar';
+$port = getenv('MYSQLPORT') ?: 3306;
 
 // Connexion à la base de données PDO
 try {
@@ -46,7 +31,7 @@ try {
         $password,
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }
 
@@ -59,8 +44,11 @@ session_start();
 // Inclusion des fonctions utilitaires
 require_once ROOT_PATH . '/includes/functions.php';
 
+
+
 // Fonctions liées à la base de données
-function getVehicles($limit = null) {
+function getVehicles($limit = null)
+{
     global $db;
     $sql = "SELECT * FROM vehicules";
     if ($limit) {
@@ -70,7 +58,8 @@ function getVehicles($limit = null) {
     return $stmt->fetchAll();
 }
 
-function getTestimonials($limit = 3) {
+function getTestimonials($limit = 3)
+{
     global $db;
     $sql = "SELECT ac.*, c.nom as client_nom 
             FROM avis_clients ac 
@@ -81,7 +70,8 @@ function getTestimonials($limit = 3) {
     return $stmt->fetchAll();
 }
 
-function getPopularBrands() {
+function getPopularBrands()
+{
     return [
         'Renault',
         'Peugeot',
@@ -94,7 +84,8 @@ function getPopularBrands() {
     ];
 }
 
-function getVehicleById($id) {
+function getVehicleById($id)
+{
     global $db;
     try {
         $sql = "SELECT * FROM vehicules WHERE id_vehicule = :id";
@@ -113,19 +104,19 @@ function getVehicleById($id) {
             if (!isset($vehicle['stock'])) {
                 $vehicle['stock'] = 0;
             }
-            
+
             return $vehicle;
         }
 
         return false;
-
     } catch (PDOException $e) {
         error_log("Erreur lors de la récupération du véhicule: " . $e->getMessage());
         return false;
     }
 }
 
-function addToCart($vehicleId, $type = 'achat') {
+function addToCart($vehicleId, $type = 'achat')
+{
     if (!isset($_SESSION['panier'])) {
         $_SESSION['panier'] = [];
     }
