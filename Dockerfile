@@ -33,8 +33,12 @@ RUN echo '<Directory /var/www/html>\n\
 EXPOSE 80
 
 # Démarrage d'Apache
+RUN a2enmod headers
 CMD ["apache2-foreground"]
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 CMD ["/start.sh"]
+
+# Activer les modules Apache nécessaires
+RUN a2enmod rewrite headers
