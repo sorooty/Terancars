@@ -1,42 +1,28 @@
 <?php
 
 /**
- * Configuration globale de l'application TeranCar
+ * Configuration globale de l'application
  */
 
 // Activation du rapport d'erreurs en mode développement
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Définition du chemin racine
-if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__));
-
 // Configuration de base
 define('SITE_NAME', 'Teran\'Cars');
-$public_domain = getenv('RAILWAY_PUBLIC_DOMAIN');
-define('SITE_URL', $public_domain ? '' : '/DaCar');
+define('SITE_URL', '/DaCar');
 
 // Configuration des chemins
 define('PUBLIC_PATH', ROOT_PATH . '/public');
 define('PAGES_PATH', PUBLIC_PATH . '/pages');
 define('ASSETS_PATH', PUBLIC_PATH . '/assets');
 
-// Vérifier si on est en local ou sur Railway
-if (getenv('RAILWAY_ENVIRONMENT')) {
-    // Mode production (Railway)
-    $host = getenv('MYSQLHOST') ?: 'localhost';
-    $username = getenv('MYSQLUSER') ?: 'root';
-    $password = getenv('MYSQLPASSWORD') ?: '';
-    $dbname = getenv('MYSQLDATABASE') ?: 'terancar';
-    $port = getenv('MYSQLPORT') ?: 3306;
-} else {
-    // Mode développement local (Docker Compose)
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $dbname = 'terancar';
-    $port = 3307;
-}
+// Configuration de la base de données
+$host = 'localhost';
+$username = 'root';
+$password = '';
+$dbname = 'terancar';
+$port = 3307;
 
 // Connexion à la base de données PDO
 try {
@@ -128,31 +114,77 @@ function getVehicleById($id)
     }
 }
 
-function addToCart($vehicleId, $type = 'achat')
-{
-    if (!isset($_SESSION['panier'])) {
-        $_SESSION['panier'] = [];
+// Fonctions de gestion du panier
+function getCartCount($userId = null) {
+    global $db;
+    if (!$userId && isset($_SESSION['user_id'])) {
+        $userId = $_SESSION['user_id'];
     }
+    if (!$userId) return 0;
+    
+    try {
+        $stmt = $db->prepare("SELECT SUM(quantite) as total FROM panier WHERE id_utilisateur = ?");
+        $stmt->execute([$userId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] ? (int)$result['total'] : 0;
+    } catch (PDOException $e) {
+        error_log("Erreur lors du comptage du panier: " . $e->getMessage());
+        return 0;
+    }
+}
 
-    $vehicle = getVehicleById($vehicleId);
-    if (!$vehicle) {
+function addToCart($vehicleId, $userId, $type = 'achat', $quantity = 1) {
+    global $db;
+    try {
+        // Vérifier si l'article existe déjà dans le panier
+        $stmt = $db->prepare("SELECT id_panier, quantite FROM panier WHERE id_utilisateur = ? AND id_vehicule = ? AND type = ?");
+        $stmt->execute([$userId, $vehicleId, $type]);
+        $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($existing) {
+            // Mettre à jour la quantité
+            $stmt = $db->prepare("UPDATE panier SET quantite = quantite + ? WHERE id_panier = ?");
+            return $stmt->execute([$quantity, $existing['id_panier']]);
+        } else {
+            // Ajouter un nouvel article
+            $stmt = $db->prepare("INSERT INTO panier (id_utilisateur, id_vehicule, type, quantite) VALUES (?, ?, ?, ?)");
+            return $stmt->execute([$userId, $vehicleId, $type, $quantity]);
+        }
+    } catch (PDOException $e) {
+        error_log("Erreur lors de l'ajout au panier: " . $e->getMessage());
         return false;
     }
+}
 
-    // Vérifier si le véhicule est déjà dans le panier
-    foreach ($_SESSION['panier'] as &$item) {
-        if ($item['id'] == $vehicleId && $item['type'] == $type) {
-            $item['quantity']++;
-            return true;
-        }
+function removeFromCart($cartId, $userId) {
+    global $db;
+    try {
+        $stmt = $db->prepare("DELETE FROM panier WHERE id_panier = ? AND id_utilisateur = ?");
+        return $stmt->execute([$cartId, $userId]);
+    } catch (PDOException $e) {
+        error_log("Erreur lors de la suppression du panier: " . $e->getMessage());
+        return false;
     }
+}
 
-    // Ajouter le véhicule au panier
-    $_SESSION['panier'][] = [
-        'id' => $vehicleId,
-        'type' => $type,
-        'quantity' => 1
-    ];
+function updateCartQuantity($cartId, $userId, $quantity) {
+    global $db;
+    try {
+        $stmt = $db->prepare("UPDATE panier SET quantite = ? WHERE id_panier = ? AND id_utilisateur = ?");
+        return $stmt->execute([$quantity, $cartId, $userId]);
+    } catch (PDOException $e) {
+        error_log("Erreur lors de la mise à jour de la quantité: " . $e->getMessage());
+        return false;
+    }
+}
 
-    return true;
+function clearCart($userId) {
+    global $db;
+    try {
+        $stmt = $db->prepare("DELETE FROM panier WHERE id_utilisateur = ?");
+        return $stmt->execute([$userId]);
+    } catch (PDOException $e) {
+        error_log("Erreur lors du vidage du panier: " . $e->getMessage());
+        return false;
+    }
 }

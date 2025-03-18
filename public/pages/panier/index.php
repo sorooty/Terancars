@@ -1,6 +1,13 @@
 <?php
 // Inclusion du fichier d'initialisation
-require_once ROOT_PATH . '/includes/init.php';
+require_once __DIR__ . '/../../../includes/init.php';
+
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['user_id'])) {
+    $_SESSION['redirect_after_login'] = url('panier');
+    header('Location: ' . url('connexion'));
+    exit;
+}
 
 // Variables de la page
 $pageTitle = 'Mon Panier';
@@ -9,34 +16,23 @@ $currentPage = 'panier';
 $additionalCss = ['css/panier.css'];
 $additionalJs = ['js/panier.js'];
 
-// Initialisation du panier s'il n'existe pas
-if (!isset($_SESSION['panier'])) {
-    $_SESSION['panier'] = [
-        'achat' => [],
-        'location' => []
-    ];
-}
+$userId = $_SESSION['user_id'];
 
 // Traitement des actions sur le panier
 if (isset($_POST['action'])) {
     switch ($_POST['action']) {
         case 'remove':
-            if (isset($_POST['id'])) {
-                $type = isset($_POST['type']) ? $_POST['type'] : 'achat';
-                unset($_SESSION['panier'][$type][$_POST['id']]);
+            if (isset($_POST['cart_id'])) {
+                removeFromCart($_POST['cart_id'], $userId);
             }
             break;
         case 'update':
-            if (isset($_POST['id']) && isset($_POST['quantity']) && isset($_POST['type'])) {
-                $type = $_POST['type'];
-                $_SESSION['panier'][$type][$_POST['id']]['quantite'] = max(1, intval($_POST['quantity']));
+            if (isset($_POST['cart_id']) && isset($_POST['quantity'])) {
+                updateCartQuantity($_POST['cart_id'], $userId, max(1, intval($_POST['quantity'])));
             }
             break;
         case 'clear':
-            $_SESSION['panier'] = [
-                'achat' => [],
-                'location' => []
-            ];
+            clearCart($userId);
             break;
     }
     // Redirection pour éviter la resoumission du formulaire
@@ -44,52 +40,41 @@ if (isset($_POST['action'])) {
     exit;
 }
 
-// Récupération des véhicules du panier
-$vehiculesAchat = [];
-$vehiculesLocation = [];
-
-// Récupération des véhicules à l'achat
-if (!empty($_SESSION['panier']['achat'])) {
-    $ids = array_keys($_SESSION['panier']['achat']);
-    if (!empty($ids)) {
-        $placeholders = str_repeat('?,', count($ids) - 1) . '?';
-        $query = "SELECT * FROM vehicules WHERE id_vehicule IN ($placeholders)";
-        $stmt = $db->prepare($query);
-        $stmt->execute($ids);
-        $vehiculesAchat = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+// Récupération des articles du panier
+try {
+    $stmt = $db->prepare("
+        SELECT p.*, v.*, p.quantite as cart_quantity, p.id_panier as cart_id
+        FROM panier p
+        JOIN vehicules v ON p.id_vehicule = v.id_vehicule
+        WHERE p.id_utilisateur = ?
+        ORDER BY p.type, p.date_ajout
+    ");
+    $stmt->execute([$userId]);
+    $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log("Erreur lors de la récupération du panier: " . $e->getMessage());
+    $cartItems = [];
 }
 
-// Récupération des véhicules en location
-if (!empty($_SESSION['panier']['location'])) {
-    $ids = array_keys($_SESSION['panier']['location']);
-    if (!empty($ids)) {
-        $placeholders = str_repeat('?,', count($ids) - 1) . '?';
-        $query = "SELECT * FROM vehicules WHERE id_vehicule IN ($placeholders)";
-        $stmt = $db->prepare($query);
-        $stmt->execute($ids);
-        $vehiculesLocation = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-}
+// Séparation des articles par type
+$vehiculesAchat = array_filter($cartItems, function($item) {
+    return $item['type'] === 'achat';
+});
+$vehiculesLocation = array_filter($cartItems, function($item) {
+    return $item['type'] === 'location';
+});
 
 // Calcul du total
 $total = 0;
-foreach ($vehiculesAchat as $vehicule) {
-    $id = $vehicule['id_vehicule'];
-    if (isset($_SESSION['panier']['achat'][$id])) {
-        $total += $vehicule['prix'] * $_SESSION['panier']['achat'][$id]['quantite'];
-    }
+foreach ($vehiculesAchat as $item) {
+    $total += $item['prix'] * $item['cart_quantity'];
 }
-foreach ($vehiculesLocation as $vehicule) {
-    $id = $vehicule['id_vehicule'];
-    if (isset($_SESSION['panier']['location'][$id])) {
-        $item = $_SESSION['panier']['location'][$id];
-        if (isset($item['date_debut']) && isset($item['date_fin'])) {
-            $dateDebut = new DateTime($item['date_debut']);
-            $dateFin = new DateTime($item['date_fin']);
-            $nbJours = $dateDebut->diff($dateFin)->days + 1;
-            $total += $vehicule['tarif_location_journalier'] * $item['quantite'] * $nbJours;
-        }
+foreach ($vehiculesLocation as $item) {
+    if (isset($item['date_debut_location']) && isset($item['date_fin_location'])) {
+        $dateDebut = new DateTime($item['date_debut_location']);
+        $dateFin = new DateTime($item['date_fin_location']);
+        $nbJours = $dateDebut->diff($dateFin)->days + 1;
+        $total += $item['tarif_location_journalier'] * $item['cart_quantity'] * $nbJours;
     }
 }
 
@@ -100,7 +85,7 @@ ob_start();
 <div class="container">
     <h1>Mon Panier</h1>
 
-    <?php if (empty($vehiculesAchat) && empty($vehiculesLocation)): ?>
+    <?php if (empty($cartItems)): ?>
         <div class="empty-cart">
             <i class="fas fa-shopping-cart"></i>
             <p>Votre panier est vide</p>
@@ -114,44 +99,41 @@ ob_start();
                 <div class="cart-section">
                     <h2>Véhicules à acheter</h2>
                     <div class="cart-items">
-                        <?php foreach ($vehiculesAchat as $vehicule): ?>
-                            <?php $id = $vehicule['id_vehicule']; ?>
+                        <?php foreach ($vehiculesAchat as $item): ?>
                             <div class="cart-item">
-                                <img src="<?= asset('images/vehicules/' . getVehicleImage($vehicule['marque'], $vehicule['modele'])) ?>" 
-                                     alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
+                                <img src="<?= asset('images/vehicules/' . getVehicleImage($item['marque'], $item['modele'])) ?>" 
+                                     alt="<?= htmlspecialchars($item['marque'] . ' ' . $item['modele']) ?>"
                                      class="item-image">
                                 
                                 <div class="item-details">
-                                    <h3><?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?></h3>
+                                    <h3><?= htmlspecialchars($item['marque'] . ' ' . $item['modele']) ?></h3>
                                     <div class="item-specs">
-                                        <span><i class="fas fa-calendar"></i> <?= $vehicule['annee'] ?></span>
-                                        <span><i class="fas fa-gas-pump"></i> <?= ucfirst($vehicule['carburant']) ?></span>
+                                        <span><i class="fas fa-calendar"></i> <?= $item['annee'] ?></span>
+                                        <span><i class="fas fa-gas-pump"></i> <?= ucfirst($item['carburant']) ?></span>
                                     </div>
-                                    <p class="item-price"><?= formatPrice($vehicule['prix']) ?></p>
+                                    <p class="item-price"><?= formatPrice($item['prix']) ?></p>
                                 </div>
 
                                 <div class="item-quantity">
                                     <form method="post" class="quantity-form">
                                         <input type="hidden" name="action" value="update">
-                                        <input type="hidden" name="type" value="achat">
-                                        <input type="hidden" name="id" value="<?= $id ?>">
+                                        <input type="hidden" name="cart_id" value="<?= $item['cart_id'] ?>">
                                         <button type="button" class="quantity-btn minus">-</button>
                                         <input type="number" name="quantity" 
-                                               value="<?= $_SESSION['panier']['achat'][$id]['quantite'] ?>" 
-                                               min="1" max="<?= $vehicule['stock'] ?>" 
+                                               value="<?= $item['cart_quantity'] ?>" 
+                                               min="1" max="<?= $item['stock'] ?>" 
                                                class="quantity-input">
                                         <button type="button" class="quantity-btn plus">+</button>
                                     </form>
                                 </div>
 
                                 <div class="item-total">
-                                    <?= formatPrice($vehicule['prix'] * $_SESSION['panier']['achat'][$id]['quantite']) ?>
+                                    <?= formatPrice($item['prix'] * $item['cart_quantity']) ?>
                                 </div>
 
                                 <form method="post" class="remove-form">
                                     <input type="hidden" name="action" value="remove">
-                                    <input type="hidden" name="type" value="achat">
-                                    <input type="hidden" name="id" value="<?= $id ?>">
+                                    <input type="hidden" name="cart_id" value="<?= $item['cart_id'] ?>">
                                     <button type="submit" class="remove-btn" title="Supprimer">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -166,35 +148,36 @@ ob_start();
                 <div class="cart-section">
                     <h2>Véhicules à louer</h2>
                     <div class="cart-items">
-                        <?php foreach ($vehiculesLocation as $vehicule): ?>
-                            <?php $id = $vehicule['id_vehicule']; ?>
+                        <?php foreach ($vehiculesLocation as $item): ?>
                             <div class="cart-item">
-                                <img src="<?= asset('images/vehicules/' . getVehicleImage($vehicule['marque'], $vehicule['modele'])) ?>" 
-                                     alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
+                                <img src="<?= asset('images/vehicules/' . getVehicleImage($item['marque'], $item['modele'])) ?>" 
+                                     alt="<?= htmlspecialchars($item['marque'] . ' ' . $item['modele']) ?>"
                                      class="item-image">
                                 
                                 <div class="item-details">
-                                    <h3><?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?></h3>
+                                    <h3><?= htmlspecialchars($item['marque'] . ' ' . $item['modele']) ?></h3>
                                     <div class="item-specs">
-                                        <span><i class="fas fa-calendar"></i> <?= $vehicule['annee'] ?></span>
-                                        <span><i class="fas fa-gas-pump"></i> <?= ucfirst($vehicule['carburant']) ?></span>
+                                        <span><i class="fas fa-calendar"></i> <?= $item['annee'] ?></span>
+                                        <span><i class="fas fa-gas-pump"></i> <?= ucfirst($item['carburant']) ?></span>
                                     </div>
-                                    <p class="item-price"><?= formatPrice($vehicule['tarif_location_journalier']) ?> / jour</p>
+                                    <p class="item-price"><?= formatPrice($item['tarif_location_journalier']) ?> / jour</p>
                                     
                                     <div class="item-dates">
                                         <div class="date-group">
                                             <label>Date de début</label>
                                             <input type="date" name="date_debut" 
-                                                   value="<?= $_SESSION['panier']['location'][$id]['date_debut'] ?? '' ?>"
+                                                   value="<?= $item['date_debut_location'] ?? '' ?>"
                                                    min="<?= date('Y-m-d') ?>"
-                                                   required>
+                                                   required
+                                                   data-cart-id="<?= $item['cart_id'] ?>">
                                         </div>
                                         <div class="date-group">
                                             <label>Date de fin</label>
                                             <input type="date" name="date_fin"
-                                                   value="<?= $_SESSION['panier']['location'][$id]['date_fin'] ?? '' ?>"
+                                                   value="<?= $item['date_fin_location'] ?? '' ?>"
                                                    min="<?= date('Y-m-d') ?>"
-                                                   required>
+                                                   required
+                                                   data-cart-id="<?= $item['cart_id'] ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -202,12 +185,11 @@ ob_start();
                                 <div class="item-quantity">
                                     <form method="post" class="quantity-form">
                                         <input type="hidden" name="action" value="update">
-                                        <input type="hidden" name="type" value="location">
-                                        <input type="hidden" name="id" value="<?= $id ?>">
+                                        <input type="hidden" name="cart_id" value="<?= $item['cart_id'] ?>">
                                         <button type="button" class="quantity-btn minus">-</button>
                                         <input type="number" name="quantity" 
-                                               value="<?= $_SESSION['panier']['location'][$id]['quantite'] ?>" 
-                                               min="1" max="<?= $vehicule['stock'] ?>" 
+                                               value="<?= $item['cart_quantity'] ?>" 
+                                               min="1" max="<?= $item['stock'] ?>" 
                                                class="quantity-input">
                                         <button type="button" class="quantity-btn plus">+</button>
                                     </form>
@@ -215,12 +197,11 @@ ob_start();
 
                                 <div class="item-total">
                                     <?php
-                                    $item = $_SESSION['panier']['location'][$id];
-                                    if (isset($item['date_debut']) && isset($item['date_fin'])) {
-                                        $dateDebut = new DateTime($item['date_debut']);
-                                        $dateFin = new DateTime($item['date_fin']);
+                                    if (isset($item['date_debut_location']) && isset($item['date_fin_location'])) {
+                                        $dateDebut = new DateTime($item['date_debut_location']);
+                                        $dateFin = new DateTime($item['date_fin_location']);
                                         $nbJours = $dateDebut->diff($dateFin)->days + 1;
-                                        echo formatPrice($vehicule['tarif_location_journalier'] * $item['quantite'] * $nbJours);
+                                        echo formatPrice($item['tarif_location_journalier'] * $item['cart_quantity'] * $nbJours);
                                     } else {
                                         echo "Dates requises";
                                     }
@@ -229,8 +210,7 @@ ob_start();
 
                                 <form method="post" class="remove-form">
                                     <input type="hidden" name="action" value="remove">
-                                    <input type="hidden" name="type" value="location">
-                                    <input type="hidden" name="id" value="<?= $id ?>">
+                                    <input type="hidden" name="cart_id" value="<?= $item['cart_id'] ?>">
                                     <button type="submit" class="remove-btn" title="Supprimer">
                                         <i class="fas fa-trash"></i>
                                     </button>

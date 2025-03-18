@@ -1,5 +1,4 @@
-# Permettre l'accès aux fichiers statiques
-Options +FollowSymLinks
+# Activation du moteur de réécriture
 RewriteEngine On
 
 # Base du répertoire
@@ -10,16 +9,14 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-Options -MultiViews
+# Permettre l'accès aux assets
+RewriteCond %{REQUEST_URI} \.(css|js|jpg|jpeg|png|gif|ico|webp|avif)$ [NC]
+RewriteRule ^ - [L]
 
-# Règles spécifiques pour le panier
-RewriteRule ^panier/?$ pages/panier/index.php [L]
-RewriteRule ^pages/panier/?$ pages/panier/index.php [L]
-
-# Redirection vers le fichier index.php
+# Redirection vers index.php
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.php [L]
+RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Protection contre l'accès aux fichiers .htaccess et .env
 <FilesMatch "^\.">

@@ -46,9 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ];
                     }
                     $_SESSION['success_message'] = "Véhicule ajouté au panier avec succès.";
+                    }
                 }
-            }
-            break;
+                break;
 
         case 'supprimer':
             if (isset($_SESSION['panier'][$type][$vehiculeId])) {
@@ -60,13 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'modifier_quantite':
             $quantite = isset($_POST['quantite']) ? intval($_POST['quantite']) : 1;
             if ($quantite > 0 && isset($_SESSION['panier'][$type][$vehiculeId])) {
-                $_SESSION['panier'][$type][$vehiculeId]['quantite'] = $quantite;
-            }
-            break;
+                        $_SESSION['panier'][$type][$vehiculeId]['quantite'] = $quantite;
+                }
+                break;
 
-        case 'commander':
-            try {
-                $db->beginTransaction();
+            case 'commander':
+                try {
+                    $db->beginTransaction();
 
                 // Vérification du client
                 $query = "SELECT * FROM clients WHERE id_client = ?";
@@ -89,11 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                          VALUES (?, NOW(), ?, 'en attente')";
                 $stmt = $db->prepare($query);
                 $stmt->execute([$_SESSION['user_id'], $montantTotal]);
-                $commandeId = $db->lastInsertId();
+                    $commandeId = $db->lastInsertId();
 
-                // Ajout des détails de la commande
-                foreach (['achat', 'location'] as $type) {
-                    foreach ($_SESSION['panier'][$type] as $vehiculeId => $item) {
+                    // Ajout des détails de la commande
+                    foreach (['achat', 'location'] as $type) {
+                        foreach ($_SESSION['panier'][$type] as $vehiculeId => $item) {
                         // Vérification du stock
                         $query = "SELECT stock FROM vehicules WHERE id_vehicule = ? AND stock >= ?";
                         $stmt = $db->prepare($query);
@@ -103,19 +103,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
 
                         // Ajout du détail
-                        $query = "INSERT INTO details_commandes (id_commande, id_produit, quantite, prix_unitaire) 
+                            $query = "INSERT INTO details_commandes (id_commande, id_produit, quantite, prix_unitaire) 
                                  VALUES (?, ?, ?, ?)";
-                        $stmt = $db->prepare($query);
-                        $stmt->execute([
+                            $stmt = $db->prepare($query);
+                            $stmt->execute([
                             $commandeId,
                             $vehiculeId,
                             $item['quantite'],
                             $type === 'achat' ? $item['prix'] : $item['tarif_location_journalier']
-                        ]);
+                            ]);
 
-                        // Mise à jour du stock
+                            // Mise à jour du stock
                         $query = "UPDATE vehicules SET stock = stock - ? WHERE id_vehicule = ?";
-                        $stmt = $db->prepare($query);
+                            $stmt = $db->prepare($query);
                         $stmt->execute([$item['quantite'], $vehiculeId]);
 
                         // Si c'est une location, créer l'entrée dans la table locations
@@ -131,25 +131,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $item['tarif_location_journalier'] * $item['quantite']
                             ]);
                         }
+                        }
                     }
-                }
 
-                $db->commit();
-                $_SESSION['panier'] = ['achat' => [], 'location' => []];
-                $_SESSION['success_message'] = "Votre commande a été enregistrée avec succès !";
+                    $db->commit();
+                    $_SESSION['panier'] = ['achat' => [], 'location' => []];
+                    $_SESSION['success_message'] = "Votre commande a été enregistrée avec succès !";
                 header('Location: ' . url('pages/commandes.php'));
-                exit;
+                    exit;
 
             } catch (Exception $e) {
-                $db->rollBack();
+                    $db->rollBack();
                 $_SESSION['error_message'] = "Erreur lors de la commande : " . $e->getMessage();
-            }
-            break;
-    }
+                }
+                break;
+        }
 
     // Redirection pour éviter la resoumission
-    header('Location: ' . $_SERVER['REQUEST_URI']);
-    exit;
+        header('Location: ' . $_SERVER['REQUEST_URI']);
+        exit;
 }
 
 // Récupération des véhicules du panier
@@ -211,10 +211,10 @@ ob_start();
 <div class="panier-container">
     <h1 class="page-title">Mon Panier</h1>
 
-    <?php if (empty($vehiculesAchat) && empty($vehiculesLocation)): ?>
+            <?php if (empty($vehiculesAchat) && empty($vehiculesLocation)): ?>
         <div class="panier-vide">
             <i class="fas fa-shopping-cart"></i>
-            <p>Votre panier est vide</p>
+                <p>Votre panier est vide</p>
             <a href="<?= url('pages/catalogue/index.php') ?>" class="btn btn-primary">
                 <i class="fas fa-car"></i> Découvrir nos véhicules
             </a>
@@ -306,8 +306,8 @@ ob_start();
         <?php endif; ?>
 
         <!-- Résumé et validation -->
-        <div class="panier-summary">
-            <div class="summary-content">
+            <div class="panier-summary">
+                <div class="summary-content">
                 <h3>Résumé de la commande</h3>
                 <div class="summary-details">
                     <?php if (!empty($vehiculesAchat)): ?>
@@ -338,9 +338,9 @@ ob_start();
                     <i class="fas fa-check"></i> Valider la commande
                 </button>
             </div>
-        </div>
-    <?php endif; ?>
-</div>
+            </div>
+        <?php endif; ?>
+    </div>
 
 <style>
 .panier-container {

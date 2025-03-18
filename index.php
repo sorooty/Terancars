@@ -113,7 +113,7 @@ ob_start();
         <h2 class="section-title">Nos marques populaires</h2>
         <div class="brands-grid">
             <?php foreach ($popularBrands as $brand): ?>
-                <a href="<?= url('pages/catalogue/index.php?marque=' . urlencode($brand)) ?>" class="brand-logo">
+                <a href="<?= url('marque/' . urlencode($brand)) ?>" class="brand-logo">
                     <img src="<?= asset('images/brands/' . strtolower($brand) . '.png') ?>"
                         alt="Logo <?= htmlspecialchars($brand) ?>"
                         title="Voir les véhicules <?= htmlspecialchars($brand) ?>"
@@ -459,10 +459,12 @@ ob_start();
 }
 
 .feature-item i {
+    color: white;
     font-size: 1.25rem;
 }
 
 .feature-item span {
+    color: white;
     font-size: 1rem;
     font-weight: 500;
 }

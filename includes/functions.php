@@ -41,24 +41,29 @@ function url($path = '') {
         return SITE_URL . '/';
     }
     
-    // Pages d'authentification
-    if (strpos($path, 'pages/auth/') === 0) {
-        $pathParts = explode('/', $path);
-        return SITE_URL . '/auth/' . end($pathParts);
+    // Pages spécifiques
+    $routes = [
+        'panier' => '/panier',
+        'connexion' => '/connexion',
+        'inscription' => '/inscription',
+        'catalogue' => '/catalogue',
+    ];
+    
+    if (isset($routes[$path])) {
+        return SITE_URL . $routes[$path];
     }
     
-    // Gestion spéciale du panier
-    if ($path === 'panier' || $path === 'pages/panier' || $path === 'pages/panier/index.php') {
-        return SITE_URL . '/panier';
+    // Gestion des détails des véhicules
+    if (strpos($path, 'vehicule/detail') === 0) {
+        return SITE_URL . '/' . $path;
     }
     
-    // Gestion spéciale des pages de détail des véhicules
-    if (strpos($path, 'pages/vehicule/detail') === 0 || strpos($path, 'vehicule/detail') === 0) {
-        $query = parse_url($path, PHP_URL_QUERY);
-        return SITE_URL . '/vehicule/detail' . ($query ? '?' . $query : '');
+    // Gestion des marques
+    if (strpos($path, 'marque/') === 0) {
+        return SITE_URL . '/' . $path;
     }
     
-    // Pages normales
+    // Pages dans le dossier pages
     if (strpos($path, 'pages/') === 0) {
         $pathParts = explode('/', $path);
         array_shift($pathParts); // Enlève "pages"
