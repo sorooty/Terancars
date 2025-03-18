@@ -12,19 +12,6 @@ $pageTitle = "Accueil";
 $pageDescription = "TeranCar - Votre partenaire de confiance pour le transport et la mobilité à Dakar, Sénégal";
 $currentPage = 'home';
 
-// Fonction pour trouver le bon format d'image du véhicule
-function getVehicleImagePath($vehicleId)
-{
-    $imageFormats = ['jpg', 'png', 'jpeg', 'webp', 'gif', 'avif'];
-    foreach ($imageFormats as $format) {
-        $imagePath = ROOT_PATH . "/public/images/vehicules/{$vehicleId}.{$format}";
-        if (file_exists($imagePath)) {
-            return asset("images/vehicules/{$vehicleId}.{$format}");
-        }
-    }
-    return asset("images/vehicules/default.jpg"); // Image par défaut si aucune trouvée
-}
-
 // Début de la mise en mémoire tampon
 ob_start();
 ?>
@@ -39,10 +26,10 @@ ob_start();
         <h1>Devenez client privilégié TeranCar</h1>
         <p class="hero-subtitle">Profitez d'avantages exclusifs, de réductions spéciales et d'un service premium pour vos locations et achats de véhicules à Dakar</p>
         <div class="hero-buttons">
-            <a href="<?= url('pages/auth/register.php') ?>" class="btn btn-primary">
+            <a href="<?= url('inscription') ?>" class="btn btn-primary">
                 <i class="fas fa-user-plus"></i> Créer un compte
             </a>
-            <a href="<?= url('pages/auth/login.php') ?>" class="btn btn-secondary">
+            <a href="<?= url('connexion') ?>" class="btn btn-secondary">
                 <i class="fas fa-sign-in-alt"></i> Se connecter
             </a>
         </div>
@@ -74,7 +61,7 @@ ob_start();
 
             <div class="offers-wrapper">
                 <?php foreach ($vehicles as $vehicle): ?>
-                    <?php $imageUrl = getVehicleImagePath($vehicle['id_vehicule']); ?>
+                    <?php $imageUrl = getVehicleMainImage($vehicle['id_vehicule']); ?>
                     <div class="offer-card">
                         <div class="offer-image">
                             <img src="<?= $imageUrl ?>"

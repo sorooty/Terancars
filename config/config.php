@@ -60,9 +60,9 @@ function getVehicles($limit = null)
 function getTestimonials($limit = 3)
 {
     global $db;
-    $sql = "SELECT ac.*, c.nom as client_nom 
+    $sql = "SELECT ac.*, u.nom as client_nom 
             FROM avis_clients ac 
-            JOIN clients c ON ac.id_client = c.id_client 
+            JOIN utilisateurs u ON ac.id_utilisateur = u.id_utilisateur 
             ORDER BY ac.date_avis DESC 
             LIMIT " . (int)$limit;
     $stmt = $db->query($sql);
@@ -103,10 +103,14 @@ function getVehicleById($id)
             if (!isset($vehicle['stock'])) {
                 $vehicle['stock'] = 0;
             }
-
+            
+            // Récupération des images du véhicule
+            $vehicle['images'] = getVehicleImages($id);
+            $vehicle['main_image'] = getVehicleMainImage($id);
+            
             return $vehicle;
         }
-
+        
         return false;
     } catch (PDOException $e) {
         error_log("Erreur lors de la récupération du véhicule: " . $e->getMessage());
@@ -185,6 +189,101 @@ function clearCart($userId) {
         return $stmt->execute([$userId]);
     } catch (PDOException $e) {
         error_log("Erreur lors du vidage du panier: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Fonction pour récupérer les images d'un véhicule
+function getVehicleImages($vehicleId) {
+    global $db;
+    try {
+        $sql = "SELECT * FROM images_vehicules WHERE id_vehicule = :id ORDER BY is_principale DESC";
+        $stmt = $db->prepare($sql);
+        $stmt->execute(['id' => $vehicleId]);
+        $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        if (empty($images)) {
+            // Retourner l'image par défaut si aucune image n'est trouvée
+            return [['id_image' => 0, 'url' => asset('images/vehicules/default-car.jpg'), 'is_principale' => 1]];
+        }
+        
+        // Convertir les URLs avec la fonction asset()
+        foreach ($images as &$image) {
+            $image['url'] = asset($image['url_image']);
+        }
+        
+        return $images;
+    } catch (PDOException $e) {
+        error_log("Erreur lors de la récupération des images du véhicule: " . $e->getMessage());
+        return [['id_image' => 0, 'url' => asset('images/vehicules/default-car.jpg'), 'is_principale' => 1]];
+    }
+}
+
+// Fonction pour récupérer l'image principale d'un véhicule
+function getVehicleMainImage($vehicleId) {
+    global $db;
+    try {
+        // D'abord, chercher dans la table images_vehicules
+        $sql = "SELECT url_image FROM images_vehicules WHERE id_vehicule = :id AND is_principale = 1 LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->execute(['id' => $vehicleId]);
+        $image = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($image) {
+            return asset($image['url_image']);
+        }
+        
+        // Si aucune image principale, prendre la première image disponible
+        $sql = "SELECT url_image FROM images_vehicules WHERE id_vehicule = :id LIMIT 1";
+        $stmt = $db->prepare($sql);
+        $stmt->execute(['id' => $vehicleId]);
+        $image = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($image) {
+            return asset($image['url_image']);
+        }
+        
+        // Si aucune image dans la base, chercher dans le dossier (ancienne méthode)
+        $imageFormats = ['jpg', 'png', 'jpeg', 'webp', 'gif', 'avif'];
+        foreach ($imageFormats as $format) {
+            $imagePath = ROOT_PATH . "/public/images/vehicules/{$vehicleId}.{$format}";
+            if (file_exists($imagePath)) {
+                // Ajouter cette image à la base de données pour la prochaine fois
+                addVehicleImage($vehicleId, "images/vehicules/{$vehicleId}.{$format}", true);
+                return asset("images/vehicules/{$vehicleId}.{$format}");
+            }
+        }
+        
+        // Si tout échoue, retourner l'image par défaut
+        return asset("images/vehicules/default-car.jpg");
+        
+    } catch (PDOException $e) {
+        error_log("Erreur lors de la récupération de l'image principale: " . $e->getMessage());
+        return asset("images/vehicules/default-car.jpg");
+    }
+}
+
+// Fonction pour ajouter une image à un véhicule
+function addVehicleImage($vehicleId, $imageUrl, $isPrincipal = false) {
+    global $db;
+    try {
+        // Si l'image est principale, mettre à jour les autres images pour qu'elles ne soient plus principales
+        if ($isPrincipal) {
+            $sql = "UPDATE images_vehicules SET is_principale = 0 WHERE id_vehicule = :id";
+            $stmt = $db->prepare($sql);
+            $stmt->execute(['id' => $vehicleId]);
+        }
+        
+        // Ajouter la nouvelle image
+        $sql = "INSERT INTO images_vehicules (id_vehicule, url_image, is_principale) VALUES (:id, :url, :principal)";
+        $stmt = $db->prepare($sql);
+        return $stmt->execute([
+            'id' => $vehicleId, 
+            'url' => $imageUrl, 
+            'principal' => $isPrincipal ? 1 : 0
+        ]);
+    } catch (PDOException $e) {
+        error_log("Erreur lors de l'ajout de l'image: " . $e->getMessage());
         return false;
     }
 }

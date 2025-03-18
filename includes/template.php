@@ -53,9 +53,6 @@ if (!defined('ROOT_PATH')) {
                 <a href="<?= url('panier') ?>" class="<?= $currentPage === 'panier' ? 'active' : '' ?>">
                     <i class="fas fa-shopping-cart"></i>
                     Panier
-                    <?php if (!empty($_SESSION['panier'])): ?>
-                        <span class="cart-count"><?= count($_SESSION['panier']) ?></span>
-                    <?php endif; ?>
                 </a>
             </div>
 

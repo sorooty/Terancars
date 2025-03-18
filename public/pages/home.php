@@ -89,8 +89,7 @@ ob_start();
         <div class="vehicles-grid">
             <?php foreach (getVehicles(8) as $vehicule): ?>
                 <?php
-                $imagePath = 'images/vehicules/' . $vehicule['id_vehicule'] . '.jpg';
-                $imageUrl = file_exists(ROOT_PATH . '/' . $imagePath) ? asset($imagePath) : asset('images/vehicules/default.jpg');
+                $imageUrl = getVehicleMainImage($vehicule['id_vehicule']);
                 ?>
                 <div class="vehicle-card">
                     <img src="<?= $imageUrl ?>"

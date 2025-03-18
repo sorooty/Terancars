@@ -68,27 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 try {
                     $db->beginTransaction();
 
-                // Vérification du client
-                $query = "SELECT * FROM clients WHERE id_client = ?";
-                $stmt = $db->prepare($query);
-                $stmt->execute([$_SESSION['user_id']]);
-                $client = $stmt->fetch();
-
-                if (!$client) {
-                    // Création du client si nécessaire
-                    $query = "INSERT INTO clients (id_client, nom, email, telephone) 
-                             SELECT id_utilisateur, nom, email, telephone 
-                             FROM utilisateurs WHERE id_utilisateur = ?";
+                    // Création de la commande
+                    $montantTotal = calculateTotal();
+                    $query = "INSERT INTO commandes (id_utilisateur, date_commande, montant_total, statut) 
+                             VALUES (?, NOW(), ?, 'en attente')";
                     $stmt = $db->prepare($query);
-                    $stmt->execute([$_SESSION['user_id']]);
-                }
-
-                // Création de la commande
-                $montantTotal = calculateTotal();
-                $query = "INSERT INTO commandes (id_client, date_commande, montant_total, statut) 
-                         VALUES (?, NOW(), ?, 'en attente')";
-                $stmt = $db->prepare($query);
-                $stmt->execute([$_SESSION['user_id'], $montantTotal]);
+                    $stmt->execute([$_SESSION['user_id'], $montantTotal]);
                     $commandeId = $db->lastInsertId();
 
                     // Ajout des détails de la commande
@@ -96,22 +81,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         foreach ($_SESSION['panier'][$type] as $vehiculeId => $item) {
                         // Vérification du stock
                         $query = "SELECT stock FROM vehicules WHERE id_vehicule = ? AND stock >= ?";
-                        $stmt = $db->prepare($query);
+                            $stmt = $db->prepare($query);
                         $stmt->execute([$vehiculeId, $item['quantite']]);
                         if (!$stmt->fetch()) {
                             throw new Exception("Stock insuffisant pour le véhicule #" . $vehiculeId);
                         }
-
-                        // Ajout du détail
-                            $query = "INSERT INTO details_commandes (id_commande, id_produit, quantite, prix_unitaire) 
-                                 VALUES (?, ?, ?, ?)";
-                            $stmt = $db->prepare($query);
-                            $stmt->execute([
-                            $commandeId,
-                            $vehiculeId,
-                            $item['quantite'],
-                            $type === 'achat' ? $item['prix'] : $item['tarif_location_journalier']
-                            ]);
 
                             // Mise à jour du stock
                         $query = "UPDATE vehicules SET stock = stock - ? WHERE id_vehicule = ?";
@@ -120,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         // Si c'est une location, créer l'entrée dans la table locations
                         if ($type === 'location') {
-                            $query = "INSERT INTO locations (id_client, id_produit, date_debut, date_fin, tarif_total, statut_location) 
+                            $query = "INSERT INTO locations (id_utilisateur, id_vehicule, date_debut, date_fin, tarif_total, statut_location) 
                                      VALUES (?, ?, ?, ?, ?, 'active')";
                             $stmt = $db->prepare($query);
                             $stmt->execute([
@@ -228,9 +202,12 @@ ob_start();
                     <?php foreach ($vehiculesAchat as $vehicule): ?>
                         <div class="panier-item">
                             <div class="item-image">
-                                <img src="<?= asset('images/vehicules/' . $vehicule['id_vehicule'] . '.jpg') ?>" 
-                                     alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
-                                     onerror="this.src='<?= asset('images/vehicules/default.jpg') ?>'">
+                                <?php
+                                $vehicleId = $vehicule['id_vehicule'];
+                                $imageSrc = getVehicleMainImage($vehicleId);
+                                ?>
+                                <img src="<?= $imageSrc ?>" 
+                                     alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>">
                             </div>
                             <div class="item-details">
                                 <h3><?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?></h3>
@@ -268,9 +245,12 @@ ob_start();
                     <?php foreach ($vehiculesLocation as $vehicule): ?>
                         <div class="panier-item">
                             <div class="item-image">
-                                <img src="<?= asset('images/vehicules/' . $vehicule['id_vehicule'] . '.jpg') ?>" 
-                                     alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
-                                     onerror="this.src='<?= asset('images/vehicules/default.jpg') ?>'">
+                                <?php
+                                $vehicleId = $vehicule['id_vehicule'];
+                                $imageSrc = getVehicleMainImage($vehicleId);
+                                ?>
+                                <img src="<?= $imageSrc ?>" 
+                                     alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>">
                             </div>
                             <div class="item-details">
                                 <h3><?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?></h3>

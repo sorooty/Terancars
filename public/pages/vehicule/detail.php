@@ -8,7 +8,17 @@ $vehicleId = isset($_GET['id_vehicule']) ? intval($_GET['id_vehicule']) : 0;
 // Traitement de l'ajout au panier
 if (isset($_POST['action']) && $_POST['action'] === 'add_to_cart') {
     $type = isset($_POST['type']) ? $_POST['type'] : 'achat';
-    if (addToCart($vehicleId, $type)) {
+    
+    // Vérification que l'utilisateur est connecté
+    if (!isLoggedIn()) {
+        $_SESSION['error_message'] = 'Vous devez être connecté pour ajouter un véhicule au panier.';
+        header('Location: ' . url('connexion'));
+        exit;
+    }
+    
+    $userId = $_SESSION['user_id'];
+    
+    if (addToCart($vehicleId, $userId, $type)) {
         $_SESSION['success_message'] = 'Le véhicule a été ajouté au panier avec succès.';
     } else {
         $_SESSION['error_message'] = 'Une erreur est survenue lors de l\'ajout au panier.';
@@ -25,6 +35,10 @@ if (!$vehicle) {
     header('Location: ' . url('pages/errors/404.php'));
     exit;
 }
+
+// Les images sont déjà incluses dans l'objet vehicle
+$vehicleImages = $vehicle['images'];
+$mainImage = $vehicle['main_image'];
 
 // Variables de la page
 $pageTitle = $vehicle['marque'] . ' ' . $vehicle['modele'];
@@ -70,24 +84,17 @@ ob_start();
             <div class="image-gallery">
                 <div class="gallery-main">
                     <div class="gallery-slider">
-                        <!-- Image principale par défaut -->
-                        <img src="<?= asset('images/vehicules/' . $vehicleId . '/main.jpg') ?>" 
-                             alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?>" 
-                             class="gallery-img active"
-                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
-                        <!-- Images supplémentaires -->
-                        <img src="<?= asset('images/vehicules/' . $vehicleId . '/angle1.jpg') ?>" 
-                             alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?> - Vue latérale" 
-                             class="gallery-img"
-                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
-                        <img src="<?= asset('images/vehicules/' . $vehicleId . '/angle2.jpg') ?>" 
-                             alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?> - Vue arrière" 
-                             class="gallery-img"
-                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
-                        <img src="<?= asset('images/vehicules/' . $vehicleId . '/interior.jpg') ?>" 
-                             alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?> - Intérieur" 
-                             class="gallery-img"
-                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
+                        <?php if (count($vehicleImages) > 0): ?>
+                            <?php foreach ($vehicleImages as $index => $image): ?>
+                                <img src="<?= $image['url'] ?>" 
+                                     alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?><?= $index > 0 ? ' - Vue ' . $index : '' ?>" 
+                                     class="gallery-img <?= $index === 0 ? 'active' : '' ?>">
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <img src="<?= $mainImage ?>" 
+                                 alt="<?= htmlspecialchars($vehicle['marque'] . ' ' . $vehicle['modele']) ?>" 
+                                 class="gallery-img active">
+                        <?php endif; ?>
                     </div>
 
                     <button class="gallery-nav prev" id="prevBtn">
@@ -99,26 +106,19 @@ ob_start();
                 </div>
 
                 <div class="gallery-thumbs">
-                    <div class="thumb active" data-index="0">
-                        <img src="<?= asset('images/vehicules/' . $vehicleId . '/main.jpg') ?>" 
-                             alt="Miniature 1"
-                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
-                    </div>
-                    <div class="thumb" data-index="1">
-                        <img src="<?= asset('images/vehicules/' . $vehicleId . '/angle1.jpg') ?>" 
-                             alt="Miniature 2"
-                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
-                    </div>
-                    <div class="thumb" data-index="2">
-                        <img src="<?= asset('images/vehicules/' . $vehicleId . '/angle2.jpg') ?>" 
-                             alt="Miniature 3"
-                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
-                    </div>
-                    <div class="thumb" data-index="3">
-                        <img src="<?= asset('images/vehicules/' . $vehicleId . '/interior.jpg') ?>" 
-                             alt="Miniature 4"
-                             onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
-                    </div>
+                    <?php if (count($vehicleImages) > 0): ?>
+                        <?php foreach ($vehicleImages as $index => $image): ?>
+                            <div class="thumb <?= $index === 0 ? 'active' : '' ?>" data-index="<?= $index ?>">
+                                <img src="<?= $image['url'] ?>" 
+                                     alt="Miniature <?= $index + 1 ?>">
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="thumb active" data-index="0">
+                            <img src="<?= $mainImage ?>" 
+                                 alt="Miniature 1">
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

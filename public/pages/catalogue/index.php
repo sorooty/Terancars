@@ -209,11 +209,10 @@ ob_start();
                     <div class="vehicule-card">
                         <div class="vehicule-image">
                             <?php
-                            $imagePath = 'images/vehicules/' . strtolower($vehicule['marque']) . '/' . strtolower($vehicule['modele']) . '.jpg';
+                            $imagePath = getVehicleMainImage($vehicule['id_vehicule']);
                             ?>
-                            <img src="<?= asset($imagePath) ?>"
-                                alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>"
-                                onerror="this.src='<?= asset('images/vehicules/default-car.jpg') ?>'">
+                            <img src="<?= $imagePath ?>"
+                                alt="<?= htmlspecialchars($vehicule['marque'] . ' ' . $vehicule['modele']) ?>">
                             <?php if ($vehicule['stock'] > 0): ?>
                                 <span class="badge badge-success">Disponible</span>
                             <?php else: ?>
@@ -240,7 +239,7 @@ ob_start();
                                 <?php endif; ?>
                             </div>
                             <div class="vehicule-actions">
-                                <a href="<?= url('pages/vehicule/detail.php?id_vehicule=' . $vehicule['id_vehicule']) ?>" class="btn btn-primary">
+                                <a href="<?= url('vehicule/detail') ?>?id_vehicule=<?= $vehicule['id_vehicule'] ?>" class="btn btn-primary">
                                     <i class="fas fa-info-circle"></i> Voir les détails
                                 </a>
                             </div>
