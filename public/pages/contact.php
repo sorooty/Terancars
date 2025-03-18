@@ -140,7 +140,7 @@ ob_start();
                 <div class="info-card">
                     <i class="fas fa-map-marker-alt"></i>
                     <h3>Notre adresse</h3>
-                    <p>123 Avenue des Champs-Élysées<br>75008 Paris, France</p>
+                    <p>97 Route de la Corniche Dakar, Sénégal</p>
                 </div>
 
                 <div class="info-card">
