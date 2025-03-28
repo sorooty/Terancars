@@ -26,10 +26,10 @@ ob_start();
         <h1>Devenez client privilégié TeranCar</h1>
         <p class="hero-subtitle">Profitez d'avantages exclusifs, de réductions spéciales et d'un service premium pour vos locations et achats de véhicules à Dakar</p>
         <div class="hero-buttons">
-            <a href="<?= url('inscription') ?>" class="btn btn-primary">
+            <a href="<?= url('auth/inscription') ?>" class="btn btn-primary">
                 <i class="fas fa-user-plus"></i> Créer un compte
             </a>
-            <a href="<?= url('connexion') ?>" class="btn btn-secondary">
+            <a href="<?= url('auth/login') ?>" class="btn btn-secondary">
                 <i class="fas fa-sign-in-alt"></i> Se connecter
             </a>
         </div>

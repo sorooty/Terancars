@@ -76,11 +76,11 @@ ob_start();
             $team_members = [
                 [
                     'name' => 'Abdoulaye Watt',
-                    'role' => 'CEO & Chef de projet',
+                    'role' => 'CEO & Front-end Dev',
                 ],
                 [
                     'name' => 'Omar ElGhazal',
-                    'role' => 'COO',
+                    'role' => 'COO & Front-end Dev',
                 ],
                 [
                     'name' => 'Seyni Baldé',
@@ -92,11 +92,11 @@ ob_start();
                 ],
                 [
                     'name' => 'Jean Tiemtoré',
-                    'role' => 'Community Manager & Front-end Dev',
+                    'role' => 'Marketing director & Front-end Dev',
                 ],
                 [
                     'name' => 'Hameg Sonia',
-                    'role' => 'Webdesigner & Front-end Dev',
+                    'role' => 'Lead Webdesigner & Front-end Dev',
                 ]
             ];
 

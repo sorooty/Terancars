@@ -2,11 +2,9 @@
 // Inclusion du fichier d'initialisation
 require_once __DIR__ . '/../../../includes/init.php';
 
-// Vérifier si l'utilisateur est connecté
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['redirect_after_login'] = url('panier');
-    header('Location: ' . url('connexion'));
-    exit;
+// Initialiser le panier dans la session s'il n'existe pas
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
 }
 
 // Variables de la page
@@ -16,23 +14,32 @@ $currentPage = 'panier';
 $additionalCss = ['css/panier.css'];
 $additionalJs = ['js/panier.js'];
 
-$userId = $_SESSION['user_id'];
-
 // Traitement des actions sur le panier
 if (isset($_POST['action'])) {
     switch ($_POST['action']) {
         case 'remove':
             if (isset($_POST['cart_id'])) {
-                removeFromCart($_POST['cart_id'], $userId);
+                foreach ($_SESSION['cart'] as $key => $item) {
+                    if ($item['cart_id'] == $_POST['cart_id']) {
+                        unset($_SESSION['cart'][$key]);
+                        break;
+                    }
+                }
+                $_SESSION['cart'] = array_values($_SESSION['cart']);
             }
             break;
         case 'update':
             if (isset($_POST['cart_id']) && isset($_POST['quantity'])) {
-                updateCartQuantity($_POST['cart_id'], $userId, max(1, intval($_POST['quantity'])));
+                foreach ($_SESSION['cart'] as &$item) {
+                    if ($item['cart_id'] == $_POST['cart_id']) {
+                        $item['cart_quantity'] = max(1, intval($_POST['quantity']));
+                        break;
+                    }
+                }
             }
             break;
         case 'clear':
-            clearCart($userId);
+            $_SESSION['cart'] = [];
             break;
     }
     // Redirection pour éviter la resoumission du formulaire
@@ -41,19 +48,16 @@ if (isset($_POST['action'])) {
 }
 
 // Récupération des articles du panier
-try {
-    $stmt = $db->prepare("
-        SELECT p.*, v.*, p.quantite as cart_quantity, p.id_panier as cart_id
-        FROM panier p
-        JOIN vehicules v ON p.id_vehicule = v.id_vehicule
-        WHERE p.id_utilisateur = ?
-        ORDER BY p.type, p.date_ajout
-    ");
-    $stmt->execute([$userId]);
-    $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    error_log("Erreur lors de la récupération du panier: " . $e->getMessage());
-    $cartItems = [];
+$cartItems = [];
+foreach ($_SESSION['cart'] as $cartItem) {
+    $vehicle = getVehicleById($cartItem['id_vehicule']);
+    if ($vehicle) {
+        $cartItems[] = array_merge($vehicle, [
+            'cart_quantity' => $cartItem['cart_quantity'],
+            'cart_id' => $cartItem['cart_id'],
+            'type' => $cartItem['type']
+        ]);
+    }
 }
 
 // Séparation des articles par type
@@ -101,7 +105,7 @@ ob_start();
                     <div class="cart-items">
                         <?php foreach ($vehiculesAchat as $item): ?>
                             <div class="cart-item">
-                                <img src="<?= asset('images/vehicules/' . getVehicleImage($item['marque'], $item['modele'])) ?>" 
+                                <img src="<?= getVehicleMainImage($item['id_vehicule']) ?>" 
                                      alt="<?= htmlspecialchars($item['marque'] . ' ' . $item['modele']) ?>"
                                      class="item-image">
                                 
@@ -111,7 +115,7 @@ ob_start();
                                         <span><i class="fas fa-calendar"></i> <?= $item['annee'] ?></span>
                                         <span><i class="fas fa-gas-pump"></i> <?= ucfirst($item['carburant']) ?></span>
                                     </div>
-                                    <p class="item-price"><?= formatPrice($item['prix']) ?></p>
+                                    <p class="item-price"><?= number_format($item['prix'], 2, ',', ' ') ?> €</p>
                                 </div>
 
                                 <div class="item-quantity">
@@ -128,7 +132,7 @@ ob_start();
                                 </div>
 
                                 <div class="item-total">
-                                    <?= formatPrice($item['prix'] * $item['cart_quantity']) ?>
+                                    <?= number_format($item['prix'] * $item['cart_quantity'], 2, ',', ' ') ?> €
                                 </div>
 
                                 <form method="post" class="remove-form">
@@ -150,7 +154,7 @@ ob_start();
                     <div class="cart-items">
                         <?php foreach ($vehiculesLocation as $item): ?>
                             <div class="cart-item">
-                                <img src="<?= asset('images/vehicules/' . getVehicleImage($item['marque'], $item['modele'])) ?>" 
+                                <img src="<?= getVehicleMainImage($item['id_vehicule']) ?>" 
                                      alt="<?= htmlspecialchars($item['marque'] . ' ' . $item['modele']) ?>"
                                      class="item-image">
                                 
@@ -160,7 +164,7 @@ ob_start();
                                         <span><i class="fas fa-calendar"></i> <?= $item['annee'] ?></span>
                                         <span><i class="fas fa-gas-pump"></i> <?= ucfirst($item['carburant']) ?></span>
                                     </div>
-                                    <p class="item-price"><?= formatPrice($item['tarif_location_journalier']) ?> / jour</p>
+                                    <p class="item-price"><?= number_format($item['tarif_location_journalier'], 2, ',', ' ') ?> € / jour</p>
                                     
                                     <div class="item-dates">
                                         <div class="date-group">
@@ -201,7 +205,7 @@ ob_start();
                                         $dateDebut = new DateTime($item['date_debut_location']);
                                         $dateFin = new DateTime($item['date_fin_location']);
                                         $nbJours = $dateDebut->diff($dateFin)->days + 1;
-                                        echo formatPrice($item['tarif_location_journalier'] * $item['cart_quantity'] * $nbJours);
+                                        echo number_format($item['tarif_location_journalier'] * $item['cart_quantity'] * $nbJours, 2, ',', ' ') . ' €';
                                     } else {
                                         echo "Dates requises";
                                     }
@@ -225,16 +229,15 @@ ob_start();
                 <h2>Récapitulatif</h2>
                 <div class="summary-row total">
                     <span>Total</span>
-                    <span class="total-price"><?= formatPrice($total) ?></span>
+                    <span class="total-price"><?= number_format($total, 2, ',', ' ') ?> €</span>
                 </div>
                 
                 <div class="cart-actions">
-                    <form method="post" class="clear-form">
-                        <input type="hidden" name="action" value="clear">
-                        <button type="submit" class="btn btn-outline">Vider le panier</button>
-                    </form>
+                    <a href="<?= url('catalogue') ?>" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i> Continuer mes achats
+                    </a>
                     <a href="<?= url('checkout') ?>" class="btn btn-primary">
-                        Procéder au paiement
+                        <i class="fas fa-lock"></i> Procéder au paiement
                     </a>
                 </div>
             </div>

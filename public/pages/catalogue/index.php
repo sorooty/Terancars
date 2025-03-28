@@ -86,6 +86,7 @@ $pageTitle = "Catalogue des véhicules";
 $pageDescription = "Découvrez notre sélection de véhicules disponibles à l'achat et à la location.";
 $currentPage = 'catalogue';
 $additionalCss = ['css/catalogue.css'];
+$additionalJs = ['js/catalogue.js'];
 
 // Début de la mise en mémoire tampon
 ob_start();

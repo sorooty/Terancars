@@ -25,7 +25,12 @@ $routes = [
     '/reset-password' => '/public/pages/auth/reset-password.php',
     '/vehicule/detail' => '/public/pages/vehicule/detail.php',
     '/panier' => '/public/pages/panier/index.php',
-    '/marque' => '/public/pages/catalogue/index.php'
+    '/checkout' => '/public/pages/checkout/index.php',
+    '/confirmation' => '/public/pages/confirmation/index.php',
+    '/marque' => '/public/pages/catalogue/index.php',
+    '/auth/login' => '/public/pages/auth/login.php',
+    '/auth/inscription' => '/public/pages/auth/inscription.php',
+    '/auth/reset-password' => '/public/pages/auth/reset-password.php'
 ];
 
 // Vérifier si la route existe

@@ -44,8 +44,8 @@ function url($path = '') {
     // Pages spécifiques
     $routes = [
         'panier' => '/panier',
-        'connexion' => '/connexion',
-        'inscription' => '/inscription',
+        'connexion' => '/auth/login',
+        'inscription' => '/auth/inscription',
         'catalogue' => '/catalogue',
     ];
     

@@ -9,20 +9,24 @@ $vehicleId = isset($_GET['id_vehicule']) ? intval($_GET['id_vehicule']) : 0;
 if (isset($_POST['action']) && $_POST['action'] === 'add_to_cart') {
     $type = isset($_POST['type']) ? $_POST['type'] : 'achat';
     
-    // Vérification que l'utilisateur est connecté
-    if (!isLoggedIn()) {
-        $_SESSION['error_message'] = 'Vous devez être connecté pour ajouter un véhicule au panier.';
-        header('Location: ' . url('connexion'));
-        exit;
+    // Initialiser le panier s'il n'existe pas
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
     }
     
-    $userId = $_SESSION['user_id'];
+    // Créer un ID unique pour l'article du panier
+    $cartId = uniqid('cart_');
     
-    if (addToCart($vehicleId, $userId, $type)) {
-        $_SESSION['success_message'] = 'Le véhicule a été ajouté au panier avec succès.';
-    } else {
-        $_SESSION['error_message'] = 'Une erreur est survenue lors de l\'ajout au panier.';
-    }
+    // Ajouter l'article au panier
+    $_SESSION['cart'][] = [
+        'cart_id' => $cartId,
+        'id_vehicule' => $vehicleId,
+        'type' => $type,
+        'cart_quantity' => 1,
+        'date_ajout' => date('Y-m-d H:i:s')
+    ];
+    
+    $_SESSION['success_message'] = 'Le véhicule a été ajouté au panier avec succès.';
     header('Location: ' . $_SERVER['REQUEST_URI']);
     exit;
 }

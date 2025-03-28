@@ -2,55 +2,78 @@ document.addEventListener('DOMContentLoaded', () => {
     // Gestion du formulaire de filtres
     const filtresForm = document.getElementById('filtres-form');
     const resetButton = document.getElementById('reset-filtres');
+    const allInputs = filtresForm.querySelectorAll('input, select');
 
-    if (filtresForm) {
-        // Mise à jour automatique lors du changement de valeur
-        filtresForm.querySelectorAll('select, input').forEach(input => {
-            input.addEventListener('change', () => {
-                if (input.type !== 'number' || input.value !== '') {
-                    filtresForm.submit();
+    // Fonction pour mettre à jour les filtres
+    function updateFilters() {
+        const formData = new FormData(filtresForm);
+        const params = new URLSearchParams(formData);
+        
+        // Supprimer les paramètres vides
+        for (const [key, value] of params.entries()) {
+            if (!value) params.delete(key);
+        }
+        
+        // Rediriger vers la nouvelle URL avec les filtres
+        window.location.href = `${window.location.pathname}?${params.toString()}`;
+    }
+
+    // Écouter les changements sur les selects
+    filtresForm.querySelectorAll('select').forEach(select => {
+        select.addEventListener('change', updateFilters);
+    });
+
+    // Gestion des inputs de prix et d'année
+    const rangeInputs = filtresForm.querySelectorAll('.range-inputs input');
+    rangeInputs.forEach(input => {
+        let timer;
+        input.addEventListener('input', function() {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const group = this.closest('.range-inputs');
+                const min = group.querySelector('[name$="_min"]');
+                const max = group.querySelector('[name$="_max"]');
+                
+                // Validation des valeurs min/max
+                if (min.value && max.value && parseInt(min.value) > parseInt(max.value)) {
+                    alert('La valeur minimale ne peut pas être supérieure à la valeur maximale.');
+                    this.value = '';
+                    return;
                 }
-            });
+                
+                updateFilters();
+            }, 500); // Délai de 500ms avant mise à jour
         });
+    });
 
-        // Gestion du bouton reset
-        resetButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = window.location.pathname;
-        });
-
-        // Validation des champs de prix et d'année
-        const prixMin = document.querySelector('input[name="prix_min"]');
-        const prixMax = document.querySelector('input[name="prix_max"]');
-        const anneeMin = document.querySelector('input[name="annee_min"]');
-        const anneeMax = document.querySelector('input[name="annee_max"]');
-
-        // Validation du prix
-        prixMin.addEventListener('change', () => {
-            if (prixMax.value && parseInt(prixMin.value) > parseInt(prixMax.value)) {
-                prixMin.value = prixMax.value;
-            }
-        });
-
-        prixMax.addEventListener('change', () => {
-            if (prixMin.value && parseInt(prixMax.value) < parseInt(prixMin.value)) {
-                prixMax.value = prixMin.value;
-            }
-        });
-
-        // Validation de l'année
-        anneeMin.addEventListener('change', () => {
-            if (anneeMax.value && parseInt(anneeMin.value) > parseInt(anneeMax.value)) {
-                anneeMin.value = anneeMax.value;
-            }
-        });
-
-        anneeMax.addEventListener('change', () => {
-            if (anneeMin.value && parseInt(anneeMax.value) < parseInt(anneeMin.value)) {
-                anneeMax.value = anneeMin.value;
-            }
+    // Gestion de la recherche de modèle
+    const modeleInput = filtresForm.querySelector('#modele');
+    if (modeleInput) {
+        let searchTimer;
+        modeleInput.addEventListener('input', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                updateFilters();
+            }, 500); // Délai de 500ms avant mise à jour
         });
     }
+
+    // Réinitialisation des filtres
+    resetButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Réinitialiser tous les champs
+        allInputs.forEach(input => {
+            if (input.type === 'number' || input.type === 'text') {
+                input.value = '';
+            } else if (input.tagName === 'SELECT') {
+                input.selectedIndex = 0;
+            }
+        });
+        
+        // Rediriger vers la page sans filtres
+        window.location.href = window.location.pathname;
+    });
 
     // Gestion des favoris
     const favoriteButtons = document.querySelectorAll('.favorite-btn');
@@ -86,23 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Animation des cartes de véhicules
     const vehiculeCards = document.querySelectorAll('.vehicule-card');
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '50px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    vehiculeCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        observer.observe(card);
+    vehiculeCards.forEach((card, index) => {
+        card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
     });
 }); 
