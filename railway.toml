@@ -1,8 +1,0 @@
-[build]
-builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
-
-[deploy]
-startCommand = "php -S 0.0.0.0:$PORT -t public/"
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10 

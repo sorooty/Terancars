@@ -104,6 +104,3 @@ php_errors.log
 # Documentation générée
 /docs/generated/
 # => Peut être régénérée à partir du code source
-
-!.env.example
-!public/uploads/.gitkeep
