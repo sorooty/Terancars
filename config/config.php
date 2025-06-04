@@ -10,19 +10,21 @@ ini_set('display_errors', 1);
 
 // Configuration de base
 define('SITE_NAME', 'Teran\'Cars');
-define('SITE_URL', '/DaCar');
+// Permet de surcharger l'URL de base via une variable d'environnement
+$baseUrl = getenv('SITE_URL') ?: '/DaCar';
+define('SITE_URL', rtrim($baseUrl, '/'));
 
 // Configuration des chemins
 define('PUBLIC_PATH', ROOT_PATH . '/public');
 define('PAGES_PATH', PUBLIC_PATH . '/pages');
 define('ASSETS_PATH', PUBLIC_PATH . '/assets');
 
-// Configuration de la base de données
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$dbname = 'terancar';
-$port = 3307;
+// Configuration de la base de données (surchargée par les variables d'environnement si présentes)
+$host = getenv('DB_HOST') ?: 'localhost';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASS') ?: '';
+$dbname = getenv('DB_NAME') ?: 'terancar';
+$port = getenv('DB_PORT') ?: 3307;
 
 // Connexion à la base de données PDO
 try {
