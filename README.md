@@ -128,6 +128,11 @@ Le fichier `.htaccess` gère :
 - La gestion des erreurs
 - La protection des dossiers
 
+## 🚀 Déploiement
+
+Un guide détaillé est disponible dans [`docs/deployment.md`](docs/deployment.md).
+Pour un test rapide en local, copiez le fichier `.env.example` vers `.env` puis exécutez `./start_local.sh`.
+
 ## 🔐 Sécurité
 
 - Protection contre les injections SQL avec PDO
